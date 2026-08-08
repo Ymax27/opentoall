@@ -88,13 +88,22 @@ migrations s'appliquent automatiquement. L'app est disponible sur le port `8000`
 3. Pour l'ingestion d'issues, créez un **Personal Access Token** (aucun scope
    nécessaire pour les données publiques) et renseignez `GITHUB_PAT`.
 
-## 🔄 Ingestion des issues
+## 🔄 Ingestion des issues (données réelles GitHub)
 
-L'ingestion tourne via Celery beat toutes les 6 h. Pour la déclencher à la main :
+GitHub limite son API (1000 résultats max par recherche, ~30 req/min, quota
+horaire). OpenToAll **agrège donc périodiquement** les issues dans sa propre base
+plutôt que d'interroger GitHub à chaque visite — d'où la pagination locale.
+
+**Sans Celery** (le plus simple, il suffit d'un `GITHUB_PAT` dans `.env`) :
 
 ```bash
-python manage.py shell -c "from core.tasks import fetch_all_issues; fetch_all_issues()"
+python manage.py fetch_issues                     # langages & labels par défaut, 2 pages
+python manage.py fetch_issues --pages 5           # plus d'issues
+python manage.py fetch_issues --languages Python Go --labels "good first issue"
 ```
+
+**Avec Celery** (production) : le worker + beat rafraîchissent automatiquement
+toutes les 6 h (voir `CELERY_BEAT_SCHEDULE`). `docker compose up` démarre le tout.
 
 ## ✅ Tests
 

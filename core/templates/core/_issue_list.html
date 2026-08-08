@@ -1,10 +1,58 @@
-{% if issues %}
-<p class="text-sm text-on-surface-variant mb-4">{{ issues|length }} issue{{ issues|length|pluralize }} disponible{{ issues|length|pluralize }}.</p>
+{% if page_obj.object_list %}
+<div class="flex items-center justify-between mb-4">
+    <p class="text-sm text-on-surface-variant">
+        {{ total_count }} issue{{ total_count|pluralize }} · page {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
+    </p>
+</div>
+
 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    {% for issue in issues %}
+    {% for issue in page_obj %}
         {% include "core/_issue_card.html" with issue=issue %}
     {% endfor %}
 </div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+{% with qs=querystring %}
+<nav class="flex items-center justify-center gap-1.5 mt-10" aria-label="Pagination">
+    {% if page_obj.has_previous %}
+    <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
+       hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader"
+       href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
+       class="w-10 h-10 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+    </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+        <span class="min-w-10 h-10 px-3 grid place-items-center rounded-lg bg-primary text-on-primary font-semibold">{{ num }}</span>
+        {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+        <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
+           hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader"
+           href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
+           class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+        <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
+           hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader"
+           href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
+           class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+        {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+        <span class="w-6 text-center text-on-surface-variant">…</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.next_page_number }}"
+       hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader"
+       href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.next_page_number }}"
+       class="w-10 h-10 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+    </a>
+    {% endif %}
+</nav>
+{% endwith %}
+{% endif %}
+
 {% else %}
 <div class="text-center py-20 px-4">
     <div class="w-16 h-16 rounded-2xl bg-surface-container grid place-items-center mx-auto mb-5">

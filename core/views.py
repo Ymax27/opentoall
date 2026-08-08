@@ -1,4 +1,6 @@
-from django.contrib.auth.models import User as DjangoUser
+from urllib.parse import urlencode
+
+from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 
@@ -10,6 +12,9 @@ SORT_OPTIONS = {
     "beginner": "-beginner_friendly_score",
     "light": "repo_size_kb",
 }
+
+# Number of issues per page in the explore view.
+PAGE_SIZE = 30
 
 
 def home(request):
@@ -54,7 +59,18 @@ def explore(request):
     if max_size.isdigit():
         issues = issues.filter(repo_size_kb__lte=int(max_size))
 
-    issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))[:60]
+    issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
+
+    paginator = Paginator(issues, PAGE_SIZE)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    # Querystring carrying every active filter (minus `page`) so pagination
+    # links preserve the current search context.
+    params = {k: v for k, v in {
+        "q": q, "language": language, "difficulty": difficulty,
+        "foundation": foundation, "sort": sort,
+    }.items() if v}
+    querystring = urlencode(params)
 
     languages = (
         Issue.objects.exclude(language__isnull=True)
@@ -65,7 +81,9 @@ def explore(request):
     )
 
     context = {
-        "issues": issues,
+        "page_obj": page_obj,
+        "total_count": paginator.count,
+        "querystring": querystring,
         "languages": languages,
         "filters": {
             "q": q,
