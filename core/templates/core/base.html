@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="{% block meta_description %}OpenToAll — trouvez l'issue open source parfaite et donnez de la visibilité aux développeurs africains qui contribuent.{% endblock %}">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+
+    <!-- Prevent dark-mode flash -->
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        const c = (v) => `rgb(var(--${v}) / <alpha-value>)`;
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: c('background'), 'on-background': c('on-background'),
+                        surface: c('surface'), 'surface-dim': c('surface-dim'), 'surface-bright': c('surface-bright'),
+                        'surface-container-lowest': c('surface-container-lowest'), 'surface-container-low': c('surface-container-low'),
+                        'surface-container': c('surface-container'), 'surface-container-high': c('surface-container-high'),
+                        'surface-container-highest': c('surface-container-highest'), 'surface-variant': c('surface-variant'),
+                        'on-surface': c('on-surface'), 'on-surface-variant': c('on-surface-variant'),
+                        'inverse-surface': c('inverse-surface'), 'inverse-on-surface': c('inverse-on-surface'),
+                        outline: c('outline'), 'outline-variant': c('outline-variant'), 'surface-tint': c('surface-tint'),
+                        primary: c('primary'), 'on-primary': c('on-primary'), 'primary-container': c('primary-container'),
+                        'on-primary-container': c('on-primary-container'), 'inverse-primary': c('inverse-primary'),
+                        'primary-fixed': c('primary-fixed'), 'primary-fixed-dim': c('primary-fixed-dim'),
+                        'on-primary-fixed': c('on-primary-fixed'), 'on-primary-fixed-variant': c('on-primary-fixed-variant'),
+                        secondary: c('secondary'), 'on-secondary': c('on-secondary'), 'secondary-container': c('secondary-container'),
+                        'on-secondary-container': c('on-secondary-container'), 'secondary-fixed': c('secondary-fixed'),
+                        'secondary-fixed-dim': c('secondary-fixed-dim'),
+                        tertiary: c('tertiary'), 'on-tertiary': c('on-tertiary'), 'tertiary-container': c('tertiary-container'),
+                        'on-tertiary-container': c('on-tertiary-container'), 'tertiary-fixed': c('tertiary-fixed'),
+                        'tertiary-fixed-dim': c('tertiary-fixed-dim'),
+                        error: c('error'), 'on-error': c('on-error'), 'error-container': c('error-container'),
+                        'on-error-container': c('on-error-container'),
+                    },
+                    fontFamily: {
+                        display: ['Lexend', 'sans-serif'],
+                        heading: ['Lexend', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        code: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    borderRadius: { DEFAULT: '0.5rem', md: '0.75rem', lg: '1rem', xl: '1.5rem', '2xl': '2rem' },
+                    maxWidth: { content: '1280px' },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
+                        'card-hover': '0 12px 24px -8px rgb(53 37 205 / 0.18)',
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 focus:rounded-lg">Aller au contenu</a>
+
+{% include "core/_nav.html" %}
+
+<main id="main" class="flex-1 w-full">
+    {% if messages %}
+    <div class="max-w-content mx-auto px-4 lg:px-8 pt-4">
+        {% for message in messages %}
+        <div class="mb-2 rounded-lg px-4 py-3 text-sm font-medium bg-primary-container/15 text-on-primary-container border border-primary/20">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+{% include "core/_footer.html" %}
+{% include "core/_bottom_nav.html" %}
+
+<script>
+    // Theme toggle
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    }
+    // Mobile drawer
+    function toggleDrawer(open) {
+        const d = document.getElementById('mobile-drawer');
+        const o = document.getElementById('drawer-overlay');
+        if (!d) return;
+        d.classList.toggle('-translate-x-full', !open);
+        o.classList.toggle('hidden', !open);
+    }
+</script>
+{% block extra_body %}{% endblock %}
+</body>
+</html>

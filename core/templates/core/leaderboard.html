@@ -1,0 +1,92 @@
+{% extends "core/base.html" %}
+
+{% block title %}Classement des contributeurs — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden">
+    <div class="absolute inset-0 kente-bg opacity-50 pointer-events-none"></div>
+    <div class="relative max-w-content mx-auto px-4 lg:px-8 py-10 lg:py-14">
+
+        <div class="text-center max-w-2xl mx-auto mb-10">
+            <span class="inline-flex items-center gap-2 rounded-full bg-secondary-container/15 text-secondary-container px-3 py-1.5 text-xs font-semibold uppercase tracking-wider mb-4">
+                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1;">emoji_events</span>Mur des contributeurs
+            </span>
+            <h1 class="font-display font-bold text-3xl lg:text-5xl text-on-surface">Ceux qui font bouger les choses</h1>
+            <p class="mt-4 text-on-surface-variant text-lg">« Untel l'a fait dans mon pays — je peux le faire aussi. »</p>
+        </div>
+
+        <!-- Top contributor -->
+        {% if top %}
+        <div class="relative overflow-hidden rounded-2xl bg-primary text-on-primary p-6 lg:p-8 shadow-card-hover mb-8">
+            <div class="absolute -top-10 -right-10 w-48 h-48 bg-secondary-container/30 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-12 -left-8 w-40 h-40 bg-tertiary-fixed-dim/20 rounded-full blur-2xl"></div>
+            <div class="relative flex flex-col sm:flex-row items-center gap-6">
+                <div class="relative shrink-0">
+                    {% if top.avatar_url %}
+                    <img src="{{ top.avatar_url }}" alt="" class="w-24 h-24 rounded-2xl object-cover border-2 border-on-primary/30 bg-primary-fixed-dim">
+                    {% else %}
+                    <div class="w-24 h-24 rounded-2xl grid place-items-center bg-on-primary/15 font-display font-bold text-3xl">{{ top.initials }}</div>
+                    {% endif %}
+                    <span class="absolute -top-3 -left-3 bg-secondary-container text-on-secondary text-xs font-bold px-2.5 py-1 rounded-full shadow flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">workspace_premium</span>N°1</span>
+                </div>
+                <div class="text-center sm:text-left flex-1">
+                    <div class="inline-flex items-center gap-1.5 bg-on-primary/10 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tertiary-fixed mb-2">
+                        <span class="material-symbols-outlined text-[14px]">local_fire_department</span>Top contributeur
+                    </div>
+                    <h2 class="font-display font-bold text-2xl lg:text-3xl">{{ top.github_username }}</h2>
+                    <p class="text-on-primary/80 flex items-center justify-center sm:justify-start gap-1.5 mt-1">{{ top.flag }} {{ top.country|default:"Communauté" }} <span class="opacity-50">•</span> <span class="font-semibold">{{ top.total }} contributions</span></p>
+                    {% if top.headline %}<p class="mt-3 italic text-on-primary/90 max-w-lg">« {{ top.headline }} »</p>{% endif %}
+                </div>
+                <a href="{% url 'profile' top.github_username %}" class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary font-semibold px-5 py-2.5 rounded-xl hover:scale-105 transition-transform shrink-0">
+                    Voir le profil<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filter -->
+        <form method="get" class="flex items-center justify-between gap-3 mb-5">
+            <h3 class="font-heading font-semibold text-xl text-on-surface">Classement</h3>
+            <div class="relative">
+                <select name="country" onchange="this.form.submit()" class="appearance-none bg-surface-container-high text-on-surface font-medium text-sm rounded-xl py-2.5 pl-4 pr-10 shadow-sm outline-none cursor-pointer">
+                    <option value="">Tous les pays</option>
+                    {% for c in countries %}
+                    <option value="{{ c }}" {% if selected_country == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+            </div>
+        </form>
+
+        <!-- List -->
+        {% if rest or podium %}
+        <div class="space-y-2.5">
+            {% for p in profiles %}
+            <a href="{% url 'profile' p.github_username %}" class="group flex items-center gap-4 bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-3.5 pl-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all relative overflow-hidden">
+                <span class="absolute left-0 top-0 bottom-0 w-1 {% if forloop.counter == 1 %}bg-primary{% elif forloop.counter == 2 %}bg-secondary-container{% elif forloop.counter == 3 %}bg-tertiary{% else %}bg-transparent{% endif %}"></span>
+                <span class="w-8 text-center font-display font-bold text-xl shrink-0 {% if forloop.counter <= 3 %}text-primary{% else %}text-on-surface-variant{% endif %}">{{ forloop.counter }}</span>
+                {% if p.avatar_url %}
+                <img src="{{ p.avatar_url }}" alt="" class="w-12 h-12 rounded-xl object-cover bg-surface-container shrink-0">
+                {% else %}
+                <span class="w-12 h-12 rounded-xl bg-primary/12 text-primary grid place-items-center font-bold shrink-0">{{ p.initials }}</span>
+                {% endif %}
+                <div class="min-w-0 flex-1">
+                    <div class="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{{ p.github_username }}</div>
+                    <div class="text-sm text-on-surface-variant flex items-center gap-1.5">{{ p.flag }} {{ p.country|default:"—" }}</div>
+                </div>
+                <div class="text-right shrink-0">
+                    <div class="font-display font-bold text-xl text-on-surface">{{ p.total }}</div>
+                    <div class="text-xs text-on-surface-variant uppercase tracking-wider">contrib.</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 bg-surface-container-low/50 rounded-2xl">
+            <span class="material-symbols-outlined text-[40px] text-on-surface-variant">groups</span>
+            <p class="mt-3 text-on-surface-variant">Aucun contributeur pour ce filtre. Soyez le premier à apparaître ici !</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+services:
+  web:
+    build: .
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      USE_POSTGRES: "1"
+      DB_HOST: db
+      DB_PORT: "5432"
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-opentoall}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    build: .
+    entrypoint: []
+    command: celery -A config worker --loglevel=info
+    env_file: .env
+    environment:
+      USE_POSTGRES: "1"
+      DB_HOST: db
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    build: .
+    entrypoint: []
+    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file: .env
+    environment:
+      USE_POSTGRES: "1"
+      DB_HOST: db
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  pgdata:

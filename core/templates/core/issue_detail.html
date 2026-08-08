@@ -1,0 +1,120 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+
+{% block title %}{{ issue.title|truncatechars:60 }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="max-w-content mx-auto px-4 lg:px-8 py-6 lg:py-10">
+    <a href="{% url 'explore' %}" class="inline-flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors mb-6">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>Retour aux issues
+    </a>
+
+    <div class="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
+        <!-- Main -->
+        <div>
+            <div class="flex items-center gap-2 font-code text-sm text-on-surface-variant mb-3">
+                {% if issue.repo_avatar_url %}<img src="{{ issue.repo_avatar_url }}" alt="" class="w-6 h-6 rounded-md">{% endif %}
+                {{ issue.repo_owner }}/<span class="text-on-surface font-semibold">{{ issue.repo_name }}</span>
+                {% if issue.number %}<span class="text-outline">#{{ issue.number }}</span>{% endif %}
+            </div>
+            <h1 class="font-display font-bold text-2xl lg:text-4xl leading-tight text-on-surface">{{ issue.title }}</h1>
+
+            <div class="flex flex-wrap items-center gap-2 mt-4">
+                {% if issue.difficulty == 'beginner' %}
+                <span class="inline-flex items-center gap-1 bg-tertiary text-on-tertiary text-xs font-semibold px-2.5 py-1 rounded-full"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">eco</span>Débutant</span>
+                {% else %}
+                <span class="inline-flex items-center bg-{{ issue.accent }}/12 text-{{ issue.accent }} text-xs font-semibold px-2.5 py-1 rounded-full">{{ issue.get_difficulty_display }}</span>
+                {% endif %}
+                {% if issue.foundation %}<span class="inline-flex items-center gap-1 bg-surface-container text-on-surface-variant text-xs font-medium px-2.5 py-1 rounded-full"><span class="material-symbols-outlined text-[14px]">verified</span>{{ issue.foundation }}</span>{% endif %}
+                {% for label in issue.labels_list %}
+                <span class="bg-surface-container text-on-surface-variant text-xs font-code px-2.5 py-1 rounded-full">{{ label }}</span>
+                {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div class="relative overflow-hidden bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 mt-6 shadow-card">
+                <div class="absolute inset-0 kente-bg opacity-40 pointer-events-none"></div>
+                <div class="relative">
+                    <h2 class="font-heading font-semibold text-lg text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">description</span>Description</h2>
+                    {% if issue.body %}
+                    <div class="prose-sm text-on-surface-variant leading-relaxed whitespace-pre-line">{{ issue.body|striptags }}</div>
+                    {% else %}
+                    <p class="text-on-surface-variant italic">Aucune description fournie. Consultez l'issue directement sur GitHub pour les détails complets.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Related -->
+            {% if related %}
+            <div class="mt-10">
+                <h2 class="font-heading font-semibold text-xl text-on-surface mb-4">Issues similaires</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    {% for r in related %}{% include "core/_issue_card.html" with issue=r %}{% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:sticky lg:top-24 space-y-4">
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-card">
+                <h2 class="font-heading font-semibold text-base text-on-surface mb-4">Santé du projet</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px] text-tertiary">timer</span>Temps de réponse</span>
+                        <span class="text-sm font-semibold text-on-surface">
+                            {% if issue.avg_response_time_hours %}~{{ issue.avg_response_time_hours|floatformat:0 }} h{% if issue.responsiveness %} <span class="text-tertiary text-xs">· {{ issue.responsiveness }}</span>{% endif %}{% else %}—{% endif %}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px] text-primary">merge</span>PR acceptées</span>
+                        <span class="text-sm font-semibold text-on-surface">{% if issue.pr_acceptance_pct %}{{ issue.pr_acceptance_pct }} %{% else %}—{% endif %}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px] text-secondary-container">waving_hand</span>Bienveillance</span>
+                        <span class="text-sm font-semibold text-on-surface">{% if issue.beginner_friendly_pct %}{{ issue.beginner_friendly_pct }} %{% else %}—{% endif %}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">star</span>Étoiles</span>
+                        <span class="text-sm font-semibold text-on-surface">{{ issue.stars_count|intcomma }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">database</span>Poids du dépôt</span>
+                        <span class="flex items-center gap-2 text-sm font-semibold text-on-surface capitalize">
+                            {{ issue.size_category }}
+                            <span class="flex items-end gap-0.5 h-3">
+                                <span class="w-1 rounded-sm h-1 {% if issue.size_bars >= 1 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
+                                <span class="w-1 rounded-sm h-2 {% if issue.size_bars >= 2 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
+                                <span class="w-1 rounded-sm h-3 {% if issue.size_bars >= 3 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community files -->
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-2 shadow-card">
+                <a href="https://github.com/{{ issue.repo_full_name }}/blob/HEAD/CONTRIBUTING.md" target="_blank" rel="noopener" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container transition-colors">
+                    <span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined text-on-surface-variant">menu_book</span>CONTRIBUTING.md {% if issue.has_contributing %}<span class="material-symbols-outlined text-tertiary text-[16px]">check_circle</span>{% endif %}</span>
+                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                </a>
+                <a href="https://github.com/{{ issue.repo_full_name }}/blob/HEAD/CODE_OF_CONDUCT.md" target="_blank" rel="noopener" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container transition-colors">
+                    <span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined text-on-surface-variant">gavel</span>Code of Conduct {% if issue.has_code_of_conduct %}<span class="material-symbols-outlined text-tertiary text-[16px]">check_circle</span>{% endif %}</span>
+                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                </a>
+            </div>
+
+            <a href="{{ issue.url }}" target="_blank" rel="noopener" class="hidden lg:flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-all active:scale-[0.98]">
+                <span class="material-symbols-outlined">code</span>Contribuer sur GitHub
+            </a>
+        </aside>
+    </div>
+</div>
+
+<!-- Mobile sticky CTA -->
+<div class="lg:hidden fixed bottom-16 inset-x-0 z-40 p-3 bg-surface/90 backdrop-blur-md border-t border-outline-variant/40" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));">
+    <a href="{{ issue.url }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card active:scale-[0.98] transition-transform">
+        <span class="material-symbols-outlined">code</span>Contribuer sur GitHub
+    </a>
+</div>
+{% endblock %}

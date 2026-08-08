@@ -1,0 +1,142 @@
+/* ==========================================================================
+   OpenToAll — Design tokens (from DESIGN.md)
+   Colours are stored as raw "R G B" channels so Tailwind's /opacity modifier
+   works AND dark mode is a simple variable swap under .dark.
+   ========================================================================== */
+:root {
+  --background: 250 248 255;
+  --on-background: 19 27 46;
+  --surface: 250 248 255;
+  --surface-dim: 210 217 244;
+  --surface-bright: 255 255 255;
+  --surface-container-lowest: 255 255 255;
+  --surface-container-low: 242 243 255;
+  --surface-container: 234 237 255;
+  --surface-container-high: 226 231 255;
+  --surface-container-highest: 218 226 253;
+  --on-surface: 19 27 46;
+  --on-surface-variant: 70 69 85;
+  --inverse-surface: 40 48 68;
+  --inverse-on-surface: 238 240 255;
+  --outline: 119 117 135;
+  --outline-variant: 199 196 216;
+  --surface-tint: 77 68 227;
+  --surface-variant: 218 226 253;
+
+  --primary: 53 37 205;
+  --on-primary: 255 255 255;
+  --primary-container: 79 70 229;
+  --on-primary-container: 218 215 255;
+  --inverse-primary: 195 192 255;
+  --primary-fixed: 226 223 255;
+  --primary-fixed-dim: 195 192 255;
+  --on-primary-fixed: 15 0 105;
+  --on-primary-fixed-variant: 51 35 204;
+
+  --secondary: 167 58 0;
+  --on-secondary: 255 255 255;
+  --secondary-container: 253 101 30;
+  --on-secondary-container: 87 26 0;
+  --secondary-fixed: 255 219 206;
+  --secondary-fixed-dim: 255 181 153;
+  --on-secondary-fixed: 55 14 0;
+  --on-secondary-fixed-variant: 127 43 0;
+
+  --tertiary: 0 83 56;
+  --on-tertiary: 255 255 255;
+  --tertiary-container: 0 110 75;
+  --on-tertiary-container: 103 244 183;
+  --tertiary-fixed: 111 251 190;
+  --tertiary-fixed-dim: 78 222 163;
+  --on-tertiary-fixed: 0 33 19;
+  --on-tertiary-fixed-variant: 0 82 54;
+
+  --error: 186 26 26;
+  --on-error: 255 255 255;
+  --error-container: 255 218 214;
+  --on-error-container: 147 0 10;
+}
+
+.dark {
+  --background: 16 19 28;
+  --on-background: 227 225 236;
+  --surface: 16 19 28;
+  --surface-dim: 16 19 28;
+  --surface-bright: 54 58 69;
+  --surface-container-lowest: 11 14 22;
+  --surface-container-low: 25 28 37;
+  --surface-container: 29 32 41;
+  --surface-container-high: 39 42 52;
+  --surface-container-highest: 50 53 63;
+  --on-surface: 227 225 236;
+  --on-surface-variant: 199 196 216;
+  --inverse-surface: 227 225 236;
+  --inverse-on-surface: 45 48 64;
+  --outline: 145 143 159;
+  --outline-variant: 70 69 79;
+  --surface-tint: 195 192 255;
+  --surface-variant: 70 69 79;
+
+  --primary: 195 192 255;
+  --on-primary: 16 0 125;
+  --primary-container: 51 35 204;
+  --on-primary-container: 226 223 255;
+  --inverse-primary: 53 37 205;
+  --on-primary-fixed-variant: 35 18 189;
+
+  --secondary: 255 181 153;
+  --on-secondary: 90 28 0;
+  --secondary-container: 207 78 18;
+  --on-secondary-container: 255 219 206;
+
+  --tertiary: 78 222 163;
+  --on-tertiary: 0 56 36;
+  --tertiary-container: 0 110 75;
+  --on-tertiary-container: 103 244 183;
+
+  --error: 255 180 171;
+  --on-error: 105 0 5;
+  --error-container: 147 0 10;
+  --on-error-container: 255 218 214;
+}
+
+/* ---- Base ---------------------------------------------------------------- */
+html { scroll-behavior: smooth; }
+body { -webkit-tap-highlight-color: transparent; }
+
+/* African kente-grid inspired texture, used at very low opacity per DESIGN.md */
+.kente-bg {
+  background-image:
+    linear-gradient(135deg, rgb(var(--primary) / 0.04) 25%, transparent 25%),
+    linear-gradient(225deg, rgb(var(--primary) / 0.04) 25%, transparent 25%),
+    linear-gradient(45deg, rgb(var(--secondary-container) / 0.03) 25%, transparent 25%),
+    linear-gradient(315deg, rgb(var(--secondary-container) / 0.03) 25%, transparent 25%);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 0, 14px -14px, 0 14px;
+}
+
+.dot-bg {
+  background-image: radial-gradient(rgb(var(--on-surface) / 0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Hide scrollbars for horizontal chip rows */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Entrance animation */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float-slow 6s ease-in-out infinite; }
+
+/* HTMX loading state for the issue list */
+.htmx-request.htmx-indicator, .htmx-request .htmx-indicator { opacity: 1; }
+.htmx-indicator { opacity: 0; transition: opacity 0.2s; }

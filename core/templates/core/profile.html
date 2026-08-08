@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+
+{% block title %}{{ profile.github_username }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden">
+    <div class="absolute inset-0 dot-bg opacity-70 pointer-events-none"></div>
+    <div class="relative max-w-content mx-auto px-4 lg:px-8 py-10 lg:py-14">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-end gap-6 text-center sm:text-left">
+            <div class="relative shrink-0">
+                <div class="absolute inset-0 bg-primary/25 rounded-2xl blur-xl"></div>
+                {% if profile.avatar_url %}
+                <img src="{{ profile.avatar_url }}" alt="{{ profile.github_username }}" class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-2xl object-cover shadow-card border-2 border-surface-container-lowest bg-surface-container">
+                {% else %}
+                <div class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-2xl grid place-items-center bg-primary/15 text-primary font-display font-bold text-4xl shadow-card">{{ profile.initials }}</div>
+                {% endif %}
+                <span class="absolute -bottom-2 -right-2 text-2xl bg-surface-container-lowest rounded-full w-10 h-10 grid place-items-center shadow-card">{{ profile.flag }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h1 class="font-display font-bold text-3xl lg:text-4xl text-on-surface">{{ profile.github_username|default:profile.user.username }}</h1>
+                {% if profile.country %}
+                <p class="mt-1 flex items-center justify-center sm:justify-start gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">location_on</span>{{ profile.country }}</p>
+                {% endif %}
+                {% if profile.headline %}<p class="mt-3 text-on-surface max-w-xl">{{ profile.headline }}</p>{% endif %}
+                {% if languages %}
+                <div class="mt-4 flex flex-wrap justify-center sm:justify-start gap-2">
+                    {% for lang in languages %}
+                    <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-xs font-code font-medium">{{ lang }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <a href="https://github.com/{{ profile.github_username }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 border border-outline-variant text-on-surface font-medium px-4 py-2.5 rounded-xl hover:bg-surface-container transition-colors">
+                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                GitHub
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mt-10">
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-card">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Contributions</span>
+                <div class="font-display font-bold text-4xl text-primary mt-1">{{ profile.total_prs }}</div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-card">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">PR mergées</span>
+                <div class="font-display font-bold text-4xl text-tertiary mt-1">{{ profile.merged_prs }}</div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-card">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Langages</span>
+                <div class="font-display font-bold text-4xl text-secondary-container mt-1">{{ languages|length }}</div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-card">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Membre depuis</span>
+                <div class="font-heading font-semibold text-lg text-on-surface mt-2">{{ profile.created_at|date:"M Y" }}</div>
+            </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="mt-12">
+            <h2 class="font-display font-bold text-2xl text-on-surface mb-5">Activité récente</h2>
+            {% if contributions %}
+            <div class="space-y-3">
+                {% for c in contributions %}
+                <a href="{{ c.pr_url }}" target="_blank" rel="noopener" class="group flex items-center gap-4 bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-card hover:shadow-card-hover transition-all border-l-4 border-l-{% if c.is_merged %}tertiary{% else %}primary{% endif %}">
+                    <div class="w-10 h-10 rounded-lg grid place-items-center shrink-0 {% if c.is_merged %}bg-tertiary/12 text-tertiary{% else %}bg-primary/12 text-primary{% endif %}">
+                        <span class="material-symbols-outlined text-[20px]">{% if c.is_merged %}merge{% else %}commit{% endif %}</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-code text-xs text-on-surface-variant">{{ c.repo_full_name }}</div>
+                        <p class="font-medium text-on-surface truncate group-hover:text-primary transition-colors">{{ c.title|default:"Contribution" }}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="inline-block text-xs font-semibold px-2 py-1 rounded-md {% if c.is_merged %}bg-tertiary/12 text-tertiary{% else %}bg-surface-container text-on-surface-variant{% endif %}">{% if c.is_merged %}Mergée{% else %}Ouverte{% endif %}</span>
+                        <div class="text-xs text-on-surface-variant mt-1">{{ c.created_at|date:"d M Y" }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-16 bg-surface-container-low/50 rounded-2xl">
+                <span class="material-symbols-outlined text-[40px] text-on-surface-variant">rocket_launch</span>
+                <p class="mt-3 text-on-surface-variant">Aucune contribution pour l'instant. La première est la plus belle !</p>
+                <a href="{% url 'explore' %}" class="inline-flex items-center gap-2 mt-4 text-primary font-semibold">Trouver une issue<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

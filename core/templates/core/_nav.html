@@ -1,0 +1,89 @@
+{% load static %}
+{% url 'home' as home_url %}
+{% with active=request.resolver_match.url_name %}
+<header class="sticky top-0 z-50 w-full border-b border-outline-variant/40 bg-surface/80 backdrop-blur-xl">
+    <div class="max-w-content mx-auto h-16 px-4 lg:px-8 flex items-center justify-between gap-4">
+        <!-- Left: mobile menu + logo -->
+        <div class="flex items-center gap-2">
+            <button onclick="toggleDrawer(true)" class="lg:hidden w-10 h-10 -ml-2 flex items-center justify-center rounded-lg hover:bg-surface-container transition-colors" aria-label="Menu">
+                <span class="material-symbols-outlined text-on-surface">menu</span>
+            </button>
+            <a href="{{ home_url }}" class="flex items-center gap-2.5 group">
+                <img src="{% static 'img/logo.svg' %}" alt="" class="w-9 h-9 transition-transform group-hover:scale-105">
+                <span class="font-display font-bold text-xl tracking-tight text-on-surface">Open<span class="text-primary">ToAll</span></span>
+            </a>
+        </div>
+
+        <!-- Center: desktop links -->
+        <nav class="hidden lg:flex items-center gap-1">
+            {% for slug, label, icon in nav_links %}
+            <a href="{% url slug %}" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 {% if active == slug %}text-primary bg-primary/10{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                <span class="material-symbols-outlined text-[20px]">{{ icon }}</span>{{ label }}
+            </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Right: actions -->
+        <div class="flex items-center gap-1.5">
+            <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Voir le dépôt sur GitHub">
+                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                <span class="hidden xl:inline">GitHub</span>
+            </a>
+            <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" aria-label="Changer de thème">
+                <span class="material-symbols-outlined dark:hidden text-[22px]">dark_mode</span>
+                <span class="material-symbols-outlined hidden dark:inline text-[22px]">light_mode</span>
+            </button>
+
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile' user.profile.github_username %}" class="ml-1 flex items-center gap-2 pl-1 pr-1 sm:pr-3 py-1 rounded-full hover:bg-surface-container transition-colors">
+                {% if user.profile.avatar_url %}
+                <img src="{{ user.profile.avatar_url }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-outline-variant">
+                {% else %}
+                <span class="w-8 h-8 rounded-lg bg-primary/15 text-primary grid place-items-center text-sm font-bold">{{ user.profile.initials }}</span>
+                {% endif %}
+                <span class="hidden sm:inline text-sm font-medium">{{ user.profile.github_username|default:user.username }}</span>
+            </a>
+            <a href="{% url 'account_logout' %}" class="hidden sm:flex w-10 h-10 items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Déconnexion">
+                <span class="material-symbols-outlined text-[22px]">logout</span>
+            </a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="ml-1 inline-flex items-center gap-2 bg-primary text-on-primary text-sm font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow-card-hover hover:bg-primary-container transition-all active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">login</span>
+                <span class="hidden sm:inline">Connexion</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<!-- Mobile drawer -->
+<div id="drawer-overlay" onclick="toggleDrawer(false)" class="hidden fixed inset-0 bg-black/40 z-[60] lg:hidden"></div>
+<aside id="mobile-drawer" class="fixed top-0 left-0 h-full w-4/5 max-w-xs bg-surface z-[70] -translate-x-full transition-transform duration-300 lg:hidden flex flex-col p-5 gap-2">
+    <div class="flex items-center justify-between mb-4">
+        <a href="{{ home_url }}" class="flex items-center gap-2.5">
+            <img src="{% static 'img/logo.svg' %}" alt="" class="w-9 h-9">
+            <span class="font-display font-bold text-xl">Open<span class="text-primary">ToAll</span></span>
+        </a>
+        <button onclick="toggleDrawer(false)" class="w-9 h-9 grid place-items-center rounded-lg hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    {% for slug, label, icon in nav_links %}
+    <a href="{% url slug %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium {% if active == slug %}bg-primary/10 text-primary{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">
+        <span class="material-symbols-outlined">{{ icon }}</span>{{ label }}
+    </a>
+    {% endfor %}
+    <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-on-surface-variant hover:bg-surface-container">
+        <span class="material-symbols-outlined">code</span>Contribuer au projet
+    </a>
+    <div class="mt-auto">
+        {% if user.is_authenticated %}
+        <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-error hover:bg-error-container/20">
+            <span class="material-symbols-outlined">logout</span>Déconnexion
+        </a>
+        {% else %}
+        <a href="{% url 'account_login' %}" class="flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-xl font-semibold">
+            <span class="material-symbols-outlined text-[20px]">login</span>Connexion GitHub
+        </a>
+        {% endif %}
+    </div>
+</aside>
+{% endwith %}

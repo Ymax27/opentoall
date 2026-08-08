@@ -1,0 +1,13 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenToAll">
+  <defs>
+    <linearGradient id="otaGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#3525cd"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="12" fill="url(#otaGrad)"/>
+  <!-- kente-inspired interlocking triangles -->
+  <path d="M20 8 L28 16 L20 24 L12 16 Z" fill="#faf8ff" fill-opacity="0.95"/>
+  <path d="M20 16 L26 22 L20 28 L14 22 Z" fill="#fd651e"/>
+  <circle cx="20" cy="22" r="2.4" fill="#6ffbbe"/>
+</svg>

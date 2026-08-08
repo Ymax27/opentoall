@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Connexion — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="relative min-h-[80vh] flex items-center justify-center px-4 py-16 overflow-hidden">
+    <div class="absolute inset-0 kente-bg opacity-60 pointer-events-none"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative w-full max-w-md">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-card p-8 lg:p-10 text-center">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 grid place-items-center">
+                <img src="{% static 'img/logo.svg' %}" alt="" class="w-12 h-12">
+            </div>
+            <h1 class="font-display font-bold text-3xl text-on-surface">Bienvenue sur {{ SITE_NAME }}</h1>
+            <p class="mt-3 text-on-surface-variant leading-relaxed">Connectez-vous avec GitHub pour suivre vos contributions, apparaître dans le classement et rejoindre la communauté.</p>
+
+            <a href="{% provider_login_url 'github' %}" class="mt-8 w-full inline-flex items-center justify-center gap-3 bg-on-surface text-surface font-semibold px-6 py-4 rounded-xl shadow-card hover:bg-inverse-surface transition-all active:scale-[0.98]">
+                <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                Continuer avec GitHub
+            </a>
+
+            <div class="mt-6 flex items-center justify-center gap-4 text-xs text-on-surface-variant">
+                <a href="#" class="hover:text-primary transition-colors">Conditions d'utilisation</a>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <a href="#" class="hover:text-primary transition-colors">Confidentialité</a>
+            </div>
+        </div>
+        <p class="text-center text-sm text-on-surface-variant mt-6">
+            Pas encore convaincu ? <a href="{% url 'explore' %}" class="text-primary font-semibold hover:underline">Explorez d'abord les issues →</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

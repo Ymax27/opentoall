@@ -1,0 +1,147 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+
+{% block title %}{{ SITE_NAME }} — L'open source, ouvert à tous{% endblock %}
+
+{% block content %}
+<!-- ============================ HERO ============================ -->
+<section class="relative overflow-hidden">
+    <div class="absolute inset-0 kente-bg opacity-60 pointer-events-none"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-24 w-96 h-96 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative max-w-content mx-auto px-4 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28 grid lg:grid-cols-2 gap-12 items-center">
+        <div class="animate-fade-up">
+            <span class="inline-flex items-center gap-2 rounded-full bg-tertiary-container/15 text-tertiary px-3 py-1.5 text-xs font-semibold uppercase tracking-wider mb-6">
+                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1;">eco</span>
+                Pensé pour les développeurs africains
+            </span>
+            <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-on-surface">
+                Propulsez votre carrière <span class="text-primary">open source.</span>
+            </h1>
+            <p class="mt-6 text-lg text-on-surface-variant max-w-xl leading-relaxed">
+                La plateforme qui connecte les développeurs aux meilleures issues GitHub —
+                filtrées par langage, niveau, réactivité des mainteneurs et poids du dépôt.
+                Trouvez votre première contribution en moins de 5 minutes.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined">travel_explore</span>Explorer les issues
+                </a>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center gap-2 border-2 border-secondary-container text-secondary-container font-semibold px-6 py-3.5 rounded-xl hover:bg-secondary-container/10 transition-all active:scale-[0.98]">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                    Rejoindre avec GitHub
+                </a>
+                {% endif %}
+            </div>
+            <div class="mt-8 flex items-center gap-6 text-sm text-on-surface-variant">
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-tertiary text-[20px]">check_circle</span>100 % gratuit</div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-tertiary text-[20px]">check_circle</span>Sans spam</div>
+            </div>
+        </div>
+
+        <!-- Hero visual: a stylised issue card -->
+        <div class="relative animate-fade-up hidden sm:block" style="animation-delay:.1s">
+            <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-tertiary/20 rounded-2xl blur-2xl"></div>
+            <div class="relative bg-surface-container-lowest border border-outline-variant/50 rounded-2xl shadow-card p-6 animate-float">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-9 h-9 rounded-lg bg-primary/15 text-primary grid place-items-center font-bold">K</span>
+                        <div class="font-code text-sm text-on-surface-variant">kubernetes/<span class="text-on-surface font-semibold">kubernetes</span></div>
+                    </div>
+                    <span class="inline-flex items-center gap-1 bg-tertiary text-on-tertiary text-[11px] font-semibold px-2 py-1 rounded-full"><span class="material-symbols-outlined text-[14px]">eco</span>Débutant</span>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-on-surface mb-2">Improve error message when config file is missing</h3>
+                <p class="text-sm text-on-surface-variant line-clamp-2 mb-4">Provide a clearer, actionable message pointing to the docs when the kubeconfig cannot be found…</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-2 py-1 rounded-md bg-surface-container text-on-surface-variant text-xs font-code">Go</span>
+                    <span class="px-2 py-1 rounded-md bg-surface-container text-on-surface-variant text-xs font-code">good first issue</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-surface-container-low rounded-lg py-2">
+                        <div class="text-[11px] uppercase tracking-wide text-on-surface-variant">Réponse</div>
+                        <div class="font-semibold text-tertiary text-sm">~2 h</div>
+                    </div>
+                    <div class="bg-surface-container-low rounded-lg py-2">
+                        <div class="text-[11px] uppercase tracking-wide text-on-surface-variant">PR mergées</div>
+                        <div class="font-semibold text-on-surface text-sm">85 %</div>
+                    </div>
+                    <div class="bg-surface-container-low rounded-lg py-2">
+                        <div class="text-[11px] uppercase tracking-wide text-on-surface-variant">Poids</div>
+                        <div class="flex items-end justify-center gap-0.5 h-5 pt-1">
+                            <span class="w-1.5 bg-primary rounded-sm h-2"></span>
+                            <span class="w-1.5 bg-outline-variant rounded-sm h-3"></span>
+                            <span class="w-1.5 bg-outline-variant rounded-sm h-4"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================ STATS ============================ -->
+<section class="max-w-content mx-auto px-4 lg:px-8 -mt-6 relative z-10">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+        {% include "core/_stat.html" with icon="groups" value=stats.total_contributors|intcomma label="Contributeurs" tone="primary" %}
+        {% include "core/_stat.html" with icon="merge" value=stats.total_contributions|intcomma label="Contributions" tone="tertiary" %}
+        {% include "core/_stat.html" with icon="public" value=stats.total_countries label="Pays représentés" tone="secondary" %}
+        {% include "core/_stat.html" with icon="bug_report" value=stats.total_issues|intcomma label="Issues ouvertes" tone="primary" %}
+    </div>
+</section>
+
+<!-- ============================ PILLARS ============================ -->
+<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-20">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="font-display font-bold text-3xl lg:text-4xl text-on-surface">Pourquoi {{ SITE_NAME }} ?</h2>
+        <div class="w-14 h-1 bg-primary rounded-full mx-auto mt-4"></div>
+        <p class="mt-5 text-on-surface-variant text-lg">Trois piliers pour transformer l'intention en première contribution réussie.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+        {% include "core/_pillar.html" with icon="tune" tone="primary" title="Trouvez l'issue parfaite" text="Filtrez par langage, niveau et statut d'assignation. Ne perdez plus de temps sur des issues déjà prises." %}
+        {% include "core/_pillar.html" with icon="verified_user" tone="tertiary" title="Choisissez en confiance" text="Des indicateurs exclusifs : réactivité des mainteneurs, bienveillance envers les débutants et poids du dépôt." %}
+        {% include "core/_pillar.html" with icon="workspace_premium" tone="secondary" title="Gagnez en visibilité" text="Un profil public qui met en avant vos contributions et vous place sur la carte de l'open source africain." %}
+    </div>
+</section>
+
+<!-- ============================ FEATURED ============================ -->
+{% if featured %}
+<section class="max-w-content mx-auto px-4 lg:px-8 pb-8">
+    <div class="flex items-end justify-between mb-6">
+        <div>
+            <h2 class="font-display font-bold text-2xl lg:text-3xl text-on-surface">Issues à la une</h2>
+            <p class="text-on-surface-variant mt-1">Sélectionnées pour leur accueil des nouveaux venus.</p>
+        </div>
+        <a href="{% url 'explore' %}" class="hidden sm:inline-flex items-center gap-1.5 text-primary font-semibold hover:gap-2.5 transition-all">
+            Tout voir <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-4">
+        {% for issue in featured %}
+            {% include "core/_issue_card.html" with issue=issue %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ============================ CTA ============================ -->
+<section class="max-w-content mx-auto px-4 lg:px-8 py-16">
+    <div class="relative overflow-hidden rounded-2xl bg-primary text-on-primary px-8 py-14 lg:px-16 text-center shadow-card-hover">
+        <div class="absolute inset-0 kente-bg opacity-[0.15]"></div>
+        <div class="absolute -top-16 -right-16 w-64 h-64 bg-secondary-container/30 rounded-full blur-3xl"></div>
+        <div class="relative">
+            <h2 class="font-display font-bold text-3xl lg:text-4xl">Votre première contribution vous attend.</h2>
+            <p class="mt-4 text-on-primary/80 text-lg max-w-2xl mx-auto">Rejoignez une communauté grandissante de développeurs qui construisent le futur de l'open source, ensemble.</p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-on-primary text-primary font-semibold px-6 py-3.5 rounded-xl hover:bg-on-primary/90 transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined">rocket_launch</span>Commencer maintenant
+                </a>
+                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-on-primary/10 border border-on-primary/30 text-on-primary font-semibold px-6 py-3.5 rounded-xl hover:bg-on-primary/20 transition-all">
+                    <span class="material-symbols-outlined">star</span>Star le projet
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

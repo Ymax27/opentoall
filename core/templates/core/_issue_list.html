@@ -1,0 +1,16 @@
+{% if issues %}
+<p class="text-sm text-on-surface-variant mb-4">{{ issues|length }} issue{{ issues|length|pluralize }} disponible{{ issues|length|pluralize }}.</p>
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {% for issue in issues %}
+        {% include "core/_issue_card.html" with issue=issue %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-20 px-4">
+    <div class="w-16 h-16 rounded-2xl bg-surface-container grid place-items-center mx-auto mb-5">
+        <span class="material-symbols-outlined text-[32px] text-on-surface-variant">search_off</span>
+    </div>
+    <h3 class="font-heading font-semibold text-xl text-on-surface">Aucune issue trouvée</h3>
+    <p class="text-on-surface-variant mt-2 max-w-sm mx-auto">Essayez d'élargir vos critères ou de changer de langage. De nouvelles issues sont ajoutées régulièrement.</p>
+</div>
+{% endif %}
