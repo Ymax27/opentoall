@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Déconnexion — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="relative min-h-[70vh] flex items-center justify-center px-4 py-16 overflow-hidden">
+    <div class="absolute inset-0 kente-bg opacity-60 pointer-events-none"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative w-full max-w-md">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-card p-8 lg:p-10 text-center">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-error-container/25 grid place-items-center">
+                <span class="material-symbols-outlined text-[30px] text-error">logout</span>
+            </div>
+            <h1 class="font-display font-bold text-2xl lg:text-3xl text-on-surface">Se déconnecter ?</h1>
+            <p class="mt-3 text-on-surface-variant leading-relaxed">
+                {% if user.is_authenticated %}
+                Vous êtes connecté en tant que
+                <span class="font-semibold text-on-surface">{{ user.profile.github_username|default:user.username }}</span>.
+                {% endif %}
+                À bientôt sur {{ SITE_NAME }} — vos contributions vous attendent.
+            </p>
+
+            <form method="post" action="{% url 'account_logout' %}" class="mt-8 flex flex-col sm:flex-row gap-3">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                {% endif %}
+                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 bg-error text-on-error font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>Déconnexion
+                </button>
+                <a href="{% url 'home' %}" class="flex-1 inline-flex items-center justify-center gap-2 border border-outline-variant text-on-surface font-semibold px-6 py-3.5 rounded-xl hover:bg-surface-container transition-colors">
+                    Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
