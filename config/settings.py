@@ -252,5 +252,5 @@ LOGGING = {
 # ---------------------------------------------------------------------------
 SITE_NAME = "OpenToAll"
 GITHUB_REPO_URL = os.getenv(
-    "GITHUB_REPO_URL", "https://github.com/OpenToAllRepo/opentoall"
+    "GITHUB_REPO_URL", "https://github.com/Ymax27/opentoall"
 )

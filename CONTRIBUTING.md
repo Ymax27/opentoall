@@ -6,8 +6,8 @@ contribution, petite ou grande, compte.
 ## Comment contribuer
 
 1. **Trouvez une issue** — regardez les issues étiquetées
-   [`good first issue`](https://github.com/OpenToAllRepo/opentoall/labels/good%20first%20issue)
-   ou [`help wanted`](https://github.com/OpenToAllRepo/opentoall/labels/help%20wanted).
+   [`good first issue`](https://github.com/Ymax27/opentoall/labels/good%20first%20issue)
+   ou [`help wanted`](https://github.com/Ymax27/opentoall/labels/help%20wanted).
 2. **Ouvrez une discussion** — commentez l'issue pour signaler que vous la prenez,
    afin d'éviter les doublons.
 3. **Forkez** le dépôt et créez une branche : `git checkout -b feat/ma-fonctionnalite`.
@@ -53,7 +53,7 @@ core/
 
 ## Signaler un bug ou proposer une idée
 
-Ouvrez une [issue](https://github.com/OpenToAllRepo/opentoall/issues) en décrivant :
+Ouvrez une [issue](https://github.com/Ymax27/opentoall/issues) en décrivant :
 - ce que vous attendiez,
 - ce qui s'est passé,
 - les étapes pour reproduire (pour un bug).

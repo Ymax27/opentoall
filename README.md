@@ -9,8 +9,8 @@
 Plateforme de découverte et de valorisation de la contribution open source,
 pensée pour les développeurs africains.
 
-[Signaler un bug](https://github.com/OpenToAllRepo/opentoall/issues) ·
-[Proposer une fonctionnalité](https://github.com/OpenToAllRepo/opentoall/issues) ·
+[Signaler un bug](https://github.com/Ymax27/opentoall/issues) ·
+[Proposer une fonctionnalité](https://github.com/Ymax27/opentoall/issues) ·
 [Contribuer](CONTRIBUTING.md)
 
 </div>
@@ -49,7 +49,7 @@ rend visibles, et tient compte de leurs contraintes réelles :
 
 ```bash
 # 1. Cloner et créer l'environnement
-git clone https://github.com/OpenToAllRepo/opentoall.git
+git clone https://github.com/Ymax27/opentoall.git
 cd opentoall
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
