@@ -111,6 +111,66 @@ toutes les 6 h (voir `CELERY_BEAT_SCHEDULE`). `docker compose up` démarre le to
 pytest
 ```
 
+## ☁️ Déploiement gratuit (Render + Neon)
+
+Ce chemin ne nécessite **pas** Oracle ni Redis/Celery. Le site peut s’endormir
+après inactivité (cold start ~30–60 s sur le plan free).
+
+### 1. Neon (Postgres)
+
+1. Crée un projet sur [neon.tech](https://neon.tech)
+2. Copie la **connection string** (`DATABASE_URL`)
+
+### 2. Secrets GitHub
+
+- **OAuth App** : Homepage + callback = `https://TON-SERVICE.onrender.com`  
+  Callback exact : `https://TON-SERVICE.onrender.com/accounts/github/login/callback/`
+- **PAT** (`ghp_…`) pour l’ingestion
+
+### 3. Render
+
+1. [render.com](https://render.com) → New → **Blueprint** (fichier `render.yaml`)  
+   **ou** New → **Web Service** → repo `Ymax27/opentoall` → Runtime **Docker** → plan **Free**
+2. Variables d’environnement :
+
+| Variable | Valeur |
+|----------|--------|
+| `DATABASE_URL` | string Neon |
+| `SECRET_KEY` | long secret (ou généré par Blueprint) |
+| `DEBUG` | `False` |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth App |
+| `GITHUB_PAT` | token ingestion |
+| `FETCH_ISSUES_TOKEN` | secret cron |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | crée le superuser au boot |
+| `ADMIN_EMAIL` | optionnel |
+
+`ALLOWED_HOSTS` / CSRF sont enrichis automatiquement via `RENDER_EXTERNAL_HOSTNAME`.
+
+3. Deploy → ouvre l’URL `.onrender.com`
+
+### 4. Admin + OAuth
+
+- Mets à jour l’OAuth App avec l’URL Render réelle
+- Admin → **Sites** → domain = `ton-service.onrender.com`
+
+### 5. Ingestion + cron (remplace Celery)
+
+Premier run (après deploy, via cron « Run now » ou navigateur) :
+
+```text
+https://TON-SERVICE.onrender.com/internal/fetch-issues/?token=FETCH_ISSUES_TOKEN&pages=1
+```
+
+Réponse attendue : **202** `{ "started": true }` (crawl en arrière-plan).
+
+Puis sur [cron-job.org](https://cron-job.org) : même URL, toutes les **6 heures**.
+
+> Ne lance **pas** `seed_demo` en production.
+
+### 6. Mises à jour
+
+Push sur `main` → Render rebuild automatique (si auto-deploy activé).
+
 ## 🤝 Contribuer
 
 Les contributions sont les bienvenues ! Lisez le guide

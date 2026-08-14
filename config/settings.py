@@ -8,7 +8,9 @@ Documentation: https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlparse
 
 from dotenv import load_dotenv
 
@@ -20,6 +22,33 @@ load_dotenv(BASE_DIR / ".env")
 
 def env_bool(name: str, default: bool = False) -> bool:
     return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def database_from_url(url: str, *, ssl_require: bool = True, conn_max_age: int = 600) -> dict:
+    """Parse a Postgres DATABASE_URL (Neon / Render / Heroku-style) without extra deps."""
+    parsed = urlparse(url)
+    if parsed.scheme not in {"postgres", "postgresql"}:
+        raise ValueError(f"Unsupported DATABASE_URL scheme: {parsed.scheme}")
+
+    options = {}
+    query = parse_qs(parsed.query)
+    if "sslmode" in query:
+        options["sslmode"] = query["sslmode"][0]
+    elif ssl_require:
+        options["sslmode"] = "require"
+
+    config = {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": unquote(parsed.path.lstrip("/") or "postgres"),
+        "USER": unquote(parsed.username or ""),
+        "PASSWORD": unquote(parsed.password or ""),
+        "HOST": parsed.hostname or "",
+        "PORT": str(parsed.port or 5432),
+        "CONN_MAX_AGE": conn_max_age,
+    }
+    if options:
+        config["OPTIONS"] = options
+    return config
 
 
 # ---------------------------------------------------------------------------
@@ -39,11 +68,20 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
+# Render injects the public hostname automatically.
+_render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
+if _render_host and _render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_host)
+
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
     for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
     if o.strip()
 ]
+if _render_host:
+    _render_origin = f"https://{_render_host}"
+    if _render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_render_origin)
 
 
 # ---------------------------------------------------------------------------
@@ -116,10 +154,35 @@ ASGI_APPLICATION = "config.asgi.application"
 # ---------------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------------
-# Local development and tests use SQLite by default so the project runs with
-# zero external services. Set USE_POSTGRES=1 (docker-compose / production) to
-# switch to PostgreSQL, as recommended in the cahier des charges.
-if env_bool("USE_POSTGRES", False):
+# Priority:
+#   1. SQLite when running tests (ignore local .env Postgres)
+#   2. DATABASE_URL (Neon / Render / any managed Postgres)
+#   3. USE_POSTGRES=1 with DB_* (docker-compose)
+#   4. SQLite (local dev)
+_RUNNING_TESTS = (
+    os.getenv("PYTEST_CURRENT_TEST") is not None
+    or os.getenv("PYTEST_VERSION") is not None
+    or any("pytest" in arg for arg in sys.argv)
+    or (len(sys.argv) >= 2 and sys.argv[1] == "test")
+)
+
+_database_url = os.getenv("DATABASE_URL", "").strip()
+if _RUNNING_TESTS:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db_test.sqlite3",
+        }
+    }
+elif _database_url:
+    DATABASES = {
+        "default": database_from_url(
+            _database_url,
+            ssl_require=env_bool("DB_SSL_REQUIRE", True),
+            conn_max_age=600,
+        )
+    }
+elif env_bool("USE_POSTGRES", False):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -204,10 +267,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # GitHub API calls. Raises the rate limit from 60 to 5000 requests/hour.
 GITHUB_PAT = os.getenv("GITHUB_PAT", "")
 
+# Shared secret for the cron-triggered ingestion endpoint (Render free tier).
+# Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+FETCH_ISSUES_TOKEN = os.getenv("FETCH_ISSUES_TOKEN", "")
+
 
 # ---------------------------------------------------------------------------
 # Celery
 # ---------------------------------------------------------------------------
+# Optional: used by docker-compose (worker + beat). On Render free we skip
+# Redis/Celery and call /internal/fetch-issues/ from cron-job.org instead.
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -216,8 +285,6 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# Default periodic schedule (can be overridden from the admin UI). Refreshes
-# the issue catalogue every 6 hours.
 CELERY_BEAT_SCHEDULE = {
     "refresh-issues-every-6h": {
         "task": "core.tasks.fetch_all_issues",

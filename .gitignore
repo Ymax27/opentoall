@@ -17,6 +17,7 @@ env/
 # Django
 db.sqlite3
 db.sqlite3-journal
+db_test.sqlite3
 /staticfiles/
 /media/
 

@@ -1,8 +1,12 @@
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 from .models import Contribution, Issue, Profile
 
@@ -162,4 +166,69 @@ def leaderboard(request):
             "countries": countries,
             "selected_country": country,
         },
+    )
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def fetch_issues_trigger(request):
+    """Cron-friendly ingestion endpoint (Render free → cron-job.org).
+
+    Auth: ``?token=…`` or header ``X-Fetch-Token: …`` must match
+    ``FETCH_ISSUES_TOKEN``. Returns 503 if the token is not configured.
+
+    The heavy GitHub crawl runs in a background thread so the HTTP response
+    returns quickly (Render / cron free tiers time out long requests).
+    """
+    expected = getattr(settings, "FETCH_ISSUES_TOKEN", "") or ""
+    if not expected:
+        return HttpResponse(
+            "FETCH_ISSUES_TOKEN is not configured.",
+            status=503,
+            content_type="text/plain",
+        )
+
+    provided = (
+        request.headers.get("X-Fetch-Token")
+        or request.GET.get("token")
+        or request.POST.get("token")
+        or ""
+    )
+    if provided != expected:
+        return HttpResponseForbidden("Invalid token.")
+
+    pages = request.GET.get("pages") or request.POST.get("pages") or "1"
+    try:
+        pages = max(1, min(int(pages), 5))
+    except (TypeError, ValueError):
+        pages = 1
+
+    sync = (request.GET.get("sync") or request.POST.get("sync") or "") in {
+        "1",
+        "true",
+        "yes",
+    }
+
+    from .tasks import ingest_issues
+
+    if sync:
+        count = ingest_issues(pages=pages)
+        return JsonResponse({"ok": True, "processed": count, "pages": pages})
+
+    import logging
+    import threading
+
+    logger = logging.getLogger(__name__)
+
+    def _run():
+        try:
+            processed = ingest_issues(pages=pages)
+            logger.info("Background fetch_issues finished: %s issues", processed)
+        except Exception:
+            logger.exception("Background fetch_issues failed")
+
+    threading.Thread(target=_run, name="fetch-issues", daemon=True).start()
+    return JsonResponse(
+        {"ok": True, "started": True, "pages": pages, "mode": "async"},
+        status=202,
     )

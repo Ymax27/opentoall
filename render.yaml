@@ -1,0 +1,45 @@
+# Blueprint for a free-tier deploy on Render + external Neon Postgres.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Usage:
+#   1. Create a Neon database and copy DATABASE_URL
+#   2. In Render: New → Blueprint → connect this repo
+#   3. Fill the secret env vars prompted below
+#
+# Note: Redis / Celery are NOT used on the free plan. Schedule ingestion with
+# cron-job.org hitting /internal/fetch-issues/?token=FETCH_ISSUES_TOKEN
+
+services:
+  - type: web
+    name: opentoall
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_SSL_REQUIRE
+        value: "True"
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_PAT
+        sync: false
+      - key: FETCH_ISSUES_TOKEN
+        generateValue: true
+      - key: GITHUB_REPO_URL
+        value: https://github.com/Ymax27/opentoall
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: SECURE_SSL_REDIRECT
+        value: "True"

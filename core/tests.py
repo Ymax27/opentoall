@@ -115,3 +115,32 @@ def test_leaderboard_and_profile(client):
 
     assert client.get(reverse("leaderboard")).status_code == 200
     assert client.get(reverse("profile", args=["kwame"])).status_code == 200
+
+
+@pytest.mark.django_db
+def test_fetch_issues_trigger_requires_token(client, settings):
+    settings.FETCH_ISSUES_TOKEN = "secret-token"
+    assert client.get(reverse("fetch_issues_trigger")).status_code == 403
+    assert client.get(
+        reverse("fetch_issues_trigger"), {"token": "wrong"}
+    ).status_code == 403
+
+
+@pytest.mark.django_db
+def test_fetch_issues_trigger_starts_async(client, settings, monkeypatch):
+    settings.FETCH_ISSUES_TOKEN = "secret-token"
+    called = {}
+
+    def fake_ingest(**kwargs):
+        called["pages"] = kwargs.get("pages")
+        return 0
+
+    monkeypatch.setattr("core.tasks.ingest_issues", fake_ingest)
+    # Force sync path so the test does not rely on threads.
+    resp = client.get(
+        reverse("fetch_issues_trigger"),
+        {"token": "secret-token", "sync": "1", "pages": "1"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+    assert called.get("pages") == 1
