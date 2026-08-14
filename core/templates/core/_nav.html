@@ -1,6 +1,6 @@
 {% load static %}
 {% url 'home' as home_url %}
-{% with active=request.resolver_match.url_name %}
+{% with active=request.resolver_match.url_name|default:"" %}
 <header class="sticky top-0 z-50 w-full border-b border-outline-variant/40 bg-surface/80 backdrop-blur-xl">
     <div class="max-w-content mx-auto h-16 px-4 lg:px-8 flex items-center justify-between gap-4">
         <!-- Left: mobile menu + logo -->
@@ -35,14 +35,16 @@
             </button>
 
             {% if user.is_authenticated %}
-            <a href="{% url 'profile' user.profile.github_username %}" class="ml-1 flex items-center gap-2 pl-1 pr-1 sm:pr-3 py-1 rounded-full hover:bg-surface-container transition-colors">
-                {% if user.profile.avatar_url %}
-                <img src="{{ user.profile.avatar_url }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-outline-variant">
+            {% with profile=user.profile %}
+            <a href="{% if profile.github_username %}{% url 'profile' profile.github_username %}{% else %}{% url 'home' %}{% endif %}" class="ml-1 flex items-center gap-2 pl-1 pr-1 sm:pr-3 py-1 rounded-full hover:bg-surface-container transition-colors">
+                {% if profile.avatar_url %}
+                <img src="{{ profile.avatar_url }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-outline-variant">
                 {% else %}
-                <span class="w-8 h-8 rounded-lg bg-primary/15 text-primary grid place-items-center text-sm font-bold">{{ user.profile.initials }}</span>
+                <span class="w-8 h-8 rounded-lg bg-primary/15 text-primary grid place-items-center text-sm font-bold">{{ profile.initials }}</span>
                 {% endif %}
-                <span class="hidden sm:inline text-sm font-medium">{{ user.profile.github_username|default:user.username }}</span>
+                <span class="hidden sm:inline text-sm font-medium">{{ profile.github_username|default:user.username }}</span>
             </a>
+            {% endwith %}
             <a href="{% url 'account_logout' %}" class="hidden sm:flex w-10 h-10 items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Déconnexion">
                 <span class="material-symbols-outlined text-[22px]">logout</span>
             </a>

@@ -1,4 +1,4 @@
-{% with active=request.resolver_match.url_name %}
+{% with active=request.resolver_match.url_name|default:"" %}
 <!-- Mobile bottom navigation -->
 <nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-outline-variant/40 bg-surface/90 backdrop-blur-xl" style="padding-bottom: env(safe-area-inset-bottom);">
     <div class="grid grid-cols-4 h-16">
@@ -9,7 +9,7 @@
         </a>
         {% endfor %}
         {% if user.is_authenticated %}
-        <a href="{% url 'profile' user.profile.github_username %}" class="flex flex-col items-center justify-center gap-0.5 {% if active == 'profile' %}text-primary{% else %}text-on-surface-variant{% endif %}">
+        <a href="{% if user.profile.github_username %}{% url 'profile' user.profile.github_username %}{% else %}{% url 'home' %}{% endif %}" class="flex flex-col items-center justify-center gap-0.5 {% if active == 'profile' %}text-primary{% else %}text-on-surface-variant{% endif %}">
             <span class="material-symbols-outlined text-[24px]">person</span>
             <span class="text-[11px] font-medium">Profil</span>
         </a>

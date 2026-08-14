@@ -24,11 +24,18 @@ def env_bool(name: str, default: bool = False) -> bool:
     return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
 
 
-def database_from_url(url: str, *, ssl_require: bool = True, conn_max_age: int = 600) -> dict:
-    """Parse a Postgres DATABASE_URL (Neon / Render / Heroku-style) without extra deps."""
+def database_from_url(url: str, *, ssl_require: bool | None = None, conn_max_age: int = 600) -> dict:
+    """Parse a Postgres DATABASE_URL (Neon / Render / Heroku-style) without extra deps.
+
+    SSL defaults to required for remote hosts (Neon), and disabled for localhost.
+    """
     parsed = urlparse(url)
     if parsed.scheme not in {"postgres", "postgresql"}:
         raise ValueError(f"Unsupported DATABASE_URL scheme: {parsed.scheme}")
+
+    host = (parsed.hostname or "").lower()
+    if ssl_require is None:
+        ssl_require = host not in {"localhost", "127.0.0.1", "::1"}
 
     options = {}
     query = parse_qs(parsed.query)
@@ -175,10 +182,16 @@ if _RUNNING_TESTS:
         }
     }
 elif _database_url:
+    _ssl_env = os.getenv("DB_SSL_REQUIRE")
+    _ssl_require = (
+        None
+        if _ssl_env is None or not str(_ssl_env).strip()
+        else env_bool("DB_SSL_REQUIRE", True)
+    )
     DATABASES = {
         "default": database_from_url(
             _database_url,
-            ssl_require=env_bool("DB_SSL_REQUIRE", True),
+            ssl_require=_ssl_require,
             conn_max_age=600,
         )
     }
