@@ -1,7 +1,6 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
@@ -9,7 +8,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .cache_keys import CACHE_TTL, cache_key
+from .cache_keys import CACHE_TTL, cache_key, cache_get, cache_set
 from .models import Contribution, Issue, Profile
 
 SORT_OPTIONS = {
@@ -46,7 +45,7 @@ ISSUE_LIST_FIELDS = (
 
 def home(request):
     stats_key = cache_key("home", "stats")
-    stats = cache.get(stats_key)
+    stats = cache_get(stats_key)
     if stats is None:
         stats = {
             "total_contributors": Profile.objects.count(),
@@ -60,7 +59,7 @@ def home(request):
             ),
             "total_issues": Issue.objects.filter(is_assigned=False).count(),
         }
-        cache.set(stats_key, stats, CACHE_TTL)
+        cache_set(stats_key, stats, CACHE_TTL)
 
     featured = (
         Issue.objects.filter(is_assigned=False)
@@ -90,7 +89,7 @@ def explore(request):
         page_number,
         "htmx" if request.htmx else "full",
     )
-    cached = cache.get(filters_key)
+    cached = cache_get(filters_key)
     if cached is not None:
         return HttpResponse(cached)
 
@@ -130,7 +129,7 @@ def explore(request):
     querystring = urlencode(params)
 
     languages_key = cache_key("explore", "languages")
-    languages = cache.get(languages_key)
+    languages = cache_get(languages_key)
     if languages is None:
         languages = list(
             Issue.objects.exclude(language__isnull=True)
@@ -139,7 +138,7 @@ def explore(request):
             .distinct()
             .order_by("language")
         )
-        cache.set(languages_key, languages, CACHE_TTL)
+        cache_set(languages_key, languages, CACHE_TTL)
 
     context = {
         "page_obj": page_obj,
@@ -158,7 +157,7 @@ def explore(request):
 
     template = "core/_issue_list.html" if request.htmx else "core/explore.html"
     response = render(request, template, context)
-    cache.set(filters_key, response.content, CACHE_TTL)
+    cache_set(filters_key, response.content, CACHE_TTL)
     return response
 
 
@@ -206,7 +205,7 @@ def profile_view(request, username):
 def leaderboard(request):
     country = request.GET.get("country", "").strip()
     lb_key = cache_key("leaderboard", country or "all")
-    cached = cache.get(lb_key)
+    cached = cache_get(lb_key)
     if cached is not None:
         return HttpResponse(cached)
 
@@ -220,7 +219,7 @@ def leaderboard(request):
         profiles = profiles.filter(country__iexact=country)
 
     countries_key = cache_key("leaderboard", "countries")
-    countries = cache.get(countries_key)
+    countries = cache_get(countries_key)
     if countries is None:
         countries = list(
             Profile.objects.exclude(country__isnull=True)
@@ -229,7 +228,7 @@ def leaderboard(request):
             .distinct()
             .order_by("country")
         )
-        cache.set(countries_key, countries, CACHE_TTL)
+        cache_set(countries_key, countries, CACHE_TTL)
 
     profiles = list(profiles[:50])
     top = profiles[0] if profiles else None
@@ -246,7 +245,7 @@ def leaderboard(request):
             "selected_country": country,
         },
     )
-    cache.set(lb_key, response.content, CACHE_TTL)
+    cache_set(lb_key, response.content, CACHE_TTL)
     return response
 
 

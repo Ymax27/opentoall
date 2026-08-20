@@ -1,0 +1,41 @@
+# fly.toml app configuration file generated for opentoall on 2026-08-20T21:04:41+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'opentoall'
+primary_region = 'jnb'
+console_command = 'python manage.py shell'
+
+[build]
+
+[deploy]
+  release_command = 'python manage.py migrate --noinput'
+
+[env]
+  PORT = '8000'
+  # No Redis on Fly yet — LocMem cache; ingest via /internal/fetch-issues/ + cron.
+  USE_REDIS_CACHE = '0'
+
+# Web only for now. Add a celery process later when REDIS_URL points to Upstash/Fly Redis.
+[processes]
+  app = 'gunicorn --bind 0.0.0.0:8000 --workers 2 --timeout 120 config.wsgi:application'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  # Keep at least 1 machine warm to avoid Render-like cold starts (costs a bit more).
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024
+
+[[statics]]
+  guest_path = '/app/staticfiles'
+  url_prefix = '/static/'

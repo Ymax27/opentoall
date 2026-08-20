@@ -90,6 +90,16 @@ _render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if _render_host and _render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_render_host)
 
+# Fly.io injects FLY_APP_NAME (e.g. opentoall → opentoall.fly.dev).
+_fly_app = os.getenv("FLY_APP_NAME", "").strip()
+if _fly_app:
+    _fly_host = f"{_fly_app}.fly.dev"
+    if _fly_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_fly_host)
+    _fly_origin = f"https://{_fly_host}"
+else:
+    _fly_origin = ""
+
 if not DEBUG and ("*" in ALLOWED_HOSTS or not ALLOWED_HOSTS):
     raise ImproperlyConfigured(
         "ALLOWED_HOSTS must list exact production hostnames when DEBUG=False."
@@ -104,6 +114,8 @@ if _render_host:
     _render_origin = f"https://{_render_host}"
     if _render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_render_origin)
+if _fly_origin and _fly_origin not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(_fly_origin)
 
 
 # ---------------------------------------------------------------------------
@@ -328,19 +340,31 @@ CELERY_BEAT_SCHEDULE = {
 
 
 # ---------------------------------------------------------------------------
-# Cache (Redis in production when REDIS_URL/CACHE_URL is set; LocMem in DEBUG)
+# Cache (Redis only with a reachable remote URL — never localhost in prod)
 # ---------------------------------------------------------------------------
 _redis_url = os.getenv("REDIS_URL", "").strip()
 _cache_url = os.getenv("CACHE_URL", "").strip()
+
+
+def _is_local_redis(url: str) -> bool:
+    if not url:
+        return True
+    host = (urlparse(url).hostname or "").lower()
+    return host in {"localhost", "127.0.0.1", "::1"}
+
+
+_cache_location = _cache_url or _redis_url
+# Default: use Redis cache only when we have a non-local URL (Upstash / Fly Redis).
+# A REDIS_URL pointing at localhost must NOT take down the whole site.
 _use_redis_cache = env_bool(
     "USE_REDIS_CACHE",
-    default=(not DEBUG and bool(_cache_url or _redis_url)),
+    default=(not DEBUG and bool(_cache_location) and not _is_local_redis(_cache_location)),
 )
-if _use_redis_cache and (_cache_url or _redis_url):
+if _use_redis_cache and _cache_location and not _is_local_redis(_cache_location):
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": _cache_url or _redis_url,
+            "LOCATION": _cache_location,
             "KEY_PREFIX": "opentoall",
             "TIMEOUT": 60 * 12,
         }
