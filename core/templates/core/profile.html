@@ -20,7 +20,7 @@
                 <span class="absolute -bottom-2 -right-2 text-2xl bg-surface-container-lowest rounded-full w-10 h-10 grid place-items-center shadow-card">{{ profile.flag }}</span>
             </div>
             <div class="flex-1 min-w-0">
-                <h1 class="font-display font-bold text-3xl lg:text-4xl text-on-surface">{{ profile.github_username|default:profile.user.username }}</h1>
+                <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">{{ profile.github_username|default:profile.user.username }}</h1>
                 {% if profile.country %}
                 <p class="mt-1 flex items-center justify-center sm:justify-start gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">location_on</span>{{ profile.country }}</p>
                 {% endif %}
@@ -61,7 +61,7 @@
 
         <!-- Activity -->
         <div class="mt-12">
-            <h2 class="font-display font-bold text-2xl text-on-surface mb-5">Activité récente</h2>
+            <h2 class="font-display font-semibold text-2xl text-on-surface tracking-tight mb-5">Activité récente</h2>
             {% if contributions %}
             <div class="space-y-3">
                 {% for c in contributions %}
@@ -81,10 +81,11 @@
                 {% endfor %}
             </div>
             {% else %}
-            <div class="text-center py-16 bg-surface-container-low/50 rounded-2xl">
+            <div class="text-center py-16 px-4 bg-surface-container-low/50 rounded-2xl">
                 <span class="material-symbols-outlined text-[40px] text-on-surface-variant">rocket_launch</span>
-                <p class="mt-3 text-on-surface-variant">Aucune contribution pour l'instant. La première est la plus belle !</p>
-                <a href="{% url 'explore' %}" class="inline-flex items-center gap-2 mt-4 text-primary font-semibold">Trouver une issue<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+                <h3 class="font-heading font-semibold text-lg text-on-surface mt-3">Pas encore de contribution ici</h3>
+                <p class="mt-2 text-on-surface-variant max-w-sm mx-auto">Ta première PR mergée apparaîtra ici. Commence par une issue à ton niveau.</p>
+                <a href="{% url 'explore' %}" class="inline-flex items-center gap-2 mt-4 text-primary font-semibold">Trouve une issue<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
             </div>
             {% endif %}
         </div>

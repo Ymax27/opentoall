@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${WEB_CONCURRENCY:-3} --timeout 120
     ports:
       - "8000:8000"
     env_file: .env
@@ -63,6 +63,23 @@ services:
     depends_on:
       - db
       - redis
+
+  # Queue monitoring — http://localhost:5555 (basic auth via FLOWER_BASIC_AUTH)
+  flower:
+    build: .
+    entrypoint: []
+    command: celery -A config flower --port=5555
+    ports:
+      - "5555:5555"
+    env_file: .env
+    environment:
+      USE_POSTGRES: "1"
+      DB_HOST: db
+      REDIS_URL: redis://redis:6379/0
+      FLOWER_BASIC_AUTH: ${FLOWER_BASIC_AUTH:-admin:changeme}
+    depends_on:
+      - redis
+      - worker
 
 volumes:
   pgdata:

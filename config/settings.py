@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,9 +70,18 @@ SECRET_KEY = os.getenv(
 
 DEBUG = env_bool("DEBUG", False)
 
+if not DEBUG and (
+    not SECRET_KEY
+    or SECRET_KEY.startswith("django-insecure")
+    or SECRET_KEY in {"change-me-generate-with-django", "changeme"}
+):
+    raise ImproperlyConfigured(
+        "Set a strong SECRET_KEY from the environment when DEBUG=False."
+    )
+
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0").split(",")
+    for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
     if h.strip()
 ]
 
@@ -79,6 +89,11 @@ ALLOWED_HOSTS = [
 _render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if _render_host and _render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_render_host)
+
+if not DEBUG and ("*" in ALLOWED_HOSTS or not ALLOWED_HOSTS):
+    raise ImproperlyConfigured(
+        "ALLOWED_HOSTS must list exact production hostnames when DEBUG=False."
+    )
 
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
@@ -297,6 +312,12 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    # Ingestion can run long; keep visibility above soft_time_limit.
+    "visibility_timeout": 60 * 60,
+}
 
 CELERY_BEAT_SCHEDULE = {
     "refresh-issues-every-6h": {
@@ -307,24 +328,93 @@ CELERY_BEAT_SCHEDULE = {
 
 
 # ---------------------------------------------------------------------------
+# Cache (Redis in production when REDIS_URL/CACHE_URL is set; LocMem in DEBUG)
+# ---------------------------------------------------------------------------
+_redis_url = os.getenv("REDIS_URL", "").strip()
+_cache_url = os.getenv("CACHE_URL", "").strip()
+_use_redis_cache = env_bool(
+    "USE_REDIS_CACHE",
+    default=(not DEBUG and bool(_cache_url or _redis_url)),
+)
+if _use_redis_cache and (_cache_url or _redis_url):
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": _cache_url or _redis_url,
+            "KEY_PREFIX": "opentoall",
+            "TIMEOUT": 60 * 12,
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "opentoall-local",
+            "TIMEOUT": 60 * 12,
+        }
+    }
+
+
+# ---------------------------------------------------------------------------
 # Security (hardened automatically when DEBUG is off)
 # ---------------------------------------------------------------------------
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
+    SECURE_HSTS_SECONDS = 31_536_000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
 
+_LOG_FORMAT = os.getenv("LOG_FORMAT", "json" if not DEBUG else "console").lower()
+_LOG_HANDLERS = {
+    "console": {
+        "class": "logging.StreamHandler",
+        "formatter": "json" if _LOG_FORMAT == "json" else "simple",
+    }
+}
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "formatters": {
+        "simple": {"format": "[{levelname}] {name}: {message}", "style": "{"},
+        "json": {"()": "core.logging_formatters.JsonFormatter"},
+    },
+    "handlers": _LOG_HANDLERS,
     "root": {"handlers": ["console"], "level": os.getenv("LOG_LEVEL", "INFO")},
+    "loggers": {
+        "core": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "celery": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "django.security": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
 }
+
+# Optional Sentry (errors from Django views + Celery workers).
+_SENTRY_DSN = os.getenv("SENTRY_DSN", "").strip()
+if _SENTRY_DSN:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.celery import CeleryIntegration
+        from sentry_sdk.integrations.django import DjangoIntegration
+
+        sentry_sdk.init(
+            dsn=_SENTRY_DSN,
+            integrations=[DjangoIntegration(), CeleryIntegration()],
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.0")),
+            send_default_pii=False,
+            environment=os.getenv("SENTRY_ENVIRONMENT", "production" if not DEBUG else "development"),
+        )
+    except ImportError:  # pragma: no cover
+        pass
 
 
 # ---------------------------------------------------------------------------

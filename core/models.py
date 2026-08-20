@@ -41,9 +41,6 @@ class Profile(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ["-created_at"]
-
     def __str__(self):
         return self.github_username or self.user.username
 
@@ -72,6 +69,13 @@ class Profile(models.Model):
     def initials(self):
         source = self.github_username or self.user.username or "?"
         return source[:2].upper()
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["country"]),
+            models.Index(fields=["github_username"]),
+        ]
 
 
 class Issue(models.Model):
@@ -117,6 +121,11 @@ class Issue(models.Model):
             models.Index(fields=["language"]),
             models.Index(fields=["difficulty"]),
             models.Index(fields=["is_assigned"]),
+            models.Index(fields=["is_assigned", "language"]),
+            models.Index(fields=["is_assigned", "difficulty"]),
+            models.Index(fields=["foundation"]),
+            models.Index(fields=["-stars_count"]),
+            models.Index(fields=["-beginner_friendly_score"]),
         ]
 
     def __str__(self):
@@ -216,6 +225,10 @@ class Contribution(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user", "-created_at"]),
+            models.Index(fields=["merged_at"]),
+        ]
 
     def __str__(self):
         return f"{self.user} → {self.repo_full_name}"

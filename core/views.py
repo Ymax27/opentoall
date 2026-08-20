@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
@@ -8,6 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from .cache_keys import CACHE_TTL, cache_key
 from .models import Contribution, Issue, Profile
 
 SORT_OPTIONS = {
@@ -20,35 +22,79 @@ SORT_OPTIONS = {
 # Number of issues per page in the explore view.
 PAGE_SIZE = 30
 
+# Fields needed by issue cards / explore list (avoid pulling full body blobs).
+ISSUE_LIST_FIELDS = (
+    "id",
+    "github_issue_id",
+    "number",
+    "title",
+    "body",
+    "url",
+    "repo_full_name",
+    "repo_avatar_url",
+    "language",
+    "labels",
+    "foundation",
+    "difficulty",
+    "stars_count",
+    "comments_count",
+    "repo_size_kb",
+    "avg_response_time_hours",
+    "beginner_friendly_score",
+)
+
 
 def home(request):
-    stats = {
-        "total_contributors": Profile.objects.count(),
-        "total_contributions": Contribution.objects.count(),
-        "total_countries": (
-            Profile.objects.exclude(country__isnull=True)
-            .exclude(country="")
-            .values("country")
-            .distinct()
-            .count()
-        ),
-        "total_issues": Issue.objects.filter(is_assigned=False).count(),
-    }
-    featured = Issue.objects.filter(is_assigned=False).order_by(
-        "-beginner_friendly_score", "-stars_count"
-    )[:3]
+    stats_key = cache_key("home", "stats")
+    stats = cache.get(stats_key)
+    if stats is None:
+        stats = {
+            "total_contributors": Profile.objects.count(),
+            "total_contributions": Contribution.objects.count(),
+            "total_countries": (
+                Profile.objects.exclude(country__isnull=True)
+                .exclude(country="")
+                .values("country")
+                .distinct()
+                .count()
+            ),
+            "total_issues": Issue.objects.filter(is_assigned=False).count(),
+        }
+        cache.set(stats_key, stats, CACHE_TTL)
+
+    featured = (
+        Issue.objects.filter(is_assigned=False)
+        .only(*ISSUE_LIST_FIELDS)
+        .order_by("-beginner_friendly_score", "-stars_count")[:3]
+    )
     return render(request, "core/home.html", {"stats": stats, "featured": featured})
 
 
 def explore(request):
-    issues = Issue.objects.filter(is_assigned=False)
-
     q = request.GET.get("q", "").strip()
     language = request.GET.get("language", "").strip()
     difficulty = request.GET.get("difficulty", "").strip()
     foundation = request.GET.get("foundation", "").strip()
     max_size = request.GET.get("max_size", "").strip()
     sort = request.GET.get("sort", "stars").strip()
+    page_number = request.GET.get("page", "1")
+
+    filters_key = cache_key(
+        "explore",
+        q,
+        language,
+        difficulty,
+        foundation,
+        max_size,
+        sort,
+        page_number,
+        "htmx" if request.htmx else "full",
+    )
+    cached = cache.get(filters_key)
+    if cached is not None:
+        return HttpResponse(cached)
+
+    issues = Issue.objects.filter(is_assigned=False).only(*ISSUE_LIST_FIELDS)
 
     if q:
         issues = issues.filter(
@@ -66,23 +112,34 @@ def explore(request):
     issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
 
     paginator = Paginator(issues, PAGE_SIZE)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    page_obj = paginator.get_page(page_number)
 
     # Querystring carrying every active filter (minus `page`) so pagination
     # links preserve the current search context.
-    params = {k: v for k, v in {
-        "q": q, "language": language, "difficulty": difficulty,
-        "foundation": foundation, "sort": sort,
-    }.items() if v}
+    params = {
+        k: v
+        for k, v in {
+            "q": q,
+            "language": language,
+            "difficulty": difficulty,
+            "foundation": foundation,
+            "sort": sort,
+        }.items()
+        if v
+    }
     querystring = urlencode(params)
 
-    languages = (
-        Issue.objects.exclude(language__isnull=True)
-        .exclude(language="")
-        .values_list("language", flat=True)
-        .distinct()
-        .order_by("language")
-    )
+    languages_key = cache_key("explore", "languages")
+    languages = cache.get(languages_key)
+    if languages is None:
+        languages = list(
+            Issue.objects.exclude(language__isnull=True)
+            .exclude(language="")
+            .values_list("language", flat=True)
+            .distinct()
+            .order_by("language")
+        )
+        cache.set(languages_key, languages, CACHE_TTL)
 
     context = {
         "page_obj": page_obj,
@@ -100,7 +157,9 @@ def explore(request):
     }
 
     template = "core/_issue_list.html" if request.htmx else "core/explore.html"
-    return render(request, template, context)
+    response = render(request, template, context)
+    cache.set(filters_key, response.content, CACHE_TTL)
+    return response
 
 
 def issue_detail(request, pk):
@@ -108,6 +167,7 @@ def issue_detail(request, pk):
     related = (
         Issue.objects.filter(language=issue.language, is_assigned=False)
         .exclude(pk=issue.pk)
+        .only(*ISSUE_LIST_FIELDS)
         .order_by("-beginner_friendly_score")[:3]
     )
     return render(
@@ -119,7 +179,18 @@ def profile_view(request, username):
     profile = get_object_or_404(
         Profile.objects.select_related("user"), github_username=username
     )
-    contributions = profile.user.contributions.select_related("issue")
+    contributions = profile.user.contributions.select_related("issue").only(
+        "id",
+        "user_id",
+        "issue_id",
+        "repo_full_name",
+        "title",
+        "pr_url",
+        "kind",
+        "merged_at",
+        "verified",
+        "created_at",
+    )
     languages = profile.languages_list
     return render(
         request,
@@ -134,6 +205,10 @@ def profile_view(request, username):
 
 def leaderboard(request):
     country = request.GET.get("country", "").strip()
+    lb_key = cache_key("leaderboard", country or "all")
+    cached = cache.get(lb_key)
+    if cached is not None:
+        return HttpResponse(cached)
 
     profiles = (
         Profile.objects.select_related("user")
@@ -144,18 +219,22 @@ def leaderboard(request):
     if country:
         profiles = profiles.filter(country__iexact=country)
 
-    countries = (
-        Profile.objects.exclude(country__isnull=True)
-        .exclude(country="")
-        .values_list("country", flat=True)
-        .distinct()
-        .order_by("country")
-    )
+    countries_key = cache_key("leaderboard", "countries")
+    countries = cache.get(countries_key)
+    if countries is None:
+        countries = list(
+            Profile.objects.exclude(country__isnull=True)
+            .exclude(country="")
+            .values_list("country", flat=True)
+            .distinct()
+            .order_by("country")
+        )
+        cache.set(countries_key, countries, CACHE_TTL)
 
     profiles = list(profiles[:50])
     top = profiles[0] if profiles else None
 
-    return render(
+    response = render(
         request,
         "core/leaderboard.html",
         {
@@ -167,6 +246,8 @@ def leaderboard(request):
             "selected_country": country,
         },
     )
+    cache.set(lb_key, response.content, CACHE_TTL)
+    return response
 
 
 @csrf_exempt
@@ -223,9 +304,16 @@ def fetch_issues_trigger(request):
     def _run():
         try:
             processed = ingest_issues(pages=pages)
-            logger.info("Background fetch_issues finished: %s issues", processed)
+            logger.info(
+                "Background fetch_issues finished: %s issues",
+                processed,
+                extra={"event": "fetch_issues_ok"},
+            )
         except Exception:
-            logger.exception("Background fetch_issues failed")
+            logger.exception(
+                "Background fetch_issues failed",
+                extra={"event": "fetch_issues_error"},
+            )
 
     threading.Thread(target=_run, name="fetch-issues", daemon=True).start()
     return JsonResponse(

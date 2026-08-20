@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="{% block meta_description %}OpenToAll — trouvez l'issue open source parfaite et donnez de la visibilité aux développeurs africains qui contribuent.{% endblock %}">
+    <meta name="description" content="{% block meta_description %}OpenToAll — trouve une issue open source adaptée à ton niveau et à ta connexion, et rends visibles les contributeurs africains.{% endblock %}">
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
 
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
@@ -12,7 +12,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     <!-- Prevent dark-mode flash -->
@@ -55,16 +55,16 @@
                         'on-error-container': c('on-error-container'),
                     },
                     fontFamily: {
-                        display: ['Lexend', 'sans-serif'],
-                        heading: ['Lexend', 'sans-serif'],
-                        body: ['Inter', 'sans-serif'],
-                        code: ['"JetBrains Mono"', 'monospace'],
+                        display: ['Sora', 'system-ui', 'sans-serif'],
+                        heading: ['Sora', 'system-ui', 'sans-serif'],
+                        body: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
+                        code: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
                     },
-                    borderRadius: { DEFAULT: '0.5rem', md: '0.75rem', lg: '1rem', xl: '1.5rem', '2xl': '2rem' },
-                    maxWidth: { content: '1280px' },
+                    borderRadius: { DEFAULT: '0.5rem', md: '0.625rem', lg: '0.875rem', xl: '1.125rem', '2xl': '1.5rem' },
+                    maxWidth: { content: '1120px' },
                     boxShadow: {
-                        card: '0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
-                        'card-hover': '0 12px 24px -8px rgb(53 37 205 / 0.18)',
+                        card: '0 1px 2px rgb(14 21 37 / 0.04), 0 8px 24px -12px rgb(14 21 37 / 0.12)',
+                        'card-hover': '0 1px 2px rgb(14 21 37 / 0.06), 0 16px 32px -16px rgb(75 70 240 / 0.28)',
                     },
                 },
             },

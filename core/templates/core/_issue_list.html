@@ -58,7 +58,8 @@
     <div class="w-16 h-16 rounded-2xl bg-surface-container grid place-items-center mx-auto mb-5">
         <span class="material-symbols-outlined text-[32px] text-on-surface-variant">search_off</span>
     </div>
-    <h3 class="font-heading font-semibold text-xl text-on-surface">Aucune issue trouvée</h3>
-    <p class="text-on-surface-variant mt-2 max-w-sm mx-auto">Essayez d'élargir vos critères ou de changer de langage. De nouvelles issues sont ajoutées régulièrement.</p>
+    <h3 class="font-heading font-semibold text-xl text-on-surface">Rien avec ces filtres</h3>
+    <p class="text-on-surface-variant mt-2 max-w-sm mx-auto">Élargis le langage ou le niveau — ou reviens plus tard : de nouvelles issues arrivent régulièrement.</p>
+    <a href="{% url 'explore' %}" class="inline-flex items-center gap-1.5 mt-5 text-primary font-semibold text-sm">Réinitialiser les filtres<span class="material-symbols-outlined text-[18px]">refresh</span></a>
 </div>
 {% endif %}

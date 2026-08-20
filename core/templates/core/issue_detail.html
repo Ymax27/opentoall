@@ -17,7 +17,7 @@
                 {{ issue.repo_owner }}/<span class="text-on-surface font-semibold">{{ issue.repo_name }}</span>
                 {% if issue.number %}<span class="text-outline">#{{ issue.number }}</span>{% endif %}
             </div>
-            <h1 class="font-display font-bold text-2xl lg:text-4xl leading-tight text-on-surface">{{ issue.title }}</h1>
+            <h1 class="font-display font-semibold text-2xl lg:text-4xl leading-tight text-on-surface tracking-tight">{{ issue.title }}</h1>
 
             <div class="flex flex-wrap items-center gap-2 mt-4">
                 {% if issue.difficulty == 'beginner' %}
@@ -39,7 +39,7 @@
                     {% if issue.body %}
                     <div class="prose-sm text-on-surface-variant leading-relaxed whitespace-pre-line">{{ issue.body|striptags }}</div>
                     {% else %}
-                    <p class="text-on-surface-variant italic">Aucune description fournie. Consultez l'issue directement sur GitHub pour les détails complets.</p>
+                    <p class="text-on-surface-variant">Pas de description ici — ouvre l’issue sur GitHub pour le détail complet.</p>
                     {% endif %}
                 </div>
             </div>
@@ -79,13 +79,11 @@
                         <span class="text-sm font-semibold text-on-surface">{{ issue.stars_count|intcomma }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">database</span>Poids du dépôt</span>
+                        <span class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">database</span>Poids du clone</span>
                         <span class="flex items-center gap-2 text-sm font-semibold text-on-surface capitalize">
                             {{ issue.size_category }}
-                            <span class="flex items-end gap-0.5 h-3">
-                                <span class="w-1 rounded-sm h-1 {% if issue.size_bars >= 1 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
-                                <span class="w-1 rounded-sm h-2 {% if issue.size_bars >= 2 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
-                                <span class="w-1 rounded-sm h-3 {% if issue.size_bars >= 3 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
+                            <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-label="Poids {{ issue.size_category }}">
+                                <span></span><span></span><span></span>
                             </span>
                         </span>
                     </div>
@@ -104,8 +102,8 @@
                 </a>
             </div>
 
-            <a href="{{ issue.url }}" target="_blank" rel="noopener" class="hidden lg:flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-all active:scale-[0.98]">
-                <span class="material-symbols-outlined">code</span>Contribuer sur GitHub
+            <a href="{{ issue.url }}" target="_blank" rel="noopener" class="hidden lg:flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
+                <span class="material-symbols-outlined">code</span>Ouvre sur GitHub
             </a>
         </aside>
     </div>
@@ -113,8 +111,8 @@
 
 <!-- Mobile sticky CTA -->
 <div class="lg:hidden fixed bottom-16 inset-x-0 z-40 p-3 bg-surface/90 backdrop-blur-md border-t border-outline-variant/40" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));">
-    <a href="{{ issue.url }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card active:scale-[0.98] transition-transform">
-        <span class="material-symbols-outlined">code</span>Contribuer sur GitHub
+    <a href="{{ issue.url }}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 w-full bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card">
+        <span class="material-symbols-outlined">code</span>Ouvre sur GitHub
     </a>
 </div>
 {% endblock %}

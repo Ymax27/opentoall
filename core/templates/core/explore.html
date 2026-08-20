@@ -1,12 +1,12 @@
 {% extends "core/base.html" %}
 
-{% block title %}Explorer les issues — {{ SITE_NAME }}{% endblock %}
+{% block title %}Trouve une issue — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <div class="max-w-content mx-auto px-4 lg:px-8 py-8 lg:py-10">
     <div class="mb-8">
-        <h1 class="font-display font-bold text-3xl lg:text-4xl text-on-surface">Explorer les issues</h1>
-        <p class="text-on-surface-variant mt-2">Trouvez la contribution idéale, adaptée à votre langage et à votre niveau.</p>
+        <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">Trouve une issue</h1>
+        <p class="text-on-surface-variant mt-2 max-w-xl">Cherche par langage, niveau ou dépôt — puis ouvre celle qui te parle vraiment.</p>
     </div>
 
     <form id="filters" hx-get="{% url 'explore' %}" hx-target="#issue-list" hx-swap="innerHTML"
@@ -17,16 +17,16 @@
         <div class="flex flex-col md:flex-row gap-3">
             <div class="flex-1 flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary transition-all">
                 <span class="material-symbols-outlined text-on-surface-variant">search</span>
-                <input type="search" name="q" value="{{ filters.q }}" placeholder="Rechercher une issue, un dépôt…"
+                <input type="search" name="q" value="{{ filters.q }}" placeholder="Titre d’issue, nom de dépôt…"
                        class="w-full bg-transparent outline-none text-on-surface placeholder:text-on-surface-variant">
             </div>
             <div class="flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3">
                 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">sort</span>
                 <select name="sort" class="bg-transparent outline-none text-sm font-medium text-on-surface cursor-pointer">
-                    <option value="stars" {% if filters.sort == 'stars' %}selected{% endif %}>Plus populaires</option>
-                    <option value="recent" {% if filters.sort == 'recent' %}selected{% endif %}>Plus récentes</option>
-                    <option value="beginner" {% if filters.sort == 'beginner' %}selected{% endif %}>Débutant-friendly</option>
-                    <option value="light" {% if filters.sort == 'light' %}selected{% endif %}>Dépôt le plus léger</option>
+                    <option value="stars" {% if filters.sort == 'stars' %}selected{% endif %}>Plus d’étoiles</option>
+                    <option value="recent" {% if filters.sort == 'recent' %}selected{% endif %}>Mises à jour récentes</option>
+                    <option value="beginner" {% if filters.sort == 'beginner' %}selected{% endif %}>Plus accueillantes</option>
+                    <option value="light" {% if filters.sort == 'light' %}selected{% endif %}>Clone le plus léger</option>
                 </select>
             </div>
         </div>

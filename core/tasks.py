@@ -17,8 +17,11 @@ from datetime import datetime
 
 from celery import shared_task
 
+from .cache_keys import bump_issues_cache
 from .models import Issue
 from .services.github_client import (
+    GitHubAPIError,
+    GitHubRateLimitError,
     get_repo_community_profile,
     get_repo_details,
     search_issues,
@@ -34,8 +37,8 @@ logger = logging.getLogger(__name__)
 LANGUAGES = ["Python", "Go", "JavaScript", "TypeScript", "Rust", "Java"]
 LABELS = ["good first issue", "help wanted"]
 
-# search/issues is limited to ~30 requests/minute — throttle between calls.
-THROTTLE_SECONDS = 2
+# Extra pause between pages (search client already enforces ~2.2s between searches).
+THROTTLE_SECONDS = 0.5
 
 
 def _parse_dt(value: str | None):
@@ -57,8 +60,9 @@ def ingest_issues(
 ) -> int:
     """Fetch and upsert issues for the given languages/labels/pages.
 
-    Returns the number of issues created or updated. ``on_progress`` is an
-    optional callable receiving a human-readable status string.
+    Idempotent via ``update_or_create`` on ``github_issue_id``. Returns the
+    number of issues created or updated. ``on_progress`` is an optional
+    callable receiving a human-readable status string.
     """
     languages = languages or LANGUAGES
     labels = labels or LABELS
@@ -90,14 +94,17 @@ def ingest_issues(
                     if repo_full_name not in repo_cache:
                         repo_data = get_repo_details(repo_full_name)
                         community = get_repo_community_profile(repo_full_name)
-                        repo_cache[repo_full_name] = {"repo": repo_data, "community": community}
+                        repo_cache[repo_full_name] = {
+                            "repo": repo_data,
+                            "community": community,
+                        }
                         time.sleep(throttle)
 
                     repo_data = repo_cache[repo_full_name]["repo"]
                     community = repo_cache[repo_full_name]["community"]
                     files = (community or {}).get("files") or {}
 
-                    issue_labels = [l["name"] for l in item.get("labels", [])]
+                    issue_labels = [lab["name"] for lab in item.get("labels", [])]
 
                     Issue.objects.update_or_create(
                         github_issue_id=item["id"],
@@ -107,7 +114,9 @@ def ingest_issues(
                             "body": (item.get("body") or "")[:4000],
                             "url": item["html_url"],
                             "repo_full_name": repo_full_name,
-                            "repo_avatar_url": repo_data.get("owner", {}).get("avatar_url", ""),
+                            "repo_avatar_url": repo_data.get("owner", {}).get(
+                                "avatar_url", ""
+                            ),
                             "language": lang,
                             "labels": ",".join(issue_labels),
                             "foundation": detect_foundation(repo_full_name),
@@ -118,7 +127,11 @@ def ingest_issues(
                             "repo_size_kb": repo_data.get("size", 0),
                             "has_contributing": bool(files.get("contributing")),
                             "has_code_of_conduct": bool(files.get("code_of_conduct")),
-                            "pr_acceptance_rate": (community or {}).get("health_percentage", 0) / 100 or None,
+                            "pr_acceptance_rate": (community or {}).get(
+                                "health_percentage", 0
+                            )
+                            / 100
+                            or None,
                             "beginner_friendly_score": compute_beginner_friendly_score(
                                 repo_data, community, merged_first_pr_ratio=0.5
                             ),
@@ -129,11 +142,32 @@ def ingest_issues(
 
                 time.sleep(throttle)
 
+    bump_issues_cache()
     _log(f"Ingestion complete: {processed} issues processed.")
     return processed
 
 
-@shared_task
-def fetch_all_issues(pages: int = 1):
+@shared_task(
+    bind=True,
+    name="core.tasks.fetch_all_issues",
+    autoretry_for=(GitHubAPIError,),
+    retry_backoff=True,
+    retry_backoff_max=900,
+    retry_jitter=True,
+    max_retries=5,
+    soft_time_limit=25 * 60,
+    time_limit=30 * 60,
+    acks_late=True,
+)
+def fetch_all_issues(self, pages: int = 1):
     """Celery entry point used by the scheduled beat task."""
-    return ingest_issues(pages=pages)
+    try:
+        return ingest_issues(pages=pages)
+    except GitHubRateLimitError as exc:
+        countdown = min(int(exc.retry_after or 60), 900)
+        logger.error(
+            "Deferring fetch_all_issues after rate limit (retry in %ss)",
+            countdown,
+            extra={"event": "celery_rate_limit", "task_id": self.request.id},
+        )
+        raise self.retry(exc=exc, countdown=countdown)

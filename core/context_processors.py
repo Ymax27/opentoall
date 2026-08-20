@@ -8,7 +8,7 @@ def site_globals(request):
         "GITHUB_REPO_URL": getattr(settings, "GITHUB_REPO_URL", ""),
         "nav_links": [
             ("home", "Accueil", "home"),
-            ("explore", "Explorer", "travel_explore"),
+            ("explore", "Issues", "travel_explore"),
             ("leaderboard", "Classement", "leaderboard"),
         ],
     }

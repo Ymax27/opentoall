@@ -1,28 +1,28 @@
-<a href="{{ issue.get_absolute_url }}" class="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-5 pl-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
-    <span class="absolute left-0 top-0 bottom-0 w-1.5 bg-{{ issue.accent }}"></span>
+<a href="{{ issue.get_absolute_url }}" class="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 pl-6 shadow-card hover:shadow-card-hover hover:border-primary/25 transition-all duration-200 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+    <span class="absolute left-0 top-0 bottom-0 w-1 bg-{{ issue.accent }}"></span>
 
-    <!-- Repo + status -->
     <div class="flex items-start justify-between gap-3 mb-3">
         <div class="flex items-center gap-2.5 min-w-0">
             {% if issue.repo_avatar_url %}
-            <img src="{{ issue.repo_avatar_url }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-outline-variant/50 shrink-0">
+            <img src="{{ issue.repo_avatar_url }}" alt="" class="w-8 h-8 rounded-lg object-cover border border-outline-variant/50 shrink-0" loading="lazy">
             {% else %}
-            <span class="w-8 h-8 rounded-lg bg-{{ issue.accent }}/15 text-{{ issue.accent }} grid place-items-center text-sm font-bold shrink-0">{{ issue.repo_name|first|upper }}</span>
+            <span class="w-8 h-8 rounded-lg bg-{{ issue.accent }}/12 text-{{ issue.accent }} grid place-items-center text-sm font-bold shrink-0 font-display">{{ issue.repo_name|first|upper }}</span>
             {% endif %}
             <div class="min-w-0">
                 <div class="font-code text-xs text-on-surface-variant truncate">{{ issue.repo_owner }}/<span class="text-on-surface font-semibold">{{ issue.repo_name }}</span></div>
                 <div class="flex items-center gap-2 text-[11px] text-on-surface-variant mt-0.5">
                     <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[13px]">star</span>{{ issue.stars_display }}</span>
-                    <span aria-label="Poids du dépôt" class="flex items-end gap-0.5 h-3">
-                        <span class="w-1 rounded-sm h-1 {% if issue.size_bars >= 1 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
-                        <span class="w-1 rounded-sm h-2 {% if issue.size_bars >= 2 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
-                        <span class="w-1 rounded-sm h-3 {% if issue.size_bars >= 3 %}bg-{{ issue.accent }}{% else %}bg-outline-variant/40{% endif %}"></span>
+                    <span class="inline-flex items-center gap-1" title="Poids du clone : {{ issue.size_category }}">
+                        <span class="sr-only">Poids du dépôt {{ issue.size_category }}</span>
+                        <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                        </span>
                     </span>
                 </div>
             </div>
         </div>
         {% if issue.difficulty == 'beginner' %}
-        <span class="shrink-0 inline-flex items-center gap-1 bg-tertiary text-on-tertiary text-[11px] font-semibold px-2 py-1 rounded-full"><span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1;">eco</span>Débutant</span>
+        <span class="shrink-0 inline-flex items-center gap-1 bg-tertiary/12 text-tertiary text-[11px] font-semibold px-2 py-1 rounded-md">Débutant</span>
         {% elif issue.difficulty == 'advanced' %}
         <span class="shrink-0 inline-flex items-center bg-secondary-container/15 text-secondary-container text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Confirmé</span>
         {% else %}
@@ -47,6 +47,6 @@
             {% endif %}
             {% if issue.foundation %}<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span>{{ issue.foundation }}</span>{% endif %}
         </div>
-        <span class="inline-flex items-center gap-1 text-primary text-sm font-semibold group-hover:gap-2 transition-all">Détail<span class="material-symbols-outlined text-[18px]">arrow_forward</span></span>
+        <span class="inline-flex items-center gap-1 text-primary text-sm font-semibold">Ouvrir<span class="material-symbols-outlined text-[18px]">arrow_forward</span></span>
     </div>
 </a>
