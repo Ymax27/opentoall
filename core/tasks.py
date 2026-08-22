@@ -60,14 +60,16 @@ def ingest_issues(
 ) -> int:
     """Fetch and upsert issues for the given languages/labels/pages.
 
-    Idempotent via ``update_or_create`` on ``github_issue_id``. Returns the
-    number of issues created or updated. ``on_progress`` is an optional
-    callable receiving a human-readable status string.
+    Idempotent via ``update_or_create`` on ``github_issue_id``. Continues to the
+    next language if one search fails transiently; stops early on hard rate
+    limits (progress already saved — re-run to continue). Returns the number of
+    issues created or updated.
     """
     languages = languages or LANGUAGES
     labels = labels or LABELS
     processed = 0
     repo_cache: dict[str, dict] = {}
+    rate_limited = False
 
     def _log(msg: str):
         logger.info(msg)
@@ -75,11 +77,27 @@ def ingest_issues(
             on_progress(msg)
 
     for lang in languages:
+        if rate_limited:
+            break
         for label in labels:
+            if rate_limited:
+                break
             for page in range(1, pages + 1):
-                items = search_issues(
-                    language=lang, label=label, page=page, per_page=per_page
-                )
+                try:
+                    items = search_issues(
+                        language=lang, label=label, page=page, per_page=per_page
+                    )
+                except GitHubRateLimitError:
+                    _log(
+                        f"Rate limit GitHub atteint pendant {lang}/{label}. "
+                        "Progression sauvegardée — relance fetch_issues plus tard."
+                    )
+                    rate_limited = True
+                    break
+                except GitHubAPIError as exc:
+                    _log(f"API GitHub erreur ({lang}/{label} p{page}): {exc} — on continue.")
+                    break
+
                 _log(f"{lang} · {label} · page {page}: {len(items)} issues")
                 if not items:
                     break
@@ -92,19 +110,34 @@ def ingest_issues(
                     repo_full_name = item["repository_url"].split("repos/")[-1]
 
                     if repo_full_name not in repo_cache:
-                        repo_data = get_repo_details(repo_full_name)
-                        community = get_repo_community_profile(repo_full_name)
+                        try:
+                            repo_data = get_repo_details(repo_full_name)
+                            community = get_repo_community_profile(repo_full_name)
+                        except GitHubRateLimitError:
+                            _log(
+                                f"Rate limit pendant les détails repo ({repo_full_name}). "
+                                "Progression sauvegardée."
+                            )
+                            rate_limited = True
+                            break
+                        except GitHubAPIError:
+                            repo_data, community = {}, {}
                         repo_cache[repo_full_name] = {
-                            "repo": repo_data,
-                            "community": community,
+                            "repo": repo_data or {},
+                            "community": community or {},
                         }
                         time.sleep(throttle)
+
+                    if rate_limited:
+                        break
 
                     repo_data = repo_cache[repo_full_name]["repo"]
                     community = repo_cache[repo_full_name]["community"]
                     files = (community or {}).get("files") or {}
 
                     issue_labels = [lab["name"] for lab in item.get("labels", [])]
+                    # Prefer the repo's primary language from GitHub when available.
+                    detected_lang = (repo_data.get("language") or lang or "").strip() or lang
 
                     Issue.objects.update_or_create(
                         github_issue_id=item["id"],
@@ -117,7 +150,7 @@ def ingest_issues(
                             "repo_avatar_url": repo_data.get("owner", {}).get(
                                 "avatar_url", ""
                             ),
-                            "language": lang,
+                            "language": detected_lang,
                             "labels": ",".join(issue_labels),
                             "foundation": detect_foundation(repo_full_name),
                             "difficulty": estimate_difficulty(issue_labels),

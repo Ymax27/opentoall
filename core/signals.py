@@ -20,7 +20,11 @@ def ensure_profile_exists(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=SocialAccount)
 def sync_profile_from_github(sender, instance, created, **kwargs):
-    """Enrich the profile with data coming from the GitHub OAuth payload."""
+    """Enrich the profile with data coming from the GitHub OAuth payload.
+
+    Also pulls public merged PRs so the leaderboard can reflect real GitHub
+    activity (clicking « Ouvre sur GitHub » alone does not create a Contribution).
+    """
     if instance.provider != "github":
         return
 
@@ -33,3 +37,15 @@ def sync_profile_from_github(sender, instance, created, **kwargs):
     if data.get("location") and not profile.country:
         profile.country = data.get("location")
     profile.save()
+
+    # Best-effort: never block login if GitHub search fails / is rate-limited.
+    try:
+        from .services.contribution_sync import sync_merged_prs_for_user
+
+        sync_merged_prs_for_user(instance.user, username=profile.github_username)
+    except Exception:
+        import logging
+
+        logging.getLogger(__name__).exception(
+            "Contribution sync failed for %s", profile.github_username
+        )

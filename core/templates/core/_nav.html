@@ -9,7 +9,7 @@
                 <span class="material-symbols-outlined text-on-surface">menu</span>
             </button>
             <a href="{{ home_url }}" class="flex items-center gap-2.5 group">
-                <img src="{% static 'img/logo.svg' %}" alt="" class="w-9 h-9 transition-transform group-hover:scale-105">
+                <img src="{% static 'img/logo.png' %}" alt="OpenToAll" class="w-9 h-9 object-contain transition-transform group-hover:scale-105">
                 <span class="font-display font-bold text-xl tracking-tight text-on-surface">Open<span class="text-primary">ToAll</span></span>
             </a>
         </div>
@@ -63,7 +63,7 @@
 <aside id="mobile-drawer" class="fixed top-0 left-0 h-full w-4/5 max-w-xs bg-surface z-[70] -translate-x-full transition-transform duration-300 lg:hidden flex flex-col p-5 gap-2">
     <div class="flex items-center justify-between mb-4">
         <a href="{{ home_url }}" class="flex items-center gap-2.5">
-            <img src="{% static 'img/logo.svg' %}" alt="" class="w-9 h-9">
+            <img src="{% static 'img/logo.png' %}" alt="OpenToAll" class="w-9 h-9 object-contain">
             <span class="font-display font-bold text-xl">Open<span class="text-primary">ToAll</span></span>
         </a>
         <button onclick="toggleDrawer(false)" class="w-9 h-9 grid place-items-center rounded-lg hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>

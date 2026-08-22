@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="static/img/logo.svg" width="72" alt="OpenToAll logo" />
+<img src="static/img/logo.png" width="72" alt="OpenToAll logo" />
 
 # OpenToAll
 
@@ -17,166 +17,154 @@ pensée pour les développeurs africains.
 
 ---
 
-## 🌍 Pourquoi ?
+## Pourquoi ?
 
-Des agrégateurs de « good first issues » existent déjà. Ce qui n'existait pas :
-une plateforme qui **s'adresse spécifiquement aux développeurs africains**, les
-rend visibles, et tient compte de leurs contraintes réelles :
+Des agrégateurs de « good first issues » existent déjà. OpenToAll ajoute ce qui
+manquait pour beaucoup de contributeurs africains :
 
-- **Réactivité** des mainteneurs (temps de réponse, temps jusqu'au merge)
-- **Bienveillance** envers les débutants (présence de `CONTRIBUTING.md`, PR de
-  primo-contributeurs effectivement mergées)
-- **Poids du dépôt** (pour cloner facilement avec une connexion limitée)
+- **Réactivité** des mainteneurs
+- **Bienveillance** envers les débutants (`CONTRIBUTING.md`, score débutant)
+- **Poids du dépôt** (clone réaliste avec une connexion limitée)
+- **Visibilité** : profils + classement par pays
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 | Bloc | Description |
 |------|-------------|
-| **Agrégateur d'issues** | Issues `good first issue` / `help wanted` récupérées via l'API GitHub, filtrées par langage, niveau et statut d'assignation |
-| **Tri par contraintes réelles** | Métriques calculées automatiquement : réactivité, bienveillance débutants, poids du dépôt |
-| **Visibilité des contributeurs** | Profils publics, mur des contributeurs et classement filtrable par pays |
+| **Agrégateur** | Issues `good first issue` / `help wanted` via l’API GitHub, filtrées (langage, niveau, non assignées) |
+| **Contraintes réelles** | Réactivité, bienveillance, poids du clone |
+| **Profils & classement** | Profil public + leaderboard alimentés par les **PR mergées** GitHub du compte connecté |
 
-## 🛠️ Stack technique
+## Comment marche le classement ? (important)
 
-- **Django 6** + **HTMX** (rendu serveur, 100 % Python — interactions sans SPA)
-- **PostgreSQL** (prod) / **SQLite** (dev, zéro configuration)
-- **Celery** + **Redis** pour l'ingestion périodique des issues
-- **django-allauth** pour l'authentification **OAuth GitHub**
-- **Tailwind CSS** avec un design system maison (voir [`DESIGN.md`](DESIGN.md))
-- **WhiteNoise** + **Gunicorn** pour le déploiement
+Le bouton **« Ouvre sur GitHub »** ouvre seulement l’issue sur GitHub. Il **ne
+crée pas** une contribution sur OpenToAll.
 
-## 🚀 Démarrage rapide (local)
+Le flux réel aujourd’hui :
+
+1. Tu te **connectes avec GitHub** (OAuth).
+2. OpenToAll enregistre ton profil (`login`, avatar, bio…).
+3. À la connexion, la plateforme interroge l’API GitHub pour tes **PR publiques
+   mergées** (`author:toi type:pr is:merged`) et les enregistre dans la table
+   `Contribution`.
+4. Le **classement** compte ces contributions par utilisateur / pays.
+
+Donc : merge une PR sur GitHub → reconnecte-toi (ou attends la prochaine sync à
+la connexion) → tu apparais / montes dans le classement.
+
+> Ce n’est **pas** un webhook temps réel ni un tracking du clic « Contribuer ».
+> C’est une sync des PR déjà mergées liées à ton compte GitHub.
+
+## Stack
+
+- Django 6 + HTMX + templates
+- PostgreSQL (prod) / SQLite (dev)
+- Celery + Redis (optionnel ; en prod légère : cron + `/internal/fetch-issues/`)
+- django-allauth (**OAuth App** GitHub — pas une GitHub App)
+- Tailwind (CDN) + WhiteNoise + Gunicorn
+- Déploiement typique : **Fly.io** + **Neon** (Postgres)
+
+## Démarrage local
 
 ```bash
-# 1. Cloner et créer l'environnement
 git clone https://github.com/Ymax27/opentoall.git
 cd opentoall
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-
-# 2. Configurer l'environnement
-cp .env.example .env        # éditez si besoin (SQLite par défaut, aucune config requise)
-
-# 3. Base de données + données de démonstration
+cp .env.example .env
 python manage.py migrate
-python manage.py seed_demo  # remplit la base avec des données réalistes
-
-# 4. Lancer
+python manage.py seed_demo   # démo UI uniquement — pas pour la prod
 python manage.py runserver
 ```
 
-Rendez-vous sur **http://localhost:8000** 🎉
+→ http://localhost:8000
 
-> Astuce : `python manage.py createsuperuser` pour accéder à l'admin sur `/admin/`.
-
-## 🐳 Démarrage avec Docker
+Docker (web + Postgres + Redis + Celery) :
 
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
 
-Le stack complet (web + PostgreSQL + Redis + worker Celery + beat) démarre, les
-migrations s'appliquent automatiquement. L'app est disponible sur le port `8000`.
+## Auth GitHub : OAuth App (pas GitHub App)
 
-## 🔑 Configurer l'OAuth GitHub (optionnel en dev)
+django-allauth attend une **OAuth App** classique :
 
-1. Créez une **OAuth App** sur https://github.com/settings/developers
-   - *Homepage URL* : `http://localhost:8000`
-   - *Authorization callback URL* : `http://localhost:8000/accounts/github/login/callback/`
-2. Renseignez `GITHUB_CLIENT_ID` et `GITHUB_CLIENT_SECRET` dans `.env`.
-3. Pour l'ingestion d'issues, créez un **Personal Access Token** (aucun scope
-   nécessaire pour les données publiques) et renseignez `GITHUB_PAT`.
+[GitHub → Settings → Developer settings → OAuth Apps](https://github.com/settings/developers)
 
-## 🔄 Ingestion des issues (données réelles GitHub)
+| Champ | Local | Prod (exemple Fly) |
+|-------|-------|--------------------|
+| Homepage URL | `http://localhost:8000` | `https://opentoall.fly.dev` |
+| Authorization callback URL | `http://localhost:8000/accounts/github/login/callback/` | `https://opentoall.fly.dev/accounts/github/login/callback/` |
 
-GitHub limite son API (1000 résultats max par recherche, ~30 req/min, quota
-horaire). OpenToAll **agrège donc périodiquement** les issues dans sa propre base
-plutôt que d'interroger GitHub à chaque visite — d'où la pagination locale.
+Puis dans les secrets / `.env` :
 
-**Sans Celery** (le plus simple, il suffit d'un `GITHUB_PAT` dans `.env`) :
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` → ceux de l’**OAuth App**
+- `GITHUB_PAT` → Personal Access Token pour l’**ingestion** d’issues (données publiques)
+
+### Pourquoi « GitHub App » casse souvent le login
+
+Une **GitHub App** (onglet *GitHub Apps*) n’est **pas** interchangeable avec une
+OAuth App pour ce projet. Client ID / secret d’une GitHub App, callbacks
+d’installation, ou mauvais type d’app → erreurs OAuth (`redirect_uri_mismatch`,
+`incorrect_client_credentials`, boucle de login, etc.).
+
+**À faire :** créer / utiliser une **OAuth App**, pas une GitHub App.
+
+### Checklist login en prod (à vérifier une par une)
+
+1. L’app GitHub est bien une **OAuth App** (pas GitHub App).
+2. Callback URL **exacte** (https, domaine, `/accounts/github/login/callback/`, slash final).
+3. `GITHUB_CLIENT_ID` et `GITHUB_CLIENT_SECRET` sur Fly = ceux de **cette** OAuth App.
+4. Django **Sites** (`/admin/` → Sites) : domaine = `opentoall.fly.dev` (sans `https://`).
+5. Pas de doublon contradictoire : si une entrée *Social applications* existe dans
+   l’admin allauth, ses credentials doivent être **identiques** aux secrets Fly
+   (sinon allauth peut utiliser les mauvais).
+6. `DEBUG=False`, cookies sécurisés, site servi en **HTTPS**.
+7. Après fix : vider cookies du site / refaire un login en navigation privée.
+
+## Ingestion des issues (vraies données)
 
 ```bash
-python manage.py fetch_issues                     # langages & labels par défaut, 2 pages
-python manage.py fetch_issues --pages 5           # plus d'issues
-python manage.py fetch_issues --languages Python Go --labels "good first issue"
+# Local (GITHUB_PAT requis)
+python manage.py fetch_issues --pages 1
+python manage.py fetch_issues --pages 2 --languages Python Go JavaScript TypeScript Rust Java
 ```
 
-**Avec Celery** (production) : le worker + beat rafraîchissent automatiquement
-toutes les 6 h (voir `CELERY_BEAT_SCHEDULE`). `docker compose up` démarre le tout.
+En prod (Fly), sans Celery :
 
-## ✅ Tests
+```text
+https://opentoall.fly.dev/internal/fetch-issues/?token=FETCH_ISSUES_TOKEN&pages=1
+```
+
+Réponse attendue : **202**. Relancer si le rate limit GitHub a stoppé après le
+premier langage (ex. seulement Python dans les filtres) — la progression est
+sauvegardée, un second run complète les autres langages.
+
+> Ne lance **jamais** `seed_demo` en production (liens GitHub factices / issues fermées).
+
+## Déploiement (Fly + Neon) — résumé
+
+1. Neon → `DATABASE_URL`
+2. Secrets Fly : `SECRET_KEY`, `DATABASE_URL`, `GITHUB_CLIENT_ID`,
+   `GITHUB_CLIENT_SECRET`, `GITHUB_PAT`, `FETCH_ISSUES_TOKEN`, `DEBUG=False`,
+   `USE_REDIS_CACHE=0` (tant qu’il n’y a pas de Redis distant)
+3. `fly deploy`
+4. Configurer l’OAuth App + Site Django (checklist ci-dessus)
+5. Premier `fetch-issues` + cron toutes les 6 h (cron-job.org)
+
+Détails machines / `fly.toml` : voir le fichier à la racine du repo.
+
+## Tests
 
 ```bash
 pytest
 ```
 
-## ☁️ Déploiement gratuit (Render + Neon)
+## Contribuer
 
-Ce chemin ne nécessite **pas** Oracle ni Redis/Celery. Le site peut s’endormir
-après inactivité (cold start ~30–60 s sur le plan free).
+Voir [CONTRIBUTING.md](CONTRIBUTING.md) et le [Code de conduite](CODE_OF_CONDUCT.md).
 
-### 1. Neon (Postgres)
+## Licence
 
-1. Crée un projet sur [neon.tech](https://neon.tech)
-2. Copie la **connection string** (`DATABASE_URL`)
-
-### 2. Secrets GitHub
-
-- **OAuth App** : Homepage + callback = `https://TON-SERVICE.onrender.com`  
-  Callback exact : `https://TON-SERVICE.onrender.com/accounts/github/login/callback/`
-- **PAT** (`ghp_…`) pour l’ingestion
-
-### 3. Render
-
-1. [render.com](https://render.com) → New → **Blueprint** (fichier `render.yaml`)  
-   **ou** New → **Web Service** → repo `Ymax27/opentoall` → Runtime **Docker** → plan **Free**
-2. Variables d’environnement :
-
-| Variable | Valeur |
-|----------|--------|
-| `DATABASE_URL` | string Neon |
-| `SECRET_KEY` | long secret (ou généré par Blueprint) |
-| `DEBUG` | `False` |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth App |
-| `GITHUB_PAT` | token ingestion |
-| `FETCH_ISSUES_TOKEN` | secret cron |
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | crée le superuser au boot |
-| `ADMIN_EMAIL` | optionnel |
-
-`ALLOWED_HOSTS` / CSRF sont enrichis automatiquement via `RENDER_EXTERNAL_HOSTNAME`.
-
-3. Deploy → ouvre l’URL `.onrender.com`
-
-### 4. Admin + OAuth
-
-- Mets à jour l’OAuth App avec l’URL Render réelle
-- Admin → **Sites** → domain = `ton-service.onrender.com`
-
-### 5. Ingestion + cron (remplace Celery)
-
-Premier run (après deploy, via cron « Run now » ou navigateur) :
-
-```text
-https://TON-SERVICE.onrender.com/internal/fetch-issues/?token=FETCH_ISSUES_TOKEN&pages=1
-```
-
-Réponse attendue : **202** `{ "started": true }` (crawl en arrière-plan).
-
-Puis sur [cron-job.org](https://cron-job.org) : même URL, toutes les **6 heures**.
-
-> Ne lance **pas** `seed_demo` en production.
-
-### 6. Mises à jour
-
-Push sur `main` → Render rebuild automatique (si auto-deploy activé).
-
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues ! Lisez le guide
-[**CONTRIBUTING.md**](CONTRIBUTING.md) et le
-[**Code de conduite**](CODE_OF_CONDUCT.md).
-
-## 📄 Licence
-
-Distribué sous licence **MIT**. Voir [`LICENSE`](LICENSE).
+MIT — voir [`LICENSE`](LICENSE).

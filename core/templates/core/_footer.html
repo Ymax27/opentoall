@@ -3,7 +3,7 @@
     <div class="max-w-content mx-auto px-4 lg:px-8 py-12 grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
         <div>
             <a href="{% url 'home' %}" class="flex items-center gap-2.5 mb-4">
-                <img src="{% static 'img/logo.svg' %}" alt="" class="w-9 h-9">
+                <img src="{% static 'img/logo.png' %}" alt="OpenToAll" class="w-9 h-9 object-contain">
                 <span class="font-display font-bold text-xl">Open<span class="text-primary">ToAll</span></span>
             </a>
             <p class="text-sm text-on-surface-variant max-w-sm leading-relaxed">
@@ -32,13 +32,20 @@
                 <li>
                     <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Signaler un bug</a>
                 </li>
+                <li>
+                    <a href="mailto:lindsellmaxwell@gmail.com?subject=Soutenir%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Soutenir le projet</a>
+                </li>
             </ul>
         </div>
     </div>
     <div class="border-t border-outline-variant/40">
         <div class="max-w-content mx-auto px-4 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
             <p>© {% now "Y" %} {{ SITE_NAME }} — Open source, sous licence MIT.</p>
-            <p class="flex items-center gap-1.5">Pensé pour des connexions réelles, pas seulement la fibre.</p>
+            <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                <a href="https://wa.me/237650218023?text=Salut%2C%20je%20souhaite%20soutenir%20OpenToAll" target="_blank" rel="noopener" class="hover:text-primary transition-colors">WhatsApp</a>
+                <span class="text-outline-variant" aria-hidden="true">·</span>
+                <a href="mailto:lindsellmaxwell@gmail.com?subject=Soutenir%20OpenToAll" class="hover:text-primary transition-colors">Email</a>
+            </p>
         </div>
     </div>
 </footer>

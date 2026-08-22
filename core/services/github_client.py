@@ -198,3 +198,23 @@ def get_repo_community_profile(full_name: str) -> dict:
         context=f"community {full_name}",
     )
     return data if isinstance(data, dict) else {}
+
+
+def search_merged_prs(username: str, page: int = 1, per_page: int = 30) -> list[dict]:
+    """Public merged PRs authored by ``username`` (for profile / leaderboard sync)."""
+    if not username:
+        return []
+    _respect_search_budget()
+    data = _get(
+        f"{GITHUB_API}/search/issues",
+        params={
+            "q": f"author:{username} type:pr is:merged",
+            "per_page": per_page,
+            "page": page,
+            "sort": "updated",
+        },
+        context=f"merged prs {username}",
+    )
+    if not isinstance(data, dict):
+        return []
+    return data.get("items", [])
