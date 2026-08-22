@@ -261,8 +261,17 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Seamless GitHub login: no password signup form, no email verification gate.
+SOCIALACCOUNT_ADAPTER = "core.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_LOGIN_METHODS = {"username", "email"}
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email"]  # email optional — GitHub fills it
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https" if not DEBUG else "http"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 

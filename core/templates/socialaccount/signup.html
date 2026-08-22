@@ -1,0 +1,69 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}Finaliser la connexion — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="relative min-h-[70vh] flex items-center justify-center px-4 py-16">
+    <div class="absolute inset-0 kente-bg opacity-50 pointer-events-none"></div>
+    <div class="relative w-full max-w-md bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-card p-8">
+        <h1 class="font-display font-semibold text-2xl text-on-surface tracking-tight">Dernière étape</h1>
+        <p class="mt-2 text-on-surface-variant text-sm leading-relaxed">
+            Confirme juste ces infos pour lier ton compte GitHub à {{ SITE_NAME }}.
+        </p>
+
+        <form method="post" action="{% url 'socialaccount_signup' %}" class="mt-6 space-y-4">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            <div class="rounded-lg bg-error-container/30 text-on-error-container text-sm px-3 py-2">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="mt-1 text-xs text-error">{{ field.errors|striptags }}</p>
+                {% endif %}
+                {% if field.help_text %}
+                <p class="mt-1 text-xs text-on-surface-variant">{{ field.help_text }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl hover:bg-primary-container transition-colors">
+                Continuer
+            </button>
+        </form>
+
+        <p class="mt-5 text-center text-sm text-on-surface-variant">
+            <a href="{% url 'account_login' %}" class="text-primary font-semibold hover:underline">Retour à la connexion</a>
+        </p>
+    </div>
+</div>
+<style>
+  /* Light touch so allauth default widgets match the product */
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="password"],
+  form select,
+  form textarea {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(var(--outline-variant) / 0.6);
+    background: rgb(var(--surface-container-low));
+    padding: 0.75rem 1rem;
+    color: rgb(var(--on-surface));
+    outline: none;
+  }
+  form input:focus {
+    box-shadow: 0 0 0 2px rgb(var(--primary) / 0.35);
+  }
+</style>
+{% endblock %}
