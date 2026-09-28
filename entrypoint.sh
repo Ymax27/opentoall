@@ -12,21 +12,25 @@ sys.exit(0) if not s.connect_ex((os.getenv('DB_HOST','db'), int(os.getenv('DB_PO
     echo "PostgreSQL is up."
 fi
 
-# Apply migrations with a few retries (Neon cold start / first connect).
-i=0
-until python manage.py migrate --noinput; do
-    i=$((i + 1))
-    if [ "$i" -ge 10 ]; then
-        echo "migrate failed after $i attempts" >&2
-        exit 1
-    fi
-    echo "migrate attempt $i failed — retrying in 3s..."
-    sleep 3
-done
+# Migrations must not block the HTTP port.
+# On Render free, every wake re-runs this script. cron-job.org gives up after
+# ~30s. Waiting here for Neon + migrate made both cron jobs time out until
+# cron-job.org marked them inactive.
+(
+    i=0
+    until python manage.py migrate --noinput; do
+        i=$((i + 1))
+        if [ "$i" -ge 10 ]; then
+            echo "migrate failed after $i attempts" >&2
+            exit 1
+        fi
+        echo "migrate attempt $i failed — retrying in 3s..."
+        sleep 3
+    done
 
-# Optional one-shot admin bootstrap (Render free without Shell).
-if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
-    python manage.py bootstrap_admin || true
-fi
+    if [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
+        python manage.py bootstrap_admin || true
+    fi
+) &
 
 exec "$@"

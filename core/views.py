@@ -249,6 +249,16 @@ def leaderboard(request):
     return response
 
 
+@require_http_methods(["GET", "HEAD"])
+def health(request):
+    """Cheap liveness check for the keep-alive cron.
+
+    Must not touch the database or the cache: Render's cold start plus a DB
+    query is what made cron-job.org time out and disable the job.
+    """
+    return HttpResponse("ok", content_type="text/plain")
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def fetch_issues_trigger(request):

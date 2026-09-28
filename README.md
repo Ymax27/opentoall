@@ -131,15 +131,28 @@ python manage.py fetch_issues --pages 1
 python manage.py fetch_issues --pages 2 --languages Python Go JavaScript TypeScript Rust Java
 ```
 
-En prod (Fly), sans Celery :
+En prod, sans Celery :
 
 ```text
-https://opentoall.fly.dev/internal/fetch-issues/?token=FETCH_ISSUES_TOKEN&pages=1
+https://opentoall.onrender.com/internal/fetch-issues/?token=FETCH_ISSUES_TOKEN&pages=1
 ```
 
-Réponse attendue : **202**. Relancer si le rate limit GitHub a stoppé après le
-premier langage (ex. seulement Python dans les filtres) — la progression est
-sauvegardée, un second run complète les autres langages.
+Réponse attendue : **202**.
+
+### Les deux crons (Render + cron-job.org)
+
+Render gratuit éteint le service après ~15 min sans visite. cron-job.org coupe un job après plusieurs timeouts (~30 s). Il faut **deux** jobs, et les réactiver à la main s’ils passent en inactif :
+
+| Job | URL | Fréquence |
+|-----|-----|-----------|
+| Réveil | `https://opentoall.onrender.com/internal/health/` | toutes les **10 min** |
+| Fetch | `https://opentoall.onrender.com/internal/fetch-issues/?token=…&pages=1` | toutes les **6 h** |
+
+`/internal/health/` répond `ok` sans base de données, pour rester sous les 30 s du cron.
+
+Relancer le fetch si le rate limit GitHub a stoppé après le premier langage
+(ex. seulement Python dans les filtres) — la progression est sauvegardée, un
+second run complète les autres langages.
 
 > Ne lance **jamais** `seed_demo` en production (liens GitHub factices / issues fermées).
 

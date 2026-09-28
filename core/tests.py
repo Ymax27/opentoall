@@ -117,6 +117,11 @@ def test_leaderboard_and_profile(client):
     assert client.get(reverse("profile", args=["kwame"])).status_code == 200
 
 
+def test_health_does_not_touch_the_database(client):
+    assert client.get(reverse("health")).status_code == 200
+    assert client.head(reverse("health")).status_code == 200
+
+
 @pytest.mark.django_db
 def test_fetch_issues_trigger_requires_token(client, settings):
     settings.FETCH_ISSUES_TOKEN = "secret-token"
