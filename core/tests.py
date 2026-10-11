@@ -149,3 +149,12 @@ def test_fetch_issues_trigger_starts_async(client, settings, monkeypatch):
     assert resp.status_code == 200
     assert resp.json()["ok"] is True
     assert called.get("pages") == 1
+
+
+@pytest.mark.django_db
+def test_explore_filters_have_accessible_labels(client):
+    resp = client.get(reverse("explore"))
+    content = resp.content.decode()
+    for field_id in ("search-filter", "sort-filter", "language-filter"):
+        assert f'for="{field_id}"' in content
+        assert f'id="{field_id}"' in content
