@@ -106,7 +106,7 @@ def explore(request):
     if foundation:
         issues = issues.filter(foundation__iexact=foundation)
     if max_size.isdigit():
-        issues = issues.filter(repo_size_kb__lte=int(max_size))
+        issues = issues.filter(repo_size_kb__lt=int(max_size))
 
     issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
 
@@ -122,6 +122,7 @@ def explore(request):
             "language": language,
             "difficulty": difficulty,
             "foundation": foundation,
+            "max_size": max_size,
             "sort": sort,
         }.items()
         if v
@@ -150,6 +151,7 @@ def explore(request):
             "language": language,
             "difficulty": difficulty,
             "foundation": foundation,
+            "max_size": max_size,
             "sort": sort,
         },
         "difficulties": Issue.Difficulty.choices,

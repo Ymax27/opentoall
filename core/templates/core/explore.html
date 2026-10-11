@@ -53,6 +53,16 @@
                 <option value="{{ lang }}" {% if filters.language == lang %}selected{% endif %}>{{ lang }}</option>
                 {% endfor %}
             </select>
+
+        </div>
+
+        <div class="flex items-center gap-2 mt-4">
+            <label for="clone-size-filter" class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</label>
+            <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+                <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
+                <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Clone léger</option>
+                <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins</option>
+            </select>
         </div>
     </form>
 
