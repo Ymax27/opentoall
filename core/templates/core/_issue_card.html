@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <a href="{{ issue.get_absolute_url }}" class="group relative flex flex-col bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 pl-6 shadow-card hover:shadow-card-hover hover:border-primary/25 transition-all duration-200 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
     <span class="absolute left-0 top-0 bottom-0 w-1 bg-{{ issue.accent }}"></span>
 
@@ -32,6 +34,10 @@
 
     <h3 class="font-heading font-semibold text-[17px] leading-snug text-on-surface mb-2 group-hover:text-primary transition-colors line-clamp-2">{{ issue.title }}</h3>
     {% if issue.body %}<p class="text-sm text-on-surface-variant line-clamp-2 mb-4">{{ issue.body|striptags|truncatechars:120 }}</p>{% endif %}
+
+    {% if issue.issue_updated_at %}
+    <p class="text-xs text-on-surface-variant mb-3">Mise à jour <time datetime="{{ issue.issue_updated_at|date:'c' }}">{{ issue.issue_updated_at|naturaltime }}</time></p>
+    {% endif %}
 
     <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
         {% if issue.language %}<span class="px-2 py-1 rounded-md bg-surface-container text-on-surface-variant text-xs font-code">{{ issue.language }}</span>{% endif %}

@@ -1,6 +1,10 @@
+from datetime import timedelta
+
 import pytest
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone, translation
 
 from core.models import Contribution, Issue, Profile
 from core.services.metrics import (
@@ -149,3 +153,23 @@ def test_fetch_issues_trigger_starts_async(client, settings, monkeypatch):
     assert resp.status_code == 200
     assert resp.json()["ok"] is True
     assert called.get("pages") == 1
+
+
+@pytest.mark.parametrize("has_updated_at", [True, False])
+def test_issue_card_updated_date(has_updated_at):
+    updated_at = timezone.now() - timedelta(days=3, minutes=1) if has_updated_at else None
+    issue = Issue(
+        pk=1, github_issue_id=1, title="Test issue", url="https://github.com/a/b/issues/1",
+        repo_full_name="a/b", issue_updated_at=updated_at,
+    )
+    with translation.override("fr"):
+        html = render_to_string("core/_issue_card.html", {"issue": issue})
+
+    if has_updated_at:
+        assert f'<time datetime="{updated_at.isoformat()}">' in html
+        assert "Mise à jour" in html
+        assert "il y a 3 jours" in html.replace("\xa0", " ")
+    else:
+        assert "<time" not in html
+        assert "Mise à jour" not in html
+        assert "None" not in html
