@@ -11,7 +11,7 @@ click-plugins==1.1.1.2
 click-repl==0.3.0
 cron-descriptor==1.4.5
 Django==6.0.8
-django-allauth==65.19.0
+django-allauth==65.19.7
 django-celery-beat==2.9.0
 django-htmx==1.29.0
 django-timezone-field==7.2.2
