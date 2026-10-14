@@ -17,12 +17,14 @@
         <div class="flex flex-col md:flex-row gap-3">
             <div class="flex-1 flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary transition-all">
                 <span class="material-symbols-outlined text-on-surface-variant">search</span>
-                <input type="search" name="q" value="{{ filters.q }}" placeholder="Titre d’issue, nom de dépôt…"
+                <label class="sr-only" for="search-filter">Rechercher une issue</label>
+                <input type="search" id="search-filter" name="q" value="{{ filters.q }}" placeholder="Titre d’issue, nom de dépôt…"
                        class="w-full bg-transparent outline-none text-on-surface placeholder:text-on-surface-variant">
             </div>
             <div class="flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3">
                 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">sort</span>
-                <select name="sort" class="bg-transparent outline-none text-sm font-medium text-on-surface cursor-pointer">
+                <label class="sr-only" for="sort-filter">Trier les issues</label>
+                <select name="sort" id="sort-filter" class="bg-transparent outline-none text-sm font-medium text-on-surface cursor-pointer">
                     <option value="stars" {% if filters.sort == 'stars' %}selected{% endif %}>Plus d’étoiles</option>
                     <option value="recent" {% if filters.sort == 'recent' %}selected{% endif %}>Mises à jour récentes</option>
                     <option value="beginner" {% if filters.sort == 'beginner' %}selected{% endif %}>Plus accueillantes</option>
@@ -47,23 +49,57 @@
 
             <span class="w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
             <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Langage</span>
-            <select name="language" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+            <label class="sr-only" for="language-filter">Langage</label>
+            <select name="language" id="language-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
                 <option value="">Tous</option>
                 {% for lang in languages %}
                 <option value="{{ lang }}" {% if filters.language == lang %}selected{% endif %}>{{ lang }}</option>
                 {% endfor %}
             </select>
+
+        </div>
+
+        <div class="flex items-center gap-2 mt-4">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</span>
+            <label class="sr-only" for="clone-size-filter">Poids du clone</label>
+            <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+                <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
+                <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Clone léger</option>
+                <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins</option>
+            </select>
         </div>
     </form>
 
     <div class="flex items-center gap-2 text-on-surface-variant text-sm mb-4">
-        <span id="list-loader" class="htmx-indicator flex items-center gap-2">
+        <span id="list-loader" class="htmx-indicator flex items-center gap-2" aria-hidden="true">
             <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>Chargement…
         </span>
+        {# Live region starts empty: screen readers only announce content changes, so it is filled on HTMX events below. #}
+        <span id="list-status" class="sr-only" role="status" aria-live="polite"></span>
     </div>
 
     <div id="issue-list">
         {% include "core/_issue_list.html" %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+    (function () {
+        const status = document.getElementById('list-status');
+        if (!status) return;
+        document.body.addEventListener('htmx:beforeRequest', function (event) {
+            if (event.detail.elt && event.detail.elt.id === 'filters') status.textContent = 'Chargement…';
+        });
+        document.body.addEventListener('htmx:afterSwap', function (event) {
+            if (event.detail.target && event.detail.target.id === 'issue-list') status.textContent = 'Résultats mis à jour';
+        });
+        document.body.addEventListener('htmx:afterRequest', function (event) {
+            if (event.detail.elt && event.detail.elt.id === 'filters' && !event.detail.successful) {
+                status.textContent = 'Le chargement a échoué';
+            }
+        });
+    })();
+</script>
 {% endblock %}

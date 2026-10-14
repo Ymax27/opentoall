@@ -12,8 +12,8 @@ contribution, petite ou grande, compte.
    afin d'éviter les doublons.
 3. **Forkez** le dépôt et créez une branche : `git checkout -b feat/ma-fonctionnalite`.
 4. **Développez** en suivant les conventions ci-dessous.
-5. **Testez** : `pytest` doit passer.
-6. **Ouvrez une Pull Request** claire, liée à l'issue concernée.
+5. **Testez** : `pytest` doit passer. GitHub relance ces tests sur chaque pull request.
+6. **Ouvrez une Pull Request** claire, liée à l'issue concernée. Elle n'est mergée qu'après revue et tests verts.
 
 ## Mettre en place l'environnement
 
