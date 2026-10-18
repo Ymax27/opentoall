@@ -11,6 +11,7 @@ pensée pour les développeurs africains.
 
 [Signaler un bug](https://github.com/Ymax27/opentoall/issues) ·
 [Proposer une fonctionnalité](https://github.com/Ymax27/opentoall/issues) ·
+[Discussions](https://github.com/Ymax27/opentoall/discussions) ·
 [Contribuer](CONTRIBUTING.md)
 
 <p>
@@ -181,6 +182,7 @@ pytest
 ## Contribuer
 
 Voir [CONTRIBUTING.md](CONTRIBUTING.md) et le [Code de conduite](CODE_OF_CONDUCT.md).
+Une question, une idée, envie de vous présenter ? Rendez-vous dans les [Discussions](https://github.com/Ymax27/opentoall/discussions).
 
 ## Licence
 
