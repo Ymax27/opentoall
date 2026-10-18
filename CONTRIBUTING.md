@@ -58,6 +58,9 @@ Ouvrez une [issue](https://github.com/Ymax27/opentoall/issues) en décrivant :
 - ce qui s'est passé,
 - les étapes pour reproduire (pour un bug).
 
+Une question sur l'installation ou le code, une idée encore floue ? Passez plutôt par les
+[Discussions](https://github.com/Ymax27/opentoall/discussions) (catégories Q&A et Ideas) : les bonnes idées deviennent ensuite des issues.
+
 ## Code de conduite
 
 Ce projet adhère au [Code de conduite](CODE_OF_CONDUCT.md). En participant, vous
