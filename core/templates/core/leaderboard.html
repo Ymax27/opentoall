@@ -19,7 +19,7 @@
             <div class="relative flex flex-col sm:flex-row items-center gap-6">
                 <div class="relative shrink-0">
                     {% if top.avatar_url %}
-                    <img src="{{ top.avatar_url }}" alt="" class="w-20 h-20 rounded-xl object-cover border border-inverse-on-surface/20">
+                    <img src="{{ top.avatar_url }}" alt="{{ top.github_username }}" class="w-20 h-20 rounded-xl object-cover border border-inverse-on-surface/20">
                     {% else %}
                     <div class="w-20 h-20 rounded-xl grid place-items-center bg-inverse-on-surface/10 font-display font-bold text-2xl">{{ top.initials }}</div>
                     {% endif %}
@@ -61,7 +61,7 @@
                 {% endif %}
                 <span class="w-8 text-center font-display font-semibold text-lg shrink-0 {% if rank <= 3 %}text-primary{% else %}text-on-surface-variant{% endif %}">{{ rank }}</span>
                 {% if p.avatar_url %}
-                <img src="{{ p.avatar_url }}" alt="" class="w-11 h-11 rounded-xl object-cover bg-surface-container shrink-0" loading="lazy">
+                <img src="{{ p.avatar_url }}" alt="{{ p.github_username }}" class="w-11 h-11 rounded-xl object-cover bg-surface-container shrink-0" loading="lazy">
                 {% else %}
                 <span class="w-11 h-11 rounded-xl bg-primary/12 text-primary grid place-items-center font-bold shrink-0">{{ p.initials }}</span>
                 {% endif %}
