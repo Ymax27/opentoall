@@ -67,7 +67,7 @@ la connexion) → tu apparais / montes dans le classement.
 - Celery + Redis (optionnel ; en prod légère : cron + `/internal/fetch-issues/`)
 - django-allauth (**OAuth App** GitHub — pas une GitHub App)
 - Tailwind (CDN) + WhiteNoise + Gunicorn
-- Déploiement typique : **Fly.io** + **Neon** (Postgres)
+- Déploiement typique : **Render** + **Neon** (Postgres)
 
 ## Démarrage local
 
@@ -97,10 +97,10 @@ django-allauth attend une **OAuth App** classique :
 
 [GitHub → Settings → Developer settings → OAuth Apps](https://github.com/settings/developers)
 
-| Champ | Local | Prod (exemple Fly) |
+| Champ | Local | Prod (Render) |
 |-------|-------|--------------------|
-| Homepage URL | `http://localhost:8000` | `https://opentoall.fly.dev` |
-| Authorization callback URL | `http://localhost:8000/accounts/github/login/callback/` | `https://opentoall.fly.dev/accounts/github/login/callback/` |
+| Homepage URL | `http://localhost:8000` | `https://opentoall.onrender.com` |
+| Authorization callback URL | `http://localhost:8000/accounts/github/login/callback/` | `https://opentoall.onrender.com/accounts/github/login/callback/` |
 
 Puis dans les secrets / `.env` :
 
@@ -120,10 +120,10 @@ d’installation, ou mauvais type d’app → erreurs OAuth (`redirect_uri_misma
 
 1. L’app GitHub est bien une **OAuth App** (pas GitHub App).
 2. Callback URL **exacte** (https, domaine, `/accounts/github/login/callback/`, slash final).
-3. `GITHUB_CLIENT_ID` et `GITHUB_CLIENT_SECRET` sur Fly = ceux de **cette** OAuth App.
-4. Django **Sites** (`/admin/` → Sites) : domaine = `opentoall.fly.dev` (sans `https://`).
+3. `GITHUB_CLIENT_ID` et `GITHUB_CLIENT_SECRET` sur Render = ceux de **cette** OAuth App.
+4. Django **Sites** (`/admin/` → Sites) : domaine = `opentoall.onrender.com` (sans `https://`).
 5. Pas de doublon contradictoire : si une entrée *Social applications* existe dans
-   l’admin allauth, ses credentials doivent être **identiques** aux secrets Fly
+   l’admin allauth, ses credentials doivent être **identiques** aux variables d’environnement Render
    (sinon allauth peut utiliser les mauvais).
 6. `DEBUG=False`, cookies sécurisés, site servi en **HTTPS**.
 7. Après fix : vider cookies du site / refaire un login en navigation privée.
@@ -161,17 +161,21 @@ second run complète les autres langages.
 
 > Ne lance **jamais** `seed_demo` en production (liens GitHub factices / issues fermées).
 
-## Déploiement (Fly + Neon) — résumé
+## Déploiement (Render + Neon) — résumé
 
-1. Neon → `DATABASE_URL`
-2. Secrets Fly : `SECRET_KEY`, `DATABASE_URL`, `GITHUB_CLIENT_ID`,
-   `GITHUB_CLIENT_SECRET`, `GITHUB_PAT`, `FETCH_ISSUES_TOKEN`, `DEBUG=False`,
-   `USE_REDIS_CACHE=0` (tant qu’il n’y a pas de Redis distant)
-3. `fly deploy`
-4. Configurer l’OAuth App + Site Django (checklist ci-dessus)
-5. Premier `fetch-issues` + cron toutes les 6 h (cron-job.org)
+1. Neon → créer la base et copier `DATABASE_URL`
+2. Render → **New → Blueprint** → connecter ce dépôt (Render lit `render.yaml`)
+3. Renseigner les variables secrètes demandées par Render : `DATABASE_URL`,
+   `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_PAT`, `ADMIN_USERNAME`,
+   `ADMIN_PASSWORD`, `ADMIN_EMAIL` (les autres variables sont définies ou
+   générées par `render.yaml`)
+4. Configurer l’OAuth App (callback
+   `https://opentoall.onrender.com/accounts/github/login/callback/`) + Site
+   Django (checklist ci-dessus)
+5. Premier `fetch-issues` + les deux crons (voir « Les deux crons » plus haut) :
+   `/internal/health/` toutes les 10 min, `/internal/fetch-issues/` toutes les 6 h
 
-Détails machines / `fly.toml` : voir le fichier à la racine du repo.
+Détails du service : voir `render.yaml` à la racine du repo.
 
 ## Tests
 
