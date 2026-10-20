@@ -173,3 +173,28 @@ body {
 .htmx-request.htmx-indicator,
 .htmx-request .htmx-indicator { opacity: 1; }
 .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
+
+
+/* ---- Loading skeleton (Explore) ---------------------------------------- */
+.skeleton {
+  background: linear-gradient(90deg,
+    rgb(var(--surface-container)) 25%,
+    rgb(var(--surface-container-low)) 50%,
+    rgb(var(--surface-container)) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+/* Hidden (no layout space) until HTMX starts a request */
+#skeleton-loader { display: none; }
+#skeleton-loader.htmx-request { display: grid; }
+/* Swap the real list out while the skeleton is showing */
+body:has(#skeleton-loader.htmx-request) #issue-list { display: none; }
