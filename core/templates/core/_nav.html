@@ -42,7 +42,7 @@
                 {% else %}
                 <span class="w-8 h-8 rounded-lg bg-primary/15 text-primary grid place-items-center text-sm font-bold">{{ profile.initials }}</span>
                 {% endif %}
-                <span class="hidden sm:inline text-sm font-medium">{{ profile.github_username|default:user.username }}</span>
+                <span class="sr-only sm:not-sr-only text-sm font-medium">{{ profile.github_username|default:user.username }}</span>
             </a>
             {% endwith %}
             <a href="{% url 'account_logout' %}" class="hidden sm:flex w-10 h-10 items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Déconnexion">
@@ -51,7 +51,7 @@
             {% else %}
             <a href="{% url 'account_login' %}" class="ml-1 inline-flex items-center gap-2 bg-primary text-on-primary text-sm font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow-card-hover hover:bg-primary-container transition-all active:scale-95">
                 <span class="material-symbols-outlined text-[18px]">login</span>
-                <span class="hidden sm:inline">Connexion</span>
+                <span class="sr-only sm:not-sr-only">Connexion</span>
             </a>
             {% endif %}
         </div>

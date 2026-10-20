@@ -13,7 +13,7 @@
             <div class="relative shrink-0">
                 <div class="absolute inset-0 bg-primary/25 rounded-2xl blur-xl"></div>
                 {% if profile.avatar_url %}
-                <img src="{{ profile.avatar_url }}" alt="{{ profile.github_username }}" class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-2xl object-cover shadow-card border-2 border-surface-container-lowest bg-surface-container">
+                <img src="{{ profile.avatar_url }}" alt="" class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-2xl object-cover shadow-card border-2 border-surface-container-lowest bg-surface-container">
                 {% else %}
                 <div class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-2xl grid place-items-center bg-primary/15 text-primary font-display font-bold text-4xl shadow-card">{{ profile.initials }}</div>
                 {% endif %}
