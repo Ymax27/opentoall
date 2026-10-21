@@ -14,4 +14,5 @@ urlpatterns = [
         views.fetch_issues_trigger,
         name="fetch_issues_trigger",
     ),
+    path("llms.txt", views.llms_txt, name="llms_txt"),
 ]

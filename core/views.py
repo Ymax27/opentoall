@@ -353,3 +353,27 @@ def fetch_issues_trigger(request):
         {"ok": True, "started": True, "pages": pages, "mode": "async"},
         status=202,
     )
+
+
+def llms_txt(request):
+    """Serve a short machine-readable description for AI crawlers (llms.txt)."""
+    content = """# OpenToAll
+
+> Find an open source issue you can actually clone and finish. Built for developers who need a realistic first contribution.
+
+OpenToAll aggregates `good first issue` and `help wanted` issues from GitHub, with filters for language, difficulty, and maintainer responsiveness. It aims to make open-source contribution more accessible, particularly for developers in Africa.
+
+## Key pages
+
+- [Home](https://opentoall.onrender.com/): Project overview
+- [Explore](https://opentoall.onrender.com/explore/): Search and filter issues
+- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Contributor rankings by country
+- [GitHub](https://github.com/Ymax27/opentoall): Source repository
+
+## Preferred crawl paths
+
+- /explore/ — issue listings
+- /leaderboard/ — community statistics
+- Avoid /admin/ and /internal/ endpoints
+"""
+    return HttpResponse(content, content_type="text/plain")
