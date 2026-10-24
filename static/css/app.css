@@ -60,6 +60,7 @@
   --on-error: 255 255 255;
   --error-container: 255 218 214;
   --on-error-container: 147 0 10;
+  color-scheme: light;
 }
 
 .dark {
@@ -102,6 +103,7 @@
   --on-error: 105 0 5;
   --error-container: 147 0 10;
   --on-error-container: 255 218 214;
+  color-scheme: dark;
 }
 
 /* ---- Base ---------------------------------------------------------------- */
@@ -118,6 +120,11 @@ html { scroll-behavior: smooth; }
 body {
   -webkit-tap-highlight-color: transparent;
   font-feature-settings: "ss01" on, "kern" on;
+}
+
+select option {
+  background-color: rgb(var(--surface-container-low));
+  color: rgb(var(--on-surface));
 }
 
 :focus-visible {
