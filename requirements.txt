@@ -46,5 +46,5 @@ tzdata==2026.3
 tzlocal==5.4.4
 urllib3==2.8.0
 vine==5.1.0
-wcwidth==0.8.2
+wcwidth==0.9.3
 whitenoise==6.8.2
