@@ -353,3 +353,21 @@ def fetch_issues_trigger(request):
         {"ok": True, "started": True, "pages": pages, "mode": "async"},
         status=202,
     )
+
+
+def llms_txt(request):
+    """Serve a short, structured llms.txt description for AI search and crawlers."""
+    text = (
+        "# OpenToAll\n"
+        "> Find an open source issue you can actually clone and finish. "
+        "Built for developers who need a realistic first contribution.\n\n"
+        "## Core Pages\n"
+        "- [Home](https://opentoall.onrender.com/): Platform overview and curated issues\n"
+        "- [Explore](https://opentoall.onrender.com/explore/): Search and browse filtered beginner-friendly issues\n"
+        "- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Community contributors and open source milestones\n\n"
+        "## Source code\n"
+        "- [GitHub repository](https://github.com/Ymax27/opentoall): Source code, open issues and contribution guide\n\n"
+        "## Optional\n"
+        "- [Login](https://opentoall.onrender.com/accounts/login/): GitHub OAuth login\n"
+    )
+    return HttpResponse(text, content_type="text/plain; charset=utf-8")

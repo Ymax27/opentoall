@@ -333,3 +333,11 @@ def test_leaderboard_pagination(client, monkeypatch):
     assert r4.status_code == 200
     assert r4.context["page_obj"].number == 2
     assert [p.github_username for p in r4.context["profiles"]] == ["lbuser1"]
+
+@pytest.mark.django_db
+def test_llms_txt_endpoint(client):
+    response = client.get("/llms.txt")
+    assert response.status_code == 200
+    assert response["Content-Type"].startswith("text/plain")
+    assert b"# OpenToAll" in response.content
+    assert b"/explore/" in response.content
