@@ -81,10 +81,17 @@
 
 <main id="main" class="flex-1 w-full">
     {% if messages %}
-    <div class="max-w-content mx-auto px-4 lg:px-8 pt-4">
+    <div class="max-w-content mx-auto px-4 lg:px-8 pt-4" role="region" aria-label="Notifications">
         {% for message in messages %}
-        <div class="mb-2 rounded-lg px-4 py-3 text-sm font-medium bg-primary-container/15 text-on-primary-container border border-primary/20">
-            {{ message }}
+        <div data-flash
+             data-flash-tags="{{ message.tags }}"
+             role="{% if 'error' in message.tags or 'warning' in message.tags %}alert{% else %}status{% endif %}"
+             class="mb-2 flex items-start justify-between gap-3 rounded-lg px-4 py-3 text-sm font-medium bg-primary-container/15 text-on-primary-container border border-primary/20">
+            <span>{{ message }}</span>
+            <button type="button" data-flash-close aria-label="Fermer le message"
+                    class="shrink-0 -mr-1 rounded px-2 leading-none text-lg opacity-70 hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                &times;
+            </button>
         </div>
         {% endfor %}
     </div>
@@ -111,6 +118,29 @@
         d.classList.toggle('-translate-x-full', !open);
         o.classList.toggle('hidden', !open);
     }
+</script>
+<script>
+    // Flash messages: close button + auto-dismiss (success/info only)
+    (function () {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const AUTO_DISMISS_MS = 5000;
+
+        function dismiss(el) {
+            if (!el || !el.parentNode) return;
+            if (reduceMotion) { el.remove(); return; }
+            el.style.transition = 'opacity 200ms ease, transform 200ms ease';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-4px)';
+            setTimeout(function () { el.remove(); }, 200);
+        }
+
+        document.querySelectorAll('[data-flash]').forEach(function (el) {
+            const sticky = /\b(error|warning)\b/.test(el.dataset.flashTags || '');
+            const btn = el.querySelector('[data-flash-close]');
+            if (btn) btn.addEventListener('click', function () { dismiss(el); });
+            if (!sticky) setTimeout(function () { dismiss(el); }, AUTO_DISMISS_MS);
+        });
+    })();
 </script>
 {% block extra_body %}{% endblock %}
 </body>
