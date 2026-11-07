@@ -15,4 +15,6 @@ urlpatterns = [
         name="fetch_issues_trigger",
     ),
     path("llms.txt", views.llms_txt, name="llms_txt"),
+    path("robots.txt", views.robots_txt, name="robots_txt"),
+    path("sitemap.xml", views.sitemap_xml, name="sitemap_xml"),
 ]

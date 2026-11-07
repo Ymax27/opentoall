@@ -341,3 +341,39 @@ def test_llms_txt_endpoint(client):
     assert response["Content-Type"].startswith("text/plain")
     assert b"# OpenToAll" in response.content
     assert b"/explore/" in response.content
+
+
+# --------------------------------------------------------------------------- #
+# robots.txt and sitemap.xml                                                  #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_robots_txt(client):
+    resp = client.get("/robots.txt")
+    assert resp.status_code == 200
+    assert resp["Content-Type"].startswith("text/plain")
+    body = resp.content.decode()
+    assert "User-agent: *" in body
+    assert "Disallow: /admin/" in body
+    assert "Sitemap: http://testserver/sitemap.xml" in body
+
+
+@pytest.mark.django_db
+def test_sitemap_uses_request_host(client, settings):
+    settings.ALLOWED_HOSTS = ["opentoall.test"]
+    open_issue = Issue.objects.create(
+        github_issue_id=1, title="Open", url="https://github.com/a/b/issues/1",
+        repo_full_name="a/b", is_assigned=False,
+    )
+    assigned = Issue.objects.create(
+        github_issue_id=2, title="Taken", url="https://github.com/a/b/issues/2",
+        repo_full_name="a/b", is_assigned=True,
+    )
+    resp = client.get("/sitemap.xml", HTTP_HOST="opentoall.test")
+    assert resp.status_code == 200
+    body = resp.content.decode()
+    # Absolute URLs come from the request host, not the django.contrib.sites table.
+    assert "example.com" not in body
+    for name in ("home", "explore", "leaderboard"):
+        assert "http://opentoall.test" + reverse(name) in body
+    assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
+    assert reverse("issue_detail", args=[assigned.pk]) not in body

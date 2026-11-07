@@ -11,6 +11,12 @@ from django.views.decorators.http import require_http_methods
 from .cache_keys import CACHE_TTL, cache_key, cache_get, cache_set
 from .models import Contribution, Issue, Profile
 
+from django.contrib.sites.requests import RequestSite
+from django.contrib.sitemaps.views import x_robots_tag
+from django.template.response import TemplateResponse
+
+from .sitemaps import sitemaps as sitemap_classes
+
 SORT_OPTIONS = {
     "stars": "-stars_count",
     "recent": "-issue_updated_at",
@@ -371,3 +377,30 @@ def llms_txt(request):
         "- [Login](https://opentoall.onrender.com/accounts/login/): GitHub OAuth login\n"
     )
     return HttpResponse(text, content_type="text/plain; charset=utf-8")
+
+def robots_txt(request):
+    """Serve robots.txt: allow public pages, hide admin/internal, point to the sitemap."""
+    text = (
+        "User-agent: *\n"
+        "Disallow: /admin/\n"
+        "Disallow: /internal/\n"
+        "Disallow: /accounts/\n"
+        "Allow: /\n\n"
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}\n"
+    )
+    return HttpResponse(text, content_type="text/plain; charset=utf-8")
+
+@x_robots_tag
+def sitemap_xml(request):
+    """sitemap.xml with absolute URLs built from the request host."""
+    site = RequestSite(request)
+    protocol = "https" if request.is_secure() else "http"
+    urls = []
+    for section in sitemap_classes.values():
+        urls.extend(section().get_urls(site=site, protocol=protocol))
+    return TemplateResponse(
+        request,
+        "sitemap.xml",
+        {"urlset": urls},
+        content_type="application/xml",
+    )
