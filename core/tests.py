@@ -377,3 +377,44 @@ def test_sitemap_uses_request_host(client, settings):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
+
+
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("htmx", [False, True])
+def test_explore_foundation_filter(client, htmx):
+    cache.clear()
+    for i, foundation in enumerate(["CNCF", "CNCF", "Apache", ""]):
+        Issue.objects.create(
+            github_issue_id=500 + i, title=f"Found {i}", url="https://github.com/a/b",
+            repo_full_name="a/b", foundation=foundation, stars_count=i,
+        )
+    headers = {"HTTP_HX_REQUEST": "true" if htmx else "false"}
+    resp = client.get(reverse("explore"), {"foundation": "CNCF"}, **headers)
+    assert resp.status_code == 200
+    assert resp.context["total_count"] == 2
+    assert {i.foundation for i in resp.context["page_obj"]} == {"CNCF"}
+    assert resp.context["foundations"] == ["Apache", "CNCF"]
+    if not htmx:
+        html = resp.content.decode()
+        assert 'name="foundation"' in html
+        assert '<option value="CNCF" selected>' in html
+
+
+@pytest.mark.django_db
+def test_explore_foundation_filter_pagination(client):
+    cache.clear()
+    Issue.objects.bulk_create([
+        Issue(
+            github_issue_id=700 + i, title=f"CNCF {i}", url="https://github.com/a/b",
+            repo_full_name="a/b", foundation="CNCF", stars_count=i,
+        )
+        for i in range(31)
+    ])
+    resp = client.get(reverse("explore"), {"foundation": "CNCF"})
+    links = re.findall(r'(?:href|hx-get)="([^"]+)"', resp.content.decode())
+    page_links = [link for link in links if "page=" in link]
+    assert page_links
+    for link in page_links:
+        assert parse_qs(urlsplit(unescape(link)).query)["foundation"] == ["CNCF"]
