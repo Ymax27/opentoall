@@ -1,4 +1,4 @@
-amqp==5.4.1
+amqp==5.4.2
 anyio==4.14.2
 asgiref==3.13.0
 billiard==4.2.4
