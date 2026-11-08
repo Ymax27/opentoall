@@ -377,3 +377,25 @@ def test_sitemap_uses_request_host(client, settings):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("name", ["home", "explore", "leaderboard"])
+def test_json_ld_on_main_pages(client, name):
+    import json
+
+    resp = client.get(reverse(name))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    blocks = re.findall(
+        r'<script type="application/ld\+json">(.*?)</script>', html, re.S
+    )
+    data = [json.loads(b) for b in blocks]  # every block must be valid JSON
+    types = {d["@type"] for d in data}
+    assert {"Organization", "WebSite", "WebPage"} <= types
+    org = next(d for d in data if d["@type"] == "Organization")
+    assert org["name"] == "OpenToAll"
+    assert org["url"] == "http://testserver/"
+    assert org["logo"].startswith("http://testserver/static/")
+    page = next(d for d in data if d["@type"] == "WebPage")
+    assert page["url"] == "http://testserver" + reverse(name)
