@@ -72,6 +72,9 @@
     </script>
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    {% for block in json_ld_blocks %}
+    <script type="application/ld+json">{{ block|safe }}</script>
+    {% endfor %}
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col">
