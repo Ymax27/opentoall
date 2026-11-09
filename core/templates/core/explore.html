@@ -59,7 +59,7 @@
 
         </div>
 
-        <div class="flex items-center gap-2 mt-4">
+        <div class="flex flex-wrap items-center gap-2 mt-4">
             <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</span>
             <label class="sr-only" for="clone-size-filter">Poids du clone</label>
             <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
@@ -67,6 +67,18 @@
                 <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Clone léger</option>
                 <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins</option>
             </select>
+
+            {% if foundations %}
+            <span class="hidden sm:block w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Fondation</span>
+            <label class="sr-only" for="foundation-filter">Fondation</label>
+            <select name="foundation" id="foundation-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+                <option value="">Toutes</option>
+                {% for f in foundations %}
+                <option value="{{ f }}" {% if filters.foundation|lower == f|lower %}selected{% endif %}>{{ f }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
         </div>
     </form>
 

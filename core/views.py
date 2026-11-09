@@ -151,11 +151,23 @@ def explore(request):
         )
         cache_set(languages_key, languages, CACHE_TTL)
 
+    foundations_key = cache_key("explore", "foundations")
+    foundations = cache_get(foundations_key)
+    if foundations is None:
+        foundations = list(
+            Issue.objects.exclude(foundation="")
+            .values_list("foundation", flat=True)
+            .distinct()
+            .order_by("foundation")
+        )
+        cache_set(foundations_key, foundations, CACHE_TTL)
+
     context = {
         "page_obj": page_obj,
         "total_count": paginator.count,
         "querystring": querystring,
         "languages": languages,
+        "foundations": foundations,
         "filters": {
             "q": q,
             "language": language,
