@@ -450,13 +450,14 @@ def test_about_page_and_built_by_credit(client):
     about = client.get(reverse("about"))
     assert about.status_code == 200
     assert "À propos".encode() in about.content
-    assert b"@Ymax27" in about.content
-    assert b"12 contributeurs" in about.content
+    assert b"Built by" in about.content
+    assert b">Ymax<" in about.content
+    assert b"12 amazing contributors" in about.content
     assert b"/graphs/contributors" in about.content
 
     home = client.get(reverse("home"))
     assert home.status_code == 200
-    assert b"Construit par" in home.content
+    assert b"Built by" in home.content
     assert reverse("about").encode() in home.content
 
 
