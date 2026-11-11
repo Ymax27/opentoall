@@ -96,6 +96,45 @@ FAQ_ITEMS = (
     },
 )
 
+# Homepage “Pourquoi OpenToAll ?” comparison points (#51).
+WHY_ITEMS = (
+    {
+        "icon": "download",
+        "title": "Le poids du clone, pas seulement le label",
+        "text": (
+            "GitHub ne dit pas si le dépôt fait 50 Mo ou 5 Go. "
+            "OpenToAll estime le poids du clone pour que tu télécharges "
+            "même avec une connexion limitée."
+        ),
+    },
+    {
+        "icon": "school",
+        "title": "Un vrai fit débutant",
+        "text": (
+            "Une étiquette « good first issue » ne suffit pas. "
+            "On croise niveau, docs du projet et signaux d’accueil "
+            "pour éviter les issues pièges."
+        ),
+    },
+    {
+        "icon": "schedule",
+        "title": "Des mainteneurs qui répondent",
+        "text": (
+            "Sur GitHub seul, tu découvres le silence après coup. "
+            "Ici, la réactivité des mainteneurs fait partie du filtre."
+        ),
+    },
+    {
+        "icon": "public",
+        "title": "Ta contribution reste visible",
+        "text": (
+            "Les boards génériques s’arrêtent à la liste d’issues. "
+            "OpenToAll lie tes PR mergées à un profil et un classement — "
+            "utile pour montrer ton travail."
+        ),
+    },
+)
+
 # Fields needed by issue cards / explore list (avoid pulling full body blobs).
 ISSUE_LIST_FIELDS = (
     "id",
@@ -145,7 +184,12 @@ def home(request):
     return render(
         request,
         "core/home.html",
-        {"stats": stats, "featured": featured, "faq_items": FAQ_ITEMS},
+        {
+            "stats": stats,
+            "featured": featured,
+            "faq_items": FAQ_ITEMS,
+            "why_items": WHY_ITEMS,
+        },
     )
 
 

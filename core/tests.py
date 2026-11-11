@@ -100,6 +100,19 @@ def test_home_page_includes_faq(client):
 
 
 @pytest.mark.django_db
+def test_home_page_why_opentoall_section(client):
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="why"' in html
+    assert "Pourquoi OpenToAll" in html
+    assert "poids du clone" in html.lower()
+    assert "mainteneurs" in html.lower()
+    assert len(resp.context["why_items"]) >= 3
+    assert b"#why" in resp.content
+
+
+@pytest.mark.django_db
 def test_explore_page_and_htmx(client):
     Issue.objects.create(
         github_issue_id=3, title="Fix bug", url="https://x",
