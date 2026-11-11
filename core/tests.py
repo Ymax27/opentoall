@@ -373,7 +373,7 @@ def test_sitemap_uses_request_host(client, settings):
     body = resp.content.decode()
     # Absolute URLs come from the request host, not the django.contrib.sites table.
     assert "example.com" not in body
-    for name in ("home", "contact", "explore", "leaderboard"):
+    for name in ("home", "support", "explore", "leaderboard"):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
@@ -420,7 +420,7 @@ def test_explore_foundation_filter_pagination(client):
         
         
 @pytest.mark.django_db
-@pytest.mark.parametrize("name", ["home", "contact", "explore", "leaderboard"])
+@pytest.mark.parametrize("name", ["home", "support", "explore", "leaderboard"])
 def test_json_ld_on_main_pages(client, name):
     import json
 
@@ -442,25 +442,28 @@ def test_json_ld_on_main_pages(client, name):
 
 
 # --------------------------------------------------------------------------- #
-# Contact / support (#45)                                                     #
+# Support (#45)                                                               #
 # --------------------------------------------------------------------------- #
 @pytest.mark.django_db
-def test_contact_page_get(client):
-    resp = client.get(reverse("contact"))
+def test_support_page_get(client):
+    resp = client.get(reverse("support"))
     assert resp.status_code == 200
-    assert b"Contact" in resp.content
+    assert b"Support" in resp.content
     assert b"sous quelques jours" in resp.content
     assert b"linxconcept27@gmail.com" in resp.content
-    assert reverse("contact").encode() in client.get(reverse("home")).content
+    assert reverse("support").encode() in client.get(reverse("home")).content
+    legacy = client.get("/contact/")
+    assert legacy.status_code == 301
+    assert legacy["Location"] == reverse("support")
 
 
 @pytest.mark.django_db
-def test_contact_form_sends_email(client, settings):
+def test_support_form_sends_email(client, settings):
     settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     from django.core import mail
 
     resp = client.post(
-        reverse("contact"),
+        reverse("support"),
         {
             "name": "Amina",
             "email": "amina@example.com",
@@ -476,12 +479,12 @@ def test_contact_form_sends_email(client, settings):
 
 
 @pytest.mark.django_db
-def test_contact_form_honeypot_skips_email(client, settings):
+def test_support_form_honeypot_skips_email(client, settings):
     settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
     from django.core import mail
 
     resp = client.post(
-        reverse("contact"),
+        reverse("support"),
         {
             "name": "Bot",
             "email": "bot@example.com",
@@ -494,9 +497,9 @@ def test_contact_form_honeypot_skips_email(client, settings):
 
 
 @pytest.mark.django_db
-def test_contact_form_validation_errors(client):
+def test_support_form_validation_errors(client):
     resp = client.post(
-        reverse("contact"),
+        reverse("support"),
         {"name": "", "email": "not-an-email", "message": "", "website": ""},
     )
     assert resp.status_code == 200

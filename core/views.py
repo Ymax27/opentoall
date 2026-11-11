@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .cache_keys import CACHE_TTL, cache_key, cache_get, cache_set
-from .forms import ContactForm
+from .forms import SupportForm
 from .models import Contribution, Issue, Profile
 
 logger = logging.getLogger(__name__)
@@ -85,18 +85,18 @@ def home(request):
     return render(request, "core/home.html", {"stats": stats, "featured": featured})
 
 
-def contact(request):
-    """Contact / support page: short form + public email."""
+def support(request):
+    """Support page: short form + public email."""
     support_email = getattr(settings, "SUPPORT_EMAIL", "linxconcept27@gmail.com")
     if request.method == "POST":
-        form = ContactForm(request.POST)
+        form = SupportForm(request.POST)
         if form.is_valid():
             if form.cleaned_data.get("website"):
                 messages.success(
                     request,
                     "Merci — on te répond sous quelques jours.",
                 )
-                return redirect("contact")
+                return redirect("support")
 
             name = form.cleaned_data["name"]
             email = form.cleaned_data["email"]
@@ -118,8 +118,8 @@ def contact(request):
                 mail.send(fail_silently=False)
             except Exception:
                 logger.exception(
-                    "Contact form email failed",
-                    extra={"event": "contact_email_error"},
+                    "Support form email failed",
+                    extra={"event": "support_email_error"},
                 )
                 messages.error(
                     request,
@@ -127,7 +127,7 @@ def contact(request):
                 )
                 return render(
                     request,
-                    "core/contact.html",
+                    "core/support.html",
                     {"form": form, "support_email": support_email},
                 )
 
@@ -135,13 +135,13 @@ def contact(request):
                 request,
                 "Merci — on te répond sous quelques jours.",
             )
-            return redirect("contact")
+            return redirect("support")
     else:
-        form = ContactForm()
+        form = SupportForm()
 
     return render(
         request,
-        "core/contact.html",
+        "core/support.html",
         {"form": form, "support_email": support_email},
     )
 
@@ -448,7 +448,7 @@ def llms_txt(request):
         "Built for developers who need a realistic first contribution.\n\n"
         "## Core Pages\n"
         "- [Home](https://opentoall.onrender.com/): Platform overview and curated issues\n"
-        "- [Contact](https://opentoall.onrender.com/contact/): Reach the team without opening a GitHub issue\n"
+        "- [Support](https://opentoall.onrender.com/support/): Reach the team without opening a GitHub issue\n"
         "- [Explore](https://opentoall.onrender.com/explore/): Search and browse filtered beginner-friendly issues\n"
         "- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Community contributors and open source milestones\n\n"
         "## Source code\n"
