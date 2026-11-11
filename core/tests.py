@@ -588,6 +588,28 @@ def test_json_ld_on_main_pages(client, name):
 
 
 # --------------------------------------------------------------------------- #
+# Footer navigation (#54)                                                     #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_footer_covers_product_community_and_support(client, settings):
+    settings.GITHUB_REPO_URL = "https://github.com/Ymax27/opentoall"
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+
+    assert ">Produit<" in html
+    assert ">Communauté<" in html
+    assert ">Support<" in html
+
+    assert reverse("about") in html
+    assert reverse("support") in html
+    assert "#faq" in html
+    assert "https://github.com/Ymax27/opentoall/discussions" in html
+    assert "CONTRIBUTING.md" in html
+    assert "Built by" in html
+
+
+# --------------------------------------------------------------------------- #
 # Support (#45)                                                               #
 # --------------------------------------------------------------------------- #
 @pytest.mark.django_db
