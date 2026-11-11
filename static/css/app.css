@@ -1,125 +1,124 @@
 /* ==========================================================================
-   OpenToAll — "Signal" design tokens
-   Cool stone paper + logo indigo. Not cream/serif/terracotta, not acid-dark,
-   not broadsheet. Signature: clone-weight bars (bandwidth honesty).
-   Channels are "R G B" for Tailwind opacity modifiers.
+   OpenToAll — « Carnet de chantier »
+   Encre + papier froid + vert pin + cuivre. Filets 1 px, pas d'ombres
+   flottantes. Signature : règle de poids du clone + coordonnées mono.
+   Les couleurs sont des canaux « R G B » pour les modificateurs d'opacité
+   de Tailwind (rgb(var(--x) / <alpha-value>)).
    ========================================================================== */
+
 :root {
   /* Surfaces */
-  --background: 245 244 241;           /* Stone */
-  --on-background: 14 21 37;           /* Ink */
-  --surface: 245 244 241;
-  --surface-dim: 228 226 221;
-  --surface-bright: 255 255 255;
-  --surface-container-lowest: 255 255 255;
-  --surface-container-low: 250 249 246;
-  --surface-container: 238 236 231;
-  --surface-container-high: 228 226 221;
-  --surface-container-highest: 214 212 206;
-  --surface-variant: 228 226 221;
-  --on-surface: 14 21 37;
-  --on-surface-variant: 102 112 133;   /* Mute */
-  --inverse-surface: 14 21 37;
-  --inverse-on-surface: 245 244 241;
-  --outline: 148 153 164;
-  --outline-variant: 214 212 206;
-  --surface-tint: 75 70 240;
+  --background: 242 242 234;           /* Papier  #F2F2EA */
+  --on-background: 20 23 15;           /* Encre   #14170F */
+  --surface: 242 242 234;
+  --surface-dim: 230 230 219;
+  --surface-bright: 255 255 252;
+  --surface-container-lowest: 252 252 247;
+  --surface-container-low: 247 247 240;
+  --surface-container: 232 232 221;
+  --surface-container-high: 219 219 206;
+  --surface-container-highest: 205 205 191;
+  --surface-variant: 232 232 221;
+  --on-surface: 20 23 15;
+  --on-surface-variant: 88 94 85;      /* Ardoise #585E55 */
+  --inverse-surface: 20 23 15;
+  --inverse-on-surface: 242 242 234;
+  --outline: 137 142 129;
+  --outline-variant: 211 211 196;
+  --surface-tint: 20 81 60;
 
-  /* Signal indigo — logo */
-  --primary: 75 70 240;
-  --on-primary: 255 255 255;
-  --primary-container: 55 50 210;
-  --on-primary-container: 232 231 255;
-  --inverse-primary: 180 178 255;
-  --primary-fixed: 232 231 255;
-  --primary-fixed-dim: 180 178 255;
-  --on-primary-fixed: 14 12 80;
-  --on-primary-fixed-variant: 55 50 210;
+  /* Action — vert pin */
+  --primary: 20 81 60;                 /* #14513C */
+  --on-primary: 247 250 243;
+  --primary-container: 14 64 47;
+  --on-primary-container: 216 243 227;
+  --inverse-primary: 143 216 184;
+  --primary-fixed: 216 243 227;
+  --primary-fixed-dim: 143 216 184;
+  --on-primary-fixed: 6 32 22;
+  --on-primary-fixed-variant: 14 64 47;
 
-  /* Ember — community accent only */
-  --secondary: 180 90 30;
-  --on-secondary: 255 255 255;
-  --secondary-container: 224 122 47;
-  --on-secondary-container: 60 28 0;
-  --secondary-fixed: 255 228 204;
-  --secondary-fixed-dim: 255 186 140;
-  --on-secondary-fixed: 45 20 0;
-  --on-secondary-fixed-variant: 140 70 20;
+  /* Cuivre — accent éditorial */
+  --secondary: 154 66 24;              /* #9A4218 */
+  --on-secondary: 250 247 242;
+  --secondary-container: 154 66 24;
+  --on-secondary-container: 40 16 4;
+  --secondary-fixed: 255 228 210;
+  --secondary-fixed-dim: 232 166 122;
+  --on-secondary-fixed: 42 17 4;
+  --on-secondary-fixed-variant: 120 50 18;
 
-  /* Merge green */
-  --tertiary: 15 122 75;
-  --on-tertiary: 255 255 255;
-  --tertiary-container: 12 100 62;
-  --on-tertiary-container: 186 245 214;
-  --tertiary-fixed: 186 245 214;
-  --tertiary-fixed-dim: 110 210 160;
-  --on-tertiary-fixed: 0 40 24;
-  --on-tertiary-fixed-variant: 12 100 62;
+  /* Ocre — niveau débutant / attention douce */
+  --tertiary: 138 90 0;                /* #8A5A00 */
+  --on-tertiary: 255 251 240;
+  --tertiary-container: 112 72 0;
+  --on-tertiary-container: 255 232 178;
+  --tertiary-fixed: 255 232 178;
+  --tertiary-fixed-dim: 233 196 106;
+  --on-tertiary-fixed: 42 27 0;
+  --on-tertiary-fixed-variant: 112 72 0;
 
-  --error: 186 26 26;
-  --on-error: 255 255 255;
+  --error: 160 48 36;
+  --on-error: 255 247 245;
   --error-container: 255 218 214;
-  --on-error-container: 147 0 10;
+  --on-error-container: 105 18 12;
   color-scheme: light;
 }
 
 .dark {
-  --background: 10 14 24;
-  --on-background: 236 235 230;
-  --surface: 10 14 24;
-  --surface-dim: 10 14 24;
-  --surface-bright: 40 46 60;
-  --surface-container-lowest: 6 9 16;
-  --surface-container-low: 16 21 34;
-  --surface-container: 22 28 42;
-  --surface-container-high: 32 38 54;
-  --surface-container-highest: 44 50 66;
-  --surface-variant: 44 50 66;
-  --on-surface: 236 235 230;
-  --on-surface-variant: 160 166 178;
-  --inverse-surface: 236 235 230;
-  --inverse-on-surface: 14 21 37;
-  --outline: 120 126 140;
-  --outline-variant: 55 62 78;
-  --surface-tint: 180 178 255;
+  --background: 14 18 14;
+  --on-background: 236 235 228;
+  --surface: 14 18 14;
+  --surface-dim: 14 18 14;
+  --surface-bright: 48 55 48;
+  --surface-container-lowest: 20 25 20;
+  --surface-container-low: 24 29 24;
+  --surface-container: 33 39 33;
+  --surface-container-high: 43 50 43;
+  --surface-container-highest: 54 61 54;
+  --surface-variant: 54 61 54;
+  --on-surface: 236 235 228;
+  --on-surface-variant: 166 171 160;
+  --inverse-surface: 236 235 228;
+  --inverse-on-surface: 20 23 15;
+  --outline: 118 124 114;
+  --outline-variant: 62 69 61;
+  --surface-tint: 134 216 178;
 
-  --primary: 180 178 255;
-  --on-primary: 20 18 90;
-  --primary-container: 75 70 240;
-  --on-primary-container: 232 231 255;
-  --inverse-primary: 75 70 240;
+  --primary: 134 216 178;
+  --on-primary: 8 30 21;
+  --primary-container: 32 110 82;
+  --on-primary-container: 216 243 227;
+  --inverse-primary: 20 81 60;
 
-  --secondary: 255 186 140;
-  --on-secondary: 80 36 0;
-  --secondary-container: 200 100 35;
-  --on-secondary-container: 255 228 204;
+  --secondary: 227 163 119;
+  --on-secondary: 48 20 6;
+  --secondary-container: 180 80 34;
+  --on-secondary-container: 255 228 210;
 
-  --tertiary: 110 210 160;
-  --on-tertiary: 0 48 28;
-  --tertiary-container: 12 100 62;
-  --on-tertiary-container: 186 245 214;
+  --tertiary: 233 196 106;
+  --on-tertiary: 38 26 0;
+  --tertiary-container: 112 72 0;
+  --on-tertiary-container: 255 232 178;
 
-  --error: 255 180 171;
-  --on-error: 105 0 5;
-  --error-container: 147 0 10;
+  --error: 240 160 150;
+  --on-error: 60 8 4;
+  --error-container: 122 28 20;
   --on-error-container: 255 218 214;
   color-scheme: dark;
 }
 
 /* ---- Base ---------------------------------------------------------------- */
 html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 
 body {
   -webkit-tap-highlight-color: transparent;
-  font-feature-settings: "ss01" on, "kern" on;
+  font-feature-settings: "kern" on, "liga" on;
+}
+
+::selection {
+  background: rgb(var(--primary));
+  color: rgb(var(--on-primary));
 }
 
 select option {
@@ -132,30 +131,158 @@ select option {
   outline-offset: 3px;
 }
 
-/* Quiet mesh — not decorative kente overload */
-.kente-bg {
+/* ---- Composants éditoriaux ---------------------------------------------- */
+
+/* Étiquette de section, en mono capitales */
+.eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--on-surface-variant));
+}
+
+/* Note de marge / métadonnée */
+.marginalia {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  color: rgb(var(--on-surface-variant));
+}
+
+/* Papier quadrillé — motif technique, filets à 1 px */
+.grid-paper {
   background-image:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgb(var(--primary) / 0.08), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(var(--secondary-container) / 0.06), transparent);
+    linear-gradient(to right, rgb(var(--on-surface) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--on-surface) / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
-.dot-bg {
-  background-image: radial-gradient(rgb(var(--on-surface) / 0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8125rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  transition: background-color 150ms ease-out, color 150ms ease-out,
+              border-color 150ms ease-out, transform 150ms ease-out;
 }
 
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.btn:active { transform: translateY(1px); }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn-primary {
+  background: rgb(var(--primary));
+  color: rgb(var(--on-primary));
 }
-.animate-fade-up {
-  animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+.btn-primary:hover { background: rgb(var(--primary-container)); }
+
+.btn-outline {
+  border-color: rgb(var(--on-surface) / 0.28);
+  color: rgb(var(--on-surface));
+}
+.btn-outline:hover {
+  background: rgb(var(--on-surface) / 0.05);
+  border-color: rgb(var(--on-surface) / 0.5);
 }
 
-/* Signature: clone-weight meter */
+/* Sur aplat encre : papier fixe, indépendant du thème */
+.btn-paper {
+  background: #F2F2EA;
+  color: #14170F;
+  border-color: #F2F2EA;
+}
+.btn-paper:hover { background: #FFFFFF; border-color: #FFFFFF; }
+
+/* Lien fléché, souligné par un filet qui se resserre */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid rgb(var(--primary) / 0.35);
+  font-weight: 600;
+  color: rgb(var(--primary));
+  transition: border-color 150ms ease-out, gap 150ms ease-out;
+}
+.link-arrow:hover {
+  border-bottom-color: rgb(var(--primary));
+  gap: 0.65rem;
+}
+
+/* Entrée de registre : ligne séparée par un filet, pas une carte */
+.entry {
+  position: relative;
+  display: block;
+  border-top: 1px solid rgb(var(--on-surface) / 0.12);
+  transition: background-color 150ms ease-out, padding-left 150ms ease-out;
+}
+.entry::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: transparent;
+  transition: background-color 150ms ease-out;
+}
+.entry:hover { background: rgb(var(--on-surface) / 0.028); }
+.entry:hover::before { background: rgb(var(--primary)); }
+
+/* Badges et tags */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid rgb(var(--on-surface) / 0.16);
+  border-radius: 2px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: rgb(var(--on-surface-variant));
+  white-space: nowrap;
+}
+.tag-accent {
+  border-color: rgb(var(--secondary) / 0.4);
+  background: rgb(var(--secondary) / 0.07);
+  color: rgb(var(--secondary));
+}
+.tag-strong {
+  border-color: rgb(var(--primary) / 0.45);
+  background: rgb(var(--primary) / 0.07);
+  color: rgb(var(--primary));
+}
+
+/* Champs de formulaire (design system — utilisé par Support à l'étape suivante) */
+.field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgb(var(--outline-variant));
+  border-radius: 3px;
+  background: rgb(var(--surface-container-lowest));
+  color: rgb(var(--on-surface));
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: 0.9375rem;
+}
+.field::placeholder { color: rgb(var(--on-surface-variant) / 0.8); }
+.field:focus {
+  outline: 2px solid rgb(var(--primary));
+  outline-offset: 2px;
+  border-color: rgb(var(--primary));
+}
+
+/* ---- Signature : règle de poids du clone -------------------------------- */
 .weight-meter {
   display: inline-flex;
   align-items: flex-end;
@@ -164,7 +291,7 @@ select option {
 }
 .weight-meter span {
   width: 3px;
-  border-radius: 1px;
+  border-radius: 0;
   background: rgb(var(--outline-variant));
 }
 .weight-meter[data-level="1"] span:nth-child(1),
@@ -177,31 +304,55 @@ select option {
 .weight-meter span:nth-child(2) { height: 8px; }
 .weight-meter span:nth-child(3) { height: 12px; }
 
+/* ---- HTMX : indicateur, liste, squelette -------------------------------- */
 .htmx-request.htmx-indicator,
 .htmx-request .htmx-indicator { opacity: 1; }
 .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
 
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ---- Loading skeleton (Explore) ---------------------------------------- */
+/* Apparition des résultats HTMX — sobre, une seule propriété visuelle */
+@keyframes list-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#issue-list > * {
+  animation: list-in 180ms ease-out both;
+}
+
+/* ---- Mouvement ---------------------------------------------------------- */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Squelette : aplat qui respire, pas de dégradé chromatique */
 .skeleton {
-  background: linear-gradient(90deg,
-    rgb(var(--surface-container)) 25%,
-    rgb(var(--surface-container-low)) 50%,
-    rgb(var(--surface-container)) 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s infinite;
-  border-radius: 0.5rem;
+  background: rgb(var(--surface-container));
+  border-radius: 2px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
 }
-@keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .skeleton { animation: none; }
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
 }
 
-/* Hidden (no layout space) until HTMX starts a request */
 #skeleton-loader { display: none; }
 #skeleton-loader.htmx-request { display: grid; }
-/* Swap the real list out while the skeleton is showing */
 body:has(#skeleton-loader.htmx-request) #issue-list { display: none; }
+
+/* ---- Accessibilité / mouvement réduit ---------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .skeleton { animation: none; }
+  .entry:hover { padding-left: 0; }
+}
