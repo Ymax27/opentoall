@@ -79,6 +79,10 @@ def home(request):
     return render(request, "core/home.html", {"stats": stats, "featured": featured})
 
 
+def about(request):
+    return render(request, "core/about.html")
+
+
 def explore(request):
     q = request.GET.get("q", "").strip()
     language = request.GET.get("language", "").strip()
@@ -381,6 +385,7 @@ def llms_txt(request):
         "Built for developers who need a realistic first contribution.\n\n"
         "## Core Pages\n"
         "- [Home](https://opentoall.onrender.com/): Platform overview and curated issues\n"
+        "- [About](https://opentoall.onrender.com/about/): Short product pitch and built-by credit\n"
         "- [Explore](https://opentoall.onrender.com/explore/): Search and browse filtered beginner-friendly issues\n"
         "- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Community contributors and open source milestones\n\n"
         "## Source code\n"

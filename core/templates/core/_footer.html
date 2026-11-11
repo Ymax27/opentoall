@@ -22,6 +22,9 @@
             <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Communauté</h3>
             <ul class="space-y-2.5 text-sm">
                 <li>
+                    <a href="{% url 'about' %}" class="text-on-surface-variant hover:text-primary transition-colors">À propos</a>
+                </li>
+                <li>
                     <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
                         <span class="material-symbols-outlined text-[18px]">code</span>Dépôt GitHub
                     </a>
@@ -40,7 +43,10 @@
     </div>
     <div class="border-t border-outline-variant/40">
         <div class="max-w-content mx-auto px-4 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
-            <p>© {% now "Y" %} {{ SITE_NAME }} — Open source, sous licence MIT.</p>
+            <div class="space-y-1 text-center sm:text-left">
+                <p>© {% now "Y" %} {{ SITE_NAME }} — Open source, sous licence MIT.</p>
+                {% include "core/_built_by.html" %}
+            </div>
             <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
                 <a href="https://wa.me/237650218023?text=Salut%2C%20je%20souhaite%20soutenir%20OpenToAll" target="_blank" rel="noopener" class="hover:text-primary transition-colors">WhatsApp</a>
                 <span class="text-outline-variant" aria-hidden="true">·</span>

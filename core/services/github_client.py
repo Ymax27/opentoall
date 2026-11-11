@@ -10,6 +10,7 @@ Celery can back off and retry.
 from __future__ import annotations
 
 import logging
+import re
 import time
 from typing import Any
 
@@ -218,3 +219,52 @@ def search_merged_prs(username: str, page: int = 1, per_page: int = 30) -> list[
     if not isinstance(data, dict):
         return []
     return data.get("items", [])
+
+
+def get_repo_contributor_count(full_name: str) -> int | None:
+    """Contributor count for ``owner/repo``, or ``None`` if GitHub is unreachable.
+
+    Uses ``per_page=1`` and the ``Link: rel=last`` header so we never download
+    every contributor. Soft-fails for the UI credit line — never raises.
+    """
+    if not full_name or "/" not in full_name:
+        return None
+
+    try:
+        resp = httpx.get(
+            f"{GITHUB_API}/repos/{full_name}/contributors",
+            headers=_headers(),
+            params={"per_page": 1, "anon": "true"},
+            timeout=3.0,
+        )
+    except httpx.HTTPError as exc:
+        logger.warning(
+            "GitHub contributor count failed (%s): %s",
+            full_name,
+            exc,
+            extra={"event": "github_contributor_count_error"},
+        )
+        return None
+
+    if resp.status_code == 204:
+        return 0
+    if resp.status_code >= 400:
+        logger.debug(
+            "GitHub contributor count client/server error (%s): %s",
+            full_name,
+            resp.status_code,
+        )
+        return None
+
+    link = resp.headers.get("Link") or resp.headers.get("link") or ""
+    match = re.search(r'[?&]page=(\d+)>;\s*rel="last"', link)
+    if match:
+        return int(match.group(1))
+
+    try:
+        data = resp.json()
+    except ValueError:
+        return None
+    if isinstance(data, list):
+        return len(data)
+    return None

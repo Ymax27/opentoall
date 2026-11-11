@@ -373,7 +373,7 @@ def test_sitemap_uses_request_host(client, settings):
     body = resp.content.decode()
     # Absolute URLs come from the request host, not the django.contrib.sites table.
     assert "example.com" not in body
-    for name in ("home", "explore", "leaderboard"):
+    for name in ("home", "about", "explore", "leaderboard"):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
@@ -420,7 +420,7 @@ def test_explore_foundation_filter_pagination(client):
         
         
 @pytest.mark.django_db
-@pytest.mark.parametrize("name", ["home", "explore", "leaderboard"])
+@pytest.mark.parametrize("name", ["home", "about", "explore", "leaderboard"])
 def test_json_ld_on_main_pages(client, name):
     import json
 
@@ -439,4 +439,54 @@ def test_json_ld_on_main_pages(client, name):
     assert org["logo"].startswith("http://testserver/static/")
     page = next(d for d in data if d["@type"] == "WebPage")
     assert page["url"] == "http://testserver" + reverse(name)
+
+
+# --------------------------------------------------------------------------- #
+# About / built-by credit (#44)                                               #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_about_page_and_built_by_credit(client):
+    cache.clear()
+    about = client.get(reverse("about"))
+    assert about.status_code == 200
+    assert "À propos".encode() in about.content
+    assert b"@Ymax27" in about.content
+    assert b"12 contributeurs" in about.content
+    assert b"/graphs/contributors" in about.content
+
+    home = client.get(reverse("home"))
+    assert home.status_code == 200
+    assert b"Construit par" in home.content
+    assert reverse("about").encode() in home.content
+
+
+def test_get_repo_contributor_count_uses_link_header(monkeypatch):
+    class FakeResp:
+        status_code = 200
+        headers = {
+            "Link": '<https://api.github.com/repos/a/b/contributors?per_page=1&page=17>; rel="last"'
+        }
+
+        def json(self):
+            return [{"login": "x"}]
+
+    monkeypatch.setattr(
+        "core.services.github_client.httpx.get",
+        lambda *args, **kwargs: FakeResp(),
+    )
+    # Bypass the autouse stub: call the client helper directly.
+    from core.services import github_client
+
+    assert github_client.get_repo_contributor_count("a/b") == 17
+
+
+def test_get_repo_contributor_count_soft_fails(monkeypatch):
+    import httpx
+    from core.services import github_client
+
+    def boom(*args, **kwargs):
+        raise httpx.ConnectError("offline")
+
+    monkeypatch.setattr("core.services.github_client.httpx.get", boom)
+    assert github_client.get_repo_contributor_count("a/b") is None
 
