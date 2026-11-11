@@ -36,6 +36,66 @@ PAGE_SIZE = 30
 # Number of contributors per page on the leaderboard.
 LEADERBOARD_PAGE_SIZE = 50
 
+# Homepage FAQ (#46) — kept in the view so tests can assert the same copy.
+FAQ_ITEMS = (
+    {
+        "question": "Pour qui est OpenToAll ?",
+        "answer": (
+            "Pour les développeurs qui veulent une vraie première contribution "
+            "open source — surtout si tu as une connexion limitée ou peu de temps. "
+            "Tu cherches une issue encore libre, pas un tutoriel figé."
+        ),
+    },
+    {
+        "question": "Comment marchent les filtres ?",
+        "answer": (
+            "Sur Explorer, tu filtres par langage, niveau, poids du clone et "
+            "fondation. Seules les issues ouvertes et non assignées restent "
+            "visibles, pour éviter les good first issues déjà prises."
+        ),
+    },
+    {
+        "question": "C’est quoi le poids du clone ?",
+        "answer": (
+            "Le compteur Clone estime la taille du dépôt. Un repo léger se "
+            "télécharge plus vite : utile quand la bande passante est serrée. "
+            "Trois barres = plus lourd."
+        ),
+    },
+    {
+        "question": "Est-ce gratuit ?",
+        "answer": (
+            "Oui. OpenToAll est gratuit, sans spam, et le code est open source "
+            "sous licence MIT. Tu te connectes avec GitHub si tu veux un profil "
+            "et le classement."
+        ),
+    },
+    {
+        "question": "Comment j’apparais au classement ?",
+        "answer": (
+            "Connecte-toi avec GitHub. On synchronise tes pull requests "
+            "publiques mergées. Cliquer « Ouvre sur GitHub » n’enregistre rien : "
+            "seules les PR mergées comptent."
+        ),
+    },
+    {
+        "question": "Les issues listées sont-elles vraiment ouvertes ?",
+        "answer": (
+            "Oui au moment de l’ingestion. On rafraîchit régulièrement depuis "
+            "GitHub. Si une issue vient d’être assignée ou fermée, elle peut "
+            "disparaître au prochain passage."
+        ),
+    },
+    {
+        "question": "Comment contribuer à OpenToAll ?",
+        "answer": (
+            "Le dépôt est public : issues labeled good first issue, pull "
+            "requests bienvenues. Pour une question hors code, utilise "
+            "l’email ou WhatsApp indiqués dans le footer."
+        ),
+    },
+)
+
 # Fields needed by issue cards / explore list (avoid pulling full body blobs).
 ISSUE_LIST_FIELDS = (
     "id",
@@ -82,7 +142,11 @@ def home(request):
         .only(*ISSUE_LIST_FIELDS)
         .order_by("-beginner_friendly_score", "-stars_count")[:3]
     )
-    return render(request, "core/home.html", {"stats": stats, "featured": featured})
+    return render(
+        request,
+        "core/home.html",
+        {"stats": stats, "featured": featured, "faq_items": FAQ_ITEMS},
+    )
 
 
 def support(request):

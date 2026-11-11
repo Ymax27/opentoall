@@ -86,6 +86,20 @@ def test_home_page_loads(client):
 
 
 @pytest.mark.django_db
+def test_home_page_includes_faq(client):
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="faq"' in html
+    assert "Questions fréquentes" in html
+    assert "Pour qui est OpenToAll" in html
+    assert "poids du clone" in html.lower() or "Poids du clone" in html or "poids du clone" in html
+    assert "Est-ce gratuit" in html
+    assert "classement" in html.lower()
+    assert len(resp.context["faq_items"]) >= 5
+
+
+@pytest.mark.django_db
 def test_explore_page_and_htmx(client):
     Issue.objects.create(
         github_issue_id=3, title="Fix bug", url="https://x",
