@@ -7,7 +7,7 @@
 **L'open source, ouvert à tous.**
 
 Plateforme de découverte et de valorisation de la contribution open source,
-pensée pour les développeurs africains.
+ouverte à tous.
 
 [Signaler un bug](https://github.com/Ymax27/opentoall/issues) ·
 [Proposer une fonctionnalité](https://github.com/Ymax27/opentoall/issues) ·
@@ -25,7 +25,7 @@ pensée pour les développeurs africains.
 ## Pourquoi ?
 
 Des agrégateurs de « good first issues » existent déjà. OpenToAll ajoute ce qui
-manquait pour beaucoup de contributeurs africains :
+manquait pour beaucoup de contributeurs :
 
 - **Réactivité** des mainteneurs
 - **Bienveillance** envers les débutants (`CONTRIBUTING.md`, score débutant)

@@ -58,7 +58,7 @@ FAQ_ITEMS = (
         "question": "C’est quoi le Poids du clone ?",
         "answer": (
             "Poids du clone, c’est la taille estimée du dépôt à télécharger : "
-            "léger (< 5 Mo), moyen (< 50 Mo) ou lourd. Une à trois barres sur "
+            "léger (< 50 Mo), moyen (< 500 Mo) ou lourd. Une à trois barres sur "
             "les cartes — utile quand la bande passante est serrée."
         ),
     },
@@ -118,7 +118,7 @@ WHY_ITEMS = (
         "icon": "download",
         "title": "Le poids du clone, pas seulement le label",
         "text": (
-            "GitHub ne dit pas si le dépôt fait 50 Mo ou 5 Go. "
+            "GitHub ne dit pas si le dépôt fait 40 Mo ou 2 Go. "
             "OpenToAll estime le poids du clone pour que tu télécharges "
             "même avec une connexion limitée."
         ),

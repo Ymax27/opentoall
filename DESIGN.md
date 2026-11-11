@@ -1,6 +1,6 @@
 # OpenToAll — design system « Signal »
 
-Plateforme de découverte d’issues open source pour développeurs africains.
+Plateforme de découverte d’issues open source, ouverte à tous.
 Raffinement produit (pas une refonte) : palette liée au sujet, typo distinctive,
 une signature visuelle unique — le **compteur de poids de clone**.
 
