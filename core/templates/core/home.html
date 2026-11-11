@@ -18,8 +18,8 @@
             </h1>
             <p class="mt-5 text-lg text-on-surface-variant max-w-lg leading-relaxed">
                 Plus de chasse aux good first issues fermées. Filtre par langage, niveau,
-                réactivité des mainteneurs et <em class="not-italic font-medium text-on-surface">poids du dépôt</em>
-                — pour cloner même avec une connexion limitée.
+                réactivité des mainteneurs et <em class="not-italic font-medium text-on-surface">Poids du clone</em>
+                — pour télécharger même avec une connexion limitée.
             </p>
             <div class="mt-8 flex flex-col sm:flex-row gap-3">
                 <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
@@ -34,18 +34,20 @@
                 {% endif %}
             </div>
             <p class="mt-6 text-sm text-on-surface-variant">
-    Gratuit · Sans spam · Le projet est open source
-</p>
-
-<a href="{{ GITHUB_REPO_URL }}"
-   target="_blank"
-   rel="noopener noreferrer"
-   class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-   aria-label="Star OpenToAll on GitHub">
-    <span class="material-symbols-outlined text-[18px]" aria-hidden="true">star</span>
-    Star us on GitHub
-    <span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
-</a>
+                Gratuit · Sans spam · Le projet est open source
+            </p>
+            <div class="mt-3">
+                {% include "core/_built_by.html" %}
+            </div>
+            <a href="{{ GITHUB_REPO_URL }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+               aria-label="Star OpenToAll on GitHub">
+                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">star</span>
+                Star us on GitHub
+                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
+            </a>
         </div>
 
         <div class="relative animate-fade-up hidden sm:block" style="animation-delay:.08s">
@@ -63,9 +65,9 @@
                     <div class="flex items-center gap-2 text-xs text-on-surface-variant">
                         <span class="font-code">Go</span>
                         <span aria-hidden="true">·</span>
-                        <span class="inline-flex items-center gap-1.5" title="Poids du clone">
-                            <span class="uppercase tracking-wider text-[10px] font-semibold">Clone</span>
-                            <span class="weight-meter" data-level="1" aria-label="Dépôt léger">
+                        <span class="inline-flex items-center gap-1.5" title="Poids du clone : léger">
+                            <span class="uppercase tracking-wider text-[10px] font-semibold">Poids du clone</span>
+                            <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
                                 <span></span><span></span><span></span>
                             </span>
                         </span>
@@ -73,8 +75,9 @@
                     <span class="text-xs font-medium text-tertiary">Réponse ~2 h</span>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-on-surface-variant text-center sm:text-left">
-                Le compteur <strong class="font-medium text-on-surface">Clone</strong> estime le poids du dépôt — notre signature pour une connexion réelle.
+            <p class="mt-3 text-xs text-on-surface-variant text-center sm:text-left max-w-md">
+                <strong class="font-medium text-on-surface">Poids du clone</strong> —
+                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;5&nbsp;Mo), moyen (&lt;&nbsp;50&nbsp;Mo) ou lourd.
             </p>
         </div>
     </div>
@@ -101,6 +104,10 @@
     </div>
 </section>
 
+{% include "core/_why.html" %}
+
+{% include "core/_testimonials.html" %}
+
 {% if featured %}
 <section class="max-w-content mx-auto px-4 lg:px-8 pb-6">
     <div class="flex items-end justify-between mb-6 gap-4">
@@ -119,6 +126,8 @@
     </div>
 </section>
 {% endif %}
+
+{% include "core/_faq.html" %}
 
 <section class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16">
     <div class="relative overflow-hidden rounded-2xl bg-inverse-surface text-inverse-on-surface px-8 py-12 lg:px-14">

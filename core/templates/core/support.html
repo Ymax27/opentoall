@@ -1,0 +1,86 @@
+{% extends "core/base.html" %}
+
+{% block title %}Support — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Support OpenToAll : question, partenariat ou aide sur la plateforme — sans ouvrir une issue GitHub.{% endblock %}
+
+{% block content %}
+<section class="max-w-content mx-auto px-4 lg:px-8 py-12 lg:py-16">
+    <div class="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-16 items-start">
+        <div class="max-w-xl">
+            <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-4">Support</p>
+            <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">
+                Écris-nous sans passer par une issue.
+            </h1>
+            <p class="mt-5 text-lg text-on-surface-variant leading-relaxed">
+                Question, partenariat, idée ou besoin d’aide sur la plateforme —
+                on lit chaque message. Réponse sous quelques jours.
+            </p>
+
+            <ul class="mt-8 space-y-3 text-sm text-on-surface-variant">
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">mail</span>
+                    <span>
+                        Email :
+                        <a href="mailto:{{ support_email }}?subject=Support%20OpenToAll" class="font-medium text-on-surface hover:text-primary transition-colors">{{ support_email }}</a>
+                    </span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">chat</span>
+                    <span>
+                        WhatsApp :
+                        <a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20écris%20à%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">+237 650 218 023</a>
+                    </span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">bug_report</span>
+                    <span>
+                        Bug ou idée produit :
+                        <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">ouvrir une issue GitHub</a>
+                    </span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-card p-6 lg:p-8">
+            {% if messages %}
+            <ul class="mb-6 space-y-2">
+                {% for message in messages %}
+                <li class="rounded-xl px-4 py-3 text-sm {% if message.tags == 'error' %}bg-error-container/30 text-error{% else %}bg-tertiary/12 text-tertiary{% endif %}">
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form method="post" action="{% url 'support' %}" class="space-y-5" novalidate>
+                {% csrf_token %}
+                <div class="hidden" aria-hidden="true">{{ form.website }}</div>
+
+                <div>
+                    <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<p class="mt-1.5 text-sm text-error">{{ form.name.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<p class="mt-1.5 text-sm text-error">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.message.label }}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}<p class="mt-1.5 text-sm text-error">{{ form.message.errors.0 }}</p>{% endif %}
+                </div>
+
+                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
+                    Envoyer le message
+                    <span class="material-symbols-outlined text-[20px]">send</span>
+                </button>
+                <p class="text-xs text-on-surface-variant text-center">
+                    On répond sous quelques jours — pas de newsletter, pas de spam.
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

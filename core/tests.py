@@ -86,6 +86,86 @@ def test_home_page_loads(client):
 
 
 @pytest.mark.django_db
+def test_home_page_includes_faq(client):
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="faq"' in html
+    assert "Questions fréquentes" in html
+    assert "Pour qui est OpenToAll" in html
+    assert "poids du clone" in html.lower() or "Poids du clone" in html or "poids du clone" in html
+    assert "Est-ce gratuit" in html
+    assert "classement" in html.lower()
+    assert len(resp.context["faq_items"]) >= 5
+
+
+@pytest.mark.django_db
+def test_home_page_why_opentoall_section(client):
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="why"' in html
+    assert "Pourquoi OpenToAll" in html
+    assert "poids du clone" in html.lower()
+    assert "mainteneurs" in html.lower()
+    assert len(resp.context["why_items"]) >= 3
+    assert b"#why" in resp.content
+
+
+@pytest.mark.django_db
+def test_home_page_brands_clone_weight(client):
+    """#52 — Poids du clone named + buckets explained on the homepage."""
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Poids du clone" in html
+    assert "léger" in html.lower()
+    assert "5" in html and "Mo" in html
+    assert "50" in html
+    assert "lourd" in html.lower()
+    assert 'class="weight-meter"' in html
+
+
+@pytest.mark.django_db
+def test_home_page_testimonials_section_ready(client):
+    """#53 — social-proof block live and ready for real quotes."""
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="voices"' in html
+    assert "Ils ont commencé ici" in html
+    assert "show-and-tell" in html
+    assert 'href="#voices"' in html or "#voices" in html
+    assert list(resp.context["testimonials"]) == []
+    assert "prêts" in html.lower() or "prête" in html.lower()
+
+
+@pytest.mark.django_db
+def test_home_page_renders_testimonial_quotes(client, monkeypatch):
+    """#53 — real quotes from TESTIMONIAL_ITEMS appear with handle + outcome."""
+    from core import views as core_views
+
+    sample = (
+        {
+            "name": "Amina",
+            "github": "amina-dev",
+            "quote": "Repo léger, issue claire, première PR mergée.",
+            "outcome": "Première PR mergée · connexion limitée",
+        },
+    )
+    monkeypatch.setattr(core_views, "TESTIMONIAL_ITEMS", sample)
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Amina" in html
+    assert "@amina-dev" in html
+    assert "Repo léger, issue claire" in html
+    assert "Première PR mergée" in html
+    assert "https://github.com/amina-dev" in html
+    assert "La section est prête" not in html
+
+
+@pytest.mark.django_db
 def test_explore_page_and_htmx(client):
     Issue.objects.create(
         github_issue_id=3, title="Fix bug", url="https://x",
@@ -128,6 +208,57 @@ def test_leaderboard_and_profile(client):
 
     assert client.get(reverse("leaderboard")).status_code == 200
     assert client.get(reverse("profile", args=["kwame"])).status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("view_name", ["explore", "leaderboard"])
+def test_cached_pages_navbar_matches_auth_state(client, view_name):
+    """Explore/Leaderboard must not serve a cached navbar from another visitor (#38)."""
+    cache.clear()
+    Issue.objects.create(
+        github_issue_id=38,
+        title="Cache auth issue",
+        url="https://github.com/a/b/issues/38",
+        repo_full_name="a/b",
+        language="Python",
+    )
+    ranked = User.objects.create_user("ranked")
+    ranked.profile.github_username = "ranked"
+    ranked.profile.save()
+    Contribution.objects.create(
+        user=ranked, repo_full_name="a/b", pr_url="https://example.com/pr/38"
+    )
+
+    login_url = reverse("account_login").encode()
+    logout_url = reverse("account_logout").encode()
+    url = reverse(view_name)
+
+    anon_first = client.get(url)
+    assert anon_first.status_code == 200
+    assert login_url in anon_first.content
+    assert logout_url not in anon_first.content
+
+    user = User.objects.create_user("navuser")
+    user.profile.github_username = "navuser"
+    user.profile.save()
+    client.force_login(user)
+
+    auth = client.get(url)
+    assert auth.status_code == 200
+    assert login_url not in auth.content
+    assert logout_url in auth.content
+    assert b"navuser" in auth.content
+
+    cache.clear()
+    client.force_login(user)
+    assert client.get(url).status_code == 200
+    client.logout()
+
+    anon_after = client.get(url)
+    assert anon_after.status_code == 200
+    assert login_url in anon_after.content
+    assert logout_url not in anon_after.content
+    assert b"navuser" not in anon_after.content
 
 
 def test_health_does_not_touch_the_database(client):
@@ -185,6 +316,21 @@ def test_explore_filters_have_accessible_labels(client):
     for field_id in ("search-filter", "sort-filter", "language-filter", "clone-size-filter"):
         assert f'for="{field_id}"' in content
         assert f'id="{field_id}"' in content
+
+
+@pytest.mark.django_db
+def test_explore_explains_clone_weight_filter(client):
+    """#52 — Explore filter help names Poids du clone and the size buckets."""
+    resp = client.get(reverse("explore"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Poids du clone" in html
+    assert 'id="clone-size-help"' in html
+    assert 'aria-describedby="clone-size-help"' in html
+    assert "Léger" in html and "5 Mo" in html
+    assert "50 Mo" in html
+    assert "moyen" in html.lower()
+    assert "lourd" in html.lower()
 
 
 @pytest.mark.parametrize("has_updated_at", [True, False])
@@ -373,7 +519,7 @@ def test_sitemap_uses_request_host(client, settings):
     body = resp.content.decode()
     # Absolute URLs come from the request host, not the django.contrib.sites table.
     assert "example.com" not in body
-    for name in ("home", "explore", "leaderboard"):
+    for name in ("home", "about", "support", "explore", "leaderboard"):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
@@ -420,7 +566,7 @@ def test_explore_foundation_filter_pagination(client):
         
         
 @pytest.mark.django_db
-@pytest.mark.parametrize("name", ["home", "explore", "leaderboard"])
+@pytest.mark.parametrize("name", ["home", "about", "support", "explore", "leaderboard"])
 def test_json_ld_on_main_pages(client, name):
     import json
 
@@ -439,4 +585,146 @@ def test_json_ld_on_main_pages(client, name):
     assert org["logo"].startswith("http://testserver/static/")
     page = next(d for d in data if d["@type"] == "WebPage")
     assert page["url"] == "http://testserver" + reverse(name)
+
+
+# --------------------------------------------------------------------------- #
+# Footer navigation (#54)                                                     #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_footer_covers_product_community_and_support(client, settings):
+    settings.GITHUB_REPO_URL = "https://github.com/Ymax27/opentoall"
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+
+    assert ">Produit<" in html
+    assert ">Communauté<" in html
+    assert ">Support<" in html
+
+    assert reverse("about") in html
+    assert reverse("support") in html
+    assert "#faq" in html
+    assert "https://github.com/Ymax27/opentoall/discussions" in html
+    assert "CONTRIBUTING.md" in html
+    assert "Built by" in html
+
+
+# --------------------------------------------------------------------------- #
+# Support (#45)                                                               #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_support_page_get(client):
+    resp = client.get(reverse("support"))
+    assert resp.status_code == 200
+    assert b"Support" in resp.content
+    assert b"sous quelques jours" in resp.content
+    assert b"linxconcept27@gmail.com" in resp.content
+    assert reverse("support").encode() in client.get(reverse("home")).content
+    legacy = client.get("/contact/")
+    assert legacy.status_code == 301
+    assert legacy["Location"] == reverse("support")
+
+
+@pytest.mark.django_db
+def test_support_form_sends_email(client, settings):
+    settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    from django.core import mail
+
+    resp = client.post(
+        reverse("support"),
+        {
+            "name": "Amina",
+            "email": "amina@example.com",
+            "message": "Salut, question sur OpenToAll.",
+            "website": "",
+        },
+    )
+    assert resp.status_code == 302
+    assert len(mail.outbox) == 1
+    assert "Amina" in mail.outbox[0].subject
+    assert mail.outbox[0].reply_to == ["amina@example.com"]
+    assert "question sur OpenToAll" in mail.outbox[0].body
+
+
+@pytest.mark.django_db
+def test_support_form_honeypot_skips_email(client, settings):
+    settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    from django.core import mail
+
+    resp = client.post(
+        reverse("support"),
+        {
+            "name": "Bot",
+            "email": "bot@example.com",
+            "message": "spam",
+            "website": "https://spam.example",
+        },
+    )
+    assert resp.status_code == 302
+    assert mail.outbox == []
+
+
+@pytest.mark.django_db
+def test_support_form_validation_errors(client):
+    resp = client.post(
+        reverse("support"),
+        {"name": "", "email": "not-an-email", "message": "", "website": ""},
+    )
+    assert resp.status_code == 200
+    assert resp.context["form"].errors
+
+
+# --------------------------------------------------------------------------- #
+# About / built-by credit (#44)                                               #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_about_page_and_built_by_credit(client):
+    cache.clear()
+    about = client.get(reverse("about"))
+    assert about.status_code == 200
+    assert "À propos".encode() in about.content
+    assert b"Built by" in about.content
+    assert b">Ymax<" in about.content
+    assert b"12 amazing contributors" in about.content
+    assert b"/graphs/contributors" in about.content
+
+    home = client.get(reverse("home"))
+    assert home.status_code == 200
+    assert b"Built by" in home.content
+    assert reverse("about").encode() in home.content
+
+
+def test_get_repo_contributor_count_excludes_owner_bots_and_cursor(monkeypatch):
+    class FakeResp:
+        status_code = 200
+        headers = {}
+
+        def json(self):
+            return [
+                {"login": "dependabot[bot]", "type": "Bot"},
+                {"login": "Ymax27", "type": "User"},
+                {"login": "cursoragent", "type": "User"},
+                {"login": None, "type": "Anonymous"},
+                {"login": "alice", "type": "User"},
+                {"login": "bob", "type": "User"},
+            ]
+
+    monkeypatch.setattr(
+        "core.services.github_client.httpx.get",
+        lambda *args, **kwargs: FakeResp(),
+    )
+    from core.services import github_client
+
+    assert github_client.get_repo_contributor_count("Ymax27/opentoall") == 2
+
+
+def test_get_repo_contributor_count_soft_fails(monkeypatch):
+    import httpx
+    from core.services import github_client
+
+    def boom(*args, **kwargs):
+        raise httpx.ConnectError("offline")
+
+    monkeypatch.setattr("core.services.github_client.httpx.get", boom)
+    assert github_client.get_repo_contributor_count("a/b") is None
 

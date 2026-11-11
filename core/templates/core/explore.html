@@ -6,7 +6,7 @@
 <div class="max-w-content mx-auto px-4 lg:px-8 py-8 lg:py-10">
     <div class="mb-8">
         <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">Trouve une issue</h1>
-        <p class="text-on-surface-variant mt-2 max-w-xl">Cherche par langage, niveau ou dépôt — puis ouvre celle qui te parle vraiment.</p>
+        <p class="text-on-surface-variant mt-2 max-w-xl">Cherche par langage, niveau ou <span class="text-on-surface font-medium">Poids du clone</span> — puis ouvre celle qui te parle vraiment.</p>
     </div>
 
     <form id="filters" hx-get="{% url 'explore' %}" hx-target="#issue-list" hx-swap="innerHTML"
@@ -59,26 +59,32 @@
 
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 mt-4">
-            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</span>
-            <label class="sr-only" for="clone-size-filter">Poids du clone</label>
-            <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
-                <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
-                <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Clone léger</option>
-                <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins</option>
-            </select>
+        <div class="mt-4">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</span>
+                <label class="sr-only" for="clone-size-filter">Poids du clone</label>
+                <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none" aria-describedby="clone-size-help">
+                    <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
+                    <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Léger (&lt; 5 Mo)</option>
+                    <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins (&lt; 50 Mo)</option>
+                </select>
 
-            {% if foundations %}
-            <span class="hidden sm:block w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
-            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Fondation</span>
-            <label class="sr-only" for="foundation-filter">Fondation</label>
-            <select name="foundation" id="foundation-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
-                <option value="">Toutes</option>
-                {% for f in foundations %}
-                <option value="{{ f }}" {% if filters.foundation|lower == f|lower %}selected{% endif %}>{{ f }}</option>
-                {% endfor %}
-            </select>
-            {% endif %}
+                {% if foundations %}
+                <span class="hidden sm:block w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Fondation</span>
+                <label class="sr-only" for="foundation-filter">Fondation</label>
+                <select name="foundation" id="foundation-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+                    <option value="">Toutes</option>
+                    {% for f in foundations %}
+                    <option value="{{ f }}" {% if filters.foundation|lower == f|lower %}selected{% endif %}>{{ f }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+            <p id="clone-size-help" class="mt-2 text-xs text-on-surface-variant max-w-2xl">
+                <strong class="font-medium text-on-surface">Poids du clone</strong> —
+                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;5&nbsp;Mo), moyen (&lt;&nbsp;50&nbsp;Mo) ou lourd.
+            </p>
         </div>
     </form>
 

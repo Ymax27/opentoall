@@ -218,3 +218,93 @@ def search_merged_prs(username: str, page: int = 1, per_page: int = 30) -> list[
     if not isinstance(data, dict):
         return []
     return data.get("items", [])
+
+
+def _is_community_contributor(entry: dict, *, owner_login: str) -> bool:
+    """Humans other than the maintainer — no bots, Cursor, or anonymous."""
+    login = (entry.get("login") or "").strip()
+    if not login:
+        return False
+    lower = login.lower()
+    if entry.get("type") == "Bot" or lower.endswith("[bot]"):
+        return False
+    if "dependabot" in lower or "cursor" in lower:
+        return False
+    if lower == owner_login.lower():
+        return False
+    return True
+
+
+def get_repo_contributor_count(full_name: str) -> int | None:
+    """Community contributor count for the built-by credit.
+
+    Public Contributors API (no PAT). Excludes the repo owner, bots
+    (Dependabot, …), Cursor-related accounts, and anonymous entries.
+    Soft-fails for the UI — never raises.
+    """
+    if not full_name or "/" not in full_name:
+        return None
+
+    owner_login = full_name.split("/", 1)[0]
+    public_headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+
+    count = 0
+    page = 1
+    retried_202 = False
+    # Small repos fit in one page; cap pages so a huge graph cannot stall the UI.
+    while page <= 5:
+        try:
+            resp = httpx.get(
+                f"{GITHUB_API}/repos/{full_name}/contributors",
+                headers=public_headers,
+                params={"per_page": 100, "anon": "true", "page": page},
+                timeout=3.0,
+            )
+        except httpx.HTTPError as exc:
+            logger.warning(
+                "GitHub contributor count failed (%s): %s",
+                full_name,
+                exc,
+                extra={"event": "github_contributor_count_error"},
+            )
+            return None if page == 1 else count
+
+        if resp.status_code == 202 and page == 1 and not retried_202:
+            # Stats still computing — one retry after a short pause is enough.
+            retried_202 = True
+            time.sleep(0.5)
+            continue
+        if resp.status_code == 204:
+            return count
+        if resp.status_code >= 400 or resp.status_code == 202:
+            logger.warning(
+                "GitHub contributor count error (%s): %s",
+                full_name,
+                resp.status_code,
+                extra={
+                    "event": "github_contributor_count_http",
+                    "status_code": resp.status_code,
+                },
+            )
+            return None if page == 1 else count
+
+        try:
+            data = resp.json()
+        except ValueError:
+            return None if page == 1 else count
+        if not isinstance(data, list):
+            return None if page == 1 else count
+        if not data:
+            break
+
+        count += sum(
+            1 for entry in data if _is_community_contributor(entry, owner_login=owner_login)
+        )
+        if len(data) < 100:
+            break
+        page += 1
+
+    return count

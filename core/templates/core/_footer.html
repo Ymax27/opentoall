@@ -1,7 +1,7 @@
 {% load static %}
 <footer class="mt-16 border-t border-outline-variant/40 bg-surface-container-low/50">
-    <div class="max-w-content mx-auto px-4 lg:px-8 py-12 grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
-        <div>
+    <div class="max-w-content mx-auto px-4 lg:px-8 py-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div class="sm:col-span-2 lg:col-span-1">
             <a href="{% url 'home' %}" class="flex items-center gap-2.5 mb-4">
                 <img src="{% static 'img/logo.png' %}" alt="" class="w-9 h-9 object-contain">
                 <span class="font-display font-bold text-xl">Open<span class="text-primary">ToAll</span></span>
@@ -11,40 +11,66 @@
             </p>
         </div>
         <div>
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Explorer</h3>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Produit</h3>
             <ul class="space-y-2.5 text-sm">
                 <li><a href="{% url 'explore' %}" class="text-on-surface-variant hover:text-primary transition-colors">Issues</a></li>
                 <li><a href="{% url 'leaderboard' %}" class="text-on-surface-variant hover:text-primary transition-colors">Classement</a></li>
                 <li><a href="{% url 'home' %}#pillars" class="text-on-surface-variant hover:text-primary transition-colors">Comment ça marche</a></li>
+                <li><a href="{% url 'home' %}#why" class="text-on-surface-variant hover:text-primary transition-colors">Pourquoi OpenToAll</a></li>
+                <li><a href="{% url 'home' %}#voices" class="text-on-surface-variant hover:text-primary transition-colors">Témoignages</a></li>
+                <li><a href="{% url 'home' %}#faq" class="text-on-surface-variant hover:text-primary transition-colors">FAQ</a></li>
             </ul>
         </div>
         <div>
             <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Communauté</h3>
             <ul class="space-y-2.5 text-sm">
                 <li>
-                    <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-[18px]">code</span>Dépôt GitHub
-                    </a>
+                    <a href="{% url 'about' %}" class="text-on-surface-variant hover:text-primary transition-colors">À propos</a>
+                </li>
+                <li>
+                    <a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Discussions</a>
                 </li>
                 <li>
                     <a href="{{ GITHUB_REPO_URL }}/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Contribuer</a>
                 </li>
                 <li>
-                    <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Signaler un bug</a>
+                    <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">code</span>Dépôt GitHub
+                    </a>
                 </li>
                 <li>
-                    <a href="mailto:linxconcept27@gmail.com?subject=Soutenir%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Soutenir le projet</a>
+                    <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Signaler un bug</a>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Support</h3>
+            <ul class="space-y-2.5 text-sm">
+                <li>
+                    <a href="{% url 'support' %}" class="text-on-surface-variant hover:text-primary transition-colors">Support</a>
+                </li>
+                <li>
+                    <a href="mailto:{{ SUPPORT_EMAIL }}?subject=Support%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Email</a>
+                </li>
+                <li>
+                    <a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20écris%20à%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">WhatsApp</a>
+                </li>
+                <li>
+                    <a href="mailto:{{ SUPPORT_EMAIL }}?subject=Soutenir%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Soutenir le projet</a>
                 </li>
             </ul>
         </div>
     </div>
     <div class="border-t border-outline-variant/40">
         <div class="max-w-content mx-auto px-4 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-on-surface-variant">
-            <p>© {% now "Y" %} {{ SITE_NAME }} — Open source, sous licence MIT.</p>
+            <div class="space-y-1 text-center sm:text-left">
+                <p>© {% now "Y" %} {{ SITE_NAME }} — Open source, sous licence MIT.</p>
+                {% include "core/_built_by.html" %}
+            </div>
             <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-                <a href="https://wa.me/237650218023?text=Salut%2C%20je%20souhaite%20soutenir%20OpenToAll" target="_blank" rel="noopener" class="hover:text-primary transition-colors">WhatsApp</a>
+                <a href="{% url 'support' %}" class="hover:text-primary transition-colors">Support</a>
                 <span class="text-outline-variant" aria-hidden="true">·</span>
-                <a href="mailto:linxconcept27@gmail.com?subject=Soutenir%20OpenToAll" class="hover:text-primary transition-colors">Email</a>
+                <a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="hover:text-primary transition-colors">Discussions</a>
             </p>
         </div>
     </div>

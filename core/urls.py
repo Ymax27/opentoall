@@ -1,9 +1,17 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
+    path("about/", views.about, name="about"),
+    path("support/", views.support, name="support"),
+    path(
+        "contact/",
+        RedirectView.as_view(pattern_name="support", permanent=True),
+        name="contact_redirect",
+    ),
     path("explore/", views.explore, name="explore"),
     path("issue/<int:pk>/", views.issue_detail, name="issue_detail"),
     path("u/<str:username>/", views.profile_view, name="profile"),

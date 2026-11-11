@@ -15,7 +15,7 @@
                 <div class="flex items-center gap-2 text-[11px] text-on-surface-variant mt-0.5">
                     <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[13px]">star</span>{{ issue.stars_display }}</span>
                     <span class="inline-flex items-center gap-1" title="Poids du clone : {{ issue.size_category }}">
-                        <span class="sr-only">Poids du dépôt {{ issue.size_category }}</span>
+                        <span class="sr-only">Poids du clone {{ issue.size_category }}</span>
                         <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-hidden="true">
                             <span></span><span></span><span></span>
                         </span>

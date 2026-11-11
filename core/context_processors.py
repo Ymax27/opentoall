@@ -3,6 +3,8 @@ import json
 from django.conf import settings
 from django.templatetags.static import static
 
+from core.services.repo_credit import built_by_context
+
 
 def _json_ld(data: dict) -> str:
     """Serialise for a <script type="application/ld+json"> block.
@@ -44,9 +46,12 @@ def site_globals(request):
         "isPartOf": {"@type": "WebSite", "name": site_name, "url": home_url},
     }
 
-    return {
+    globals_ctx = {
         "SITE_NAME": site_name,
         "GITHUB_REPO_URL": getattr(settings, "GITHUB_REPO_URL", ""),
+        "SUPPORT_EMAIL": getattr(
+            settings, "SUPPORT_EMAIL", "linxconcept27@gmail.com"
+        ),
         "nav_links": [
             ("home", "Accueil", "home"),
             ("explore", "Issues", "travel_explore"),
@@ -58,3 +63,5 @@ def site_globals(request):
             _json_ld(webpage),
         ],
     }
+    globals_ctx.update(built_by_context())
+    return globals_ctx

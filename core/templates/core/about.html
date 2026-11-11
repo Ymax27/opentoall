@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+
+{% block title %}À propos — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}OpenToAll aide à trouver une issue open source réaliste à cloner et à finir — avec un crédit léger aux personnes qui construisent le projet.{% endblock %}
+
+{% block content %}
+<section class="max-w-content mx-auto px-4 lg:px-8 py-12 lg:py-16">
+    <div class="max-w-2xl">
+        <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-4">À propos</p>
+        <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">
+            Une issue que tu peux vraiment finir.
+        </h1>
+        <p class="mt-5 text-lg text-on-surface-variant leading-relaxed">
+            OpenToAll liste des issues GitHub encore libres, filtrées par langage, niveau
+            et poids du clone — pour que tu clones et merges sans te battre contre un monolithe
+            ou une issue déjà prise.
+        </p>
+
+        <div class="mt-10 pt-8 border-t border-outline-variant/40">
+            {% include "core/_built_by.html" with credit_class="text-base text-on-surface-variant" %}
+            <p class="mt-3 text-sm text-on-surface-variant">
+                Projet open source, sous licence MIT.
+                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">Voir le dépôt</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

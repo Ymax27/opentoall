@@ -1,15 +1,21 @@
+import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .cache_keys import CACHE_TTL, cache_key, cache_get, cache_set
+from .forms import SupportForm
 from .models import Contribution, Issue, Profile
+
+logger = logging.getLogger(__name__)
 
 from django.contrib.sites.requests import RequestSite
 from django.contrib.sitemaps.views import x_robots_tag
@@ -29,6 +35,121 @@ PAGE_SIZE = 30
 
 # Number of contributors per page on the leaderboard.
 LEADERBOARD_PAGE_SIZE = 50
+
+# Homepage FAQ (#46) — kept in the view so tests can assert the same copy.
+FAQ_ITEMS = (
+    {
+        "question": "Pour qui est OpenToAll ?",
+        "answer": (
+            "Pour les développeurs qui veulent une vraie première contribution "
+            "open source — surtout si tu as une connexion limitée ou peu de temps. "
+            "Tu cherches une issue encore libre, pas un tutoriel figé."
+        ),
+    },
+    {
+        "question": "Comment marchent les filtres ?",
+        "answer": (
+            "Sur Explorer, tu filtres par langage, niveau, poids du clone et "
+            "fondation. Seules les issues ouvertes et non assignées restent "
+            "visibles, pour éviter les good first issues déjà prises."
+        ),
+    },
+    {
+        "question": "C’est quoi le Poids du clone ?",
+        "answer": (
+            "Poids du clone, c’est la taille estimée du dépôt à télécharger : "
+            "léger (< 5 Mo), moyen (< 50 Mo) ou lourd. Une à trois barres sur "
+            "les cartes — utile quand la bande passante est serrée."
+        ),
+    },
+    {
+        "question": "Est-ce gratuit ?",
+        "answer": (
+            "Oui. OpenToAll est gratuit, sans spam, et le code est open source "
+            "sous licence MIT. Tu te connectes avec GitHub si tu veux un profil "
+            "et le classement."
+        ),
+    },
+    {
+        "question": "Comment j’apparais au classement ?",
+        "answer": (
+            "Connecte-toi avec GitHub. On synchronise tes pull requests "
+            "publiques mergées. Cliquer « Ouvre sur GitHub » n’enregistre rien : "
+            "seules les PR mergées comptent."
+        ),
+    },
+    {
+        "question": "Les issues listées sont-elles vraiment ouvertes ?",
+        "answer": (
+            "Oui au moment de l’ingestion. On rafraîchit régulièrement depuis "
+            "GitHub. Si une issue vient d’être assignée ou fermée, elle peut "
+            "disparaître au prochain passage."
+        ),
+    },
+    {
+        "question": "Comment contribuer à OpenToAll ?",
+        "answer": (
+            "Le dépôt est public : issues labeled good first issue, pull "
+            "requests bienvenues. Pour une question hors code, utilise "
+            "l’email ou WhatsApp indiqués dans le footer."
+        ),
+    },
+)
+
+# Homepage testimonials / social proof (#53).
+# Add real quotes only (name, GitHub handle, short outcome). Collect via
+# Discussions → Show and tell, or after a merged PR — see CONTRIBUTING.md.
+TESTIMONIAL_ITEMS = (
+    # Example shape (uncomment when you have consent + a real quote):
+    # {
+    #     "name": "Amina",
+    #     "github": "amina",
+    #     "quote": (
+    #         "J’ai filtré les repos légers et trouvé une issue que j’ai "
+    #         "pu cloner malgré mon débit. Première PR mergée en une semaine."
+    #     ),
+    #     "outcome": "Première PR mergée · connexion limitée",
+    # },
+)
+
+# Homepage “Pourquoi OpenToAll ?” comparison points (#51).
+WHY_ITEMS = (
+    {
+        "icon": "download",
+        "title": "Le poids du clone, pas seulement le label",
+        "text": (
+            "GitHub ne dit pas si le dépôt fait 50 Mo ou 5 Go. "
+            "OpenToAll estime le poids du clone pour que tu télécharges "
+            "même avec une connexion limitée."
+        ),
+    },
+    {
+        "icon": "school",
+        "title": "Un vrai fit débutant",
+        "text": (
+            "Une étiquette « good first issue » ne suffit pas. "
+            "On croise niveau, docs du projet et signaux d’accueil "
+            "pour éviter les issues pièges."
+        ),
+    },
+    {
+        "icon": "schedule",
+        "title": "Des mainteneurs qui répondent",
+        "text": (
+            "Sur GitHub seul, tu découvres le silence après coup. "
+            "Ici, la réactivité des mainteneurs fait partie du filtre."
+        ),
+    },
+    {
+        "icon": "public",
+        "title": "Ta contribution reste visible",
+        "text": (
+            "Les boards génériques s’arrêtent à la liste d’issues. "
+            "OpenToAll lie tes PR mergées à un profil et un classement — "
+            "utile pour montrer ton travail."
+        ),
+    },
+)
 
 # Fields needed by issue cards / explore list (avoid pulling full body blobs).
 ISSUE_LIST_FIELDS = (
@@ -76,7 +197,82 @@ def home(request):
         .only(*ISSUE_LIST_FIELDS)
         .order_by("-beginner_friendly_score", "-stars_count")[:3]
     )
-    return render(request, "core/home.html", {"stats": stats, "featured": featured})
+    return render(
+        request,
+        "core/home.html",
+        {
+            "stats": stats,
+            "featured": featured,
+            "faq_items": FAQ_ITEMS,
+            "why_items": WHY_ITEMS,
+            "testimonials": TESTIMONIAL_ITEMS,
+        },
+    )
+
+
+def support(request):
+    """Support page: short form + public email."""
+    support_email = getattr(settings, "SUPPORT_EMAIL", "linxconcept27@gmail.com")
+    if request.method == "POST":
+        form = SupportForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data.get("website"):
+                messages.success(
+                    request,
+                    "Merci — on te répond sous quelques jours.",
+                )
+                return redirect("support")
+
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            body = form.cleaned_data["message"]
+            subject = f"[OpenToAll] Message de {name}"
+            content = (
+                f"Nom : {name}\n"
+                f"Email : {email}\n\n"
+                f"{body}\n"
+            )
+            try:
+                mail = EmailMessage(
+                    subject=subject,
+                    body=content,
+                    from_email=getattr(settings, "DEFAULT_FROM_EMAIL", support_email),
+                    to=[support_email],
+                    reply_to=[email],
+                )
+                mail.send(fail_silently=False)
+            except Exception:
+                logger.exception(
+                    "Support form email failed",
+                    extra={"event": "support_email_error"},
+                )
+                messages.error(
+                    request,
+                    f"L’envoi a échoué. Écris-nous directement à {support_email}.",
+                )
+                return render(
+                    request,
+                    "core/support.html",
+                    {"form": form, "support_email": support_email},
+                )
+
+            messages.success(
+                request,
+                "Merci — on te répond sous quelques jours.",
+            )
+            return redirect("support")
+    else:
+        form = SupportForm()
+
+    return render(
+        request,
+        "core/support.html",
+        {"form": form, "support_email": support_email},
+    )
+
+
+def about(request):
+    return render(request, "core/about.html")
 
 
 def explore(request):
@@ -88,40 +284,50 @@ def explore(request):
     sort = request.GET.get("sort", "stars").strip()
     page_number = request.GET.get("page", "1")
 
-    filters_key = cache_key(
+    # Cache the filtered id list (not rendered HTML) so the navbar is always
+    # rendered for the current request. Fixes #38: anonymous HTML served to
+    # logged-in users when the whole page was cached.
+    ids_key = cache_key(
         "explore",
+        "ids",
         q,
         language,
         difficulty,
         foundation,
         max_size,
         sort,
-        page_number,
-        "htmx" if request.htmx else "full",
     )
-    cached = cache_get(filters_key)
-    if cached is not None:
-        return HttpResponse(cached)
+    issue_ids = cache_get(ids_key)
+    if issue_ids is None:
+        issues = Issue.objects.filter(is_assigned=False)
 
-    issues = Issue.objects.filter(is_assigned=False).only(*ISSUE_LIST_FIELDS)
+        if q:
+            issues = issues.filter(
+                Q(title__icontains=q) | Q(repo_full_name__icontains=q)
+            )
+        if language:
+            issues = issues.filter(language__iexact=language)
+        if difficulty:
+            issues = issues.filter(difficulty=difficulty)
+        if foundation:
+            issues = issues.filter(foundation__iexact=foundation)
+        if max_size.isdigit():
+            issues = issues.filter(repo_size_kb__lt=int(max_size))
 
-    if q:
-        issues = issues.filter(
-            Q(title__icontains=q) | Q(repo_full_name__icontains=q)
-        )
-    if language:
-        issues = issues.filter(language__iexact=language)
-    if difficulty:
-        issues = issues.filter(difficulty=difficulty)
-    if foundation:
-        issues = issues.filter(foundation__iexact=foundation)
-    if max_size.isdigit():
-        issues = issues.filter(repo_size_kb__lt=int(max_size))
+        issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
+        issue_ids = list(issues.values_list("pk", flat=True))
+        cache_set(ids_key, issue_ids, CACHE_TTL)
 
-    issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
-
-    paginator = Paginator(issues, PAGE_SIZE)
+    paginator = Paginator(issue_ids, PAGE_SIZE)
     page_obj = paginator.get_page(page_number)
+    ordered_ids = list(page_obj.object_list)
+    issues_by_pk = {
+        issue.pk: issue
+        for issue in Issue.objects.filter(pk__in=ordered_ids).only(*ISSUE_LIST_FIELDS)
+    }
+    page_obj.object_list = [
+        issues_by_pk[pk] for pk in ordered_ids if pk in issues_by_pk
+    ]
 
     # Querystring carrying every active filter (minus `page`) so pagination
     # links preserve the current search context.
@@ -180,9 +386,7 @@ def explore(request):
     }
 
     template = "core/_issue_list.html" if request.htmx else "core/explore.html"
-    response = render(request, template, context)
-    cache_set(filters_key, response.content, CACHE_TTL)
-    return response
+    return render(request, template, context)
 
 
 def issue_detail(request, pk):
@@ -381,6 +585,8 @@ def llms_txt(request):
         "Built for developers who need a realistic first contribution.\n\n"
         "## Core Pages\n"
         "- [Home](https://opentoall.onrender.com/): Platform overview and curated issues\n"
+        "- [About](https://opentoall.onrender.com/about/): Short product pitch and built-by credit\n"
+        "- [Support](https://opentoall.onrender.com/support/): Reach the team without opening a GitHub issue\n"
         "- [Explore](https://opentoall.onrender.com/explore/): Search and browse filtered beginner-friendly issues\n"
         "- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Community contributors and open source milestones\n\n"
         "## Source code\n"
