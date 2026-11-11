@@ -224,16 +224,23 @@ def search_merged_prs(username: str, page: int = 1, per_page: int = 30) -> list[
 def get_repo_contributor_count(full_name: str) -> int | None:
     """Contributor count for ``owner/repo``, or ``None`` if GitHub is unreachable.
 
-    Uses ``per_page=1`` and the ``Link: rel=last`` header so we never download
-    every contributor. Soft-fails for the UI credit line — never raises.
+    Uses the public Contributors API (no PAT): a bad ``GITHUB_PAT`` must not
+    hide the credit. ``per_page=1`` + ``Link: rel=last`` gives the total without
+    downloading every page. Soft-fails for the UI — never raises.
     """
     if not full_name or "/" not in full_name:
         return None
 
+    # Public repo metadata — omit Authorization so an expired PAT cannot 401 us.
+    public_headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+
     try:
         resp = httpx.get(
             f"{GITHUB_API}/repos/{full_name}/contributors",
-            headers=_headers(),
+            headers=public_headers,
             params={"per_page": 1, "anon": "true"},
             timeout=3.0,
         )
@@ -246,13 +253,26 @@ def get_repo_contributor_count(full_name: str) -> int | None:
         )
         return None
 
+    if resp.status_code == 202:
+        # Stats still computing — try a fuller page as a soft fallback.
+        try:
+            resp = httpx.get(
+                f"{GITHUB_API}/repos/{full_name}/contributors",
+                headers=public_headers,
+                params={"per_page": 100, "anon": "true"},
+                timeout=3.0,
+            )
+        except httpx.HTTPError:
+            return None
+
     if resp.status_code == 204:
         return 0
     if resp.status_code >= 400:
-        logger.debug(
-            "GitHub contributor count client/server error (%s): %s",
+        logger.warning(
+            "GitHub contributor count error (%s): %s",
             full_name,
             resp.status_code,
+            extra={"event": "github_contributor_count_http", "status_code": resp.status_code},
         )
         return None
 
