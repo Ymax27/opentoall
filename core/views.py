@@ -219,40 +219,50 @@ def explore(request):
     sort = request.GET.get("sort", "stars").strip()
     page_number = request.GET.get("page", "1")
 
-    filters_key = cache_key(
+    # Cache the filtered id list (not rendered HTML) so the navbar is always
+    # rendered for the current request. Fixes #38: anonymous HTML served to
+    # logged-in users when the whole page was cached.
+    ids_key = cache_key(
         "explore",
+        "ids",
         q,
         language,
         difficulty,
         foundation,
         max_size,
         sort,
-        page_number,
-        "htmx" if request.htmx else "full",
     )
-    cached = cache_get(filters_key)
-    if cached is not None:
-        return HttpResponse(cached)
+    issue_ids = cache_get(ids_key)
+    if issue_ids is None:
+        issues = Issue.objects.filter(is_assigned=False)
 
-    issues = Issue.objects.filter(is_assigned=False).only(*ISSUE_LIST_FIELDS)
+        if q:
+            issues = issues.filter(
+                Q(title__icontains=q) | Q(repo_full_name__icontains=q)
+            )
+        if language:
+            issues = issues.filter(language__iexact=language)
+        if difficulty:
+            issues = issues.filter(difficulty=difficulty)
+        if foundation:
+            issues = issues.filter(foundation__iexact=foundation)
+        if max_size.isdigit():
+            issues = issues.filter(repo_size_kb__lt=int(max_size))
 
-    if q:
-        issues = issues.filter(
-            Q(title__icontains=q) | Q(repo_full_name__icontains=q)
-        )
-    if language:
-        issues = issues.filter(language__iexact=language)
-    if difficulty:
-        issues = issues.filter(difficulty=difficulty)
-    if foundation:
-        issues = issues.filter(foundation__iexact=foundation)
-    if max_size.isdigit():
-        issues = issues.filter(repo_size_kb__lt=int(max_size))
+        issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
+        issue_ids = list(issues.values_list("pk", flat=True))
+        cache_set(ids_key, issue_ids, CACHE_TTL)
 
-    issues = issues.order_by(SORT_OPTIONS.get(sort, "-stars_count"))
-
-    paginator = Paginator(issues, PAGE_SIZE)
+    paginator = Paginator(issue_ids, PAGE_SIZE)
     page_obj = paginator.get_page(page_number)
+    ordered_ids = list(page_obj.object_list)
+    issues_by_pk = {
+        issue.pk: issue
+        for issue in Issue.objects.filter(pk__in=ordered_ids).only(*ISSUE_LIST_FIELDS)
+    }
+    page_obj.object_list = [
+        issues_by_pk[pk] for pk in ordered_ids if pk in issues_by_pk
+    ]
 
     # Querystring carrying every active filter (minus `page`) so pagination
     # links preserve the current search context.
@@ -311,9 +321,7 @@ def explore(request):
     }
 
     template = "core/_issue_list.html" if request.htmx else "core/explore.html"
-    response = render(request, template, context)
-    cache_set(filters_key, response.content, CACHE_TTL)
-    return response
+    return render(request, template, context)
 
 
 def issue_detail(request, pk):

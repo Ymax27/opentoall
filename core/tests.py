@@ -144,6 +144,57 @@ def test_leaderboard_and_profile(client):
     assert client.get(reverse("profile", args=["kwame"])).status_code == 200
 
 
+@pytest.mark.django_db
+@pytest.mark.parametrize("view_name", ["explore", "leaderboard"])
+def test_cached_pages_navbar_matches_auth_state(client, view_name):
+    """Explore/Leaderboard must not serve a cached navbar from another visitor (#38)."""
+    cache.clear()
+    Issue.objects.create(
+        github_issue_id=38,
+        title="Cache auth issue",
+        url="https://github.com/a/b/issues/38",
+        repo_full_name="a/b",
+        language="Python",
+    )
+    ranked = User.objects.create_user("ranked")
+    ranked.profile.github_username = "ranked"
+    ranked.profile.save()
+    Contribution.objects.create(
+        user=ranked, repo_full_name="a/b", pr_url="https://example.com/pr/38"
+    )
+
+    login_url = reverse("account_login").encode()
+    logout_url = reverse("account_logout").encode()
+    url = reverse(view_name)
+
+    anon_first = client.get(url)
+    assert anon_first.status_code == 200
+    assert login_url in anon_first.content
+    assert logout_url not in anon_first.content
+
+    user = User.objects.create_user("navuser")
+    user.profile.github_username = "navuser"
+    user.profile.save()
+    client.force_login(user)
+
+    auth = client.get(url)
+    assert auth.status_code == 200
+    assert login_url not in auth.content
+    assert logout_url in auth.content
+    assert b"navuser" in auth.content
+
+    cache.clear()
+    client.force_login(user)
+    assert client.get(url).status_code == 200
+    client.logout()
+
+    anon_after = client.get(url)
+    assert anon_after.status_code == 200
+    assert login_url in anon_after.content
+    assert logout_url not in anon_after.content
+    assert b"navuser" not in anon_after.content
+
+
 def test_health_does_not_touch_the_database(client):
     assert client.get(reverse("health")).status_code == 200
     assert client.head(reverse("health")).status_code == 200
