@@ -30,6 +30,45 @@ PAGE_SIZE = 30
 # Number of contributors per page on the leaderboard.
 LEADERBOARD_PAGE_SIZE = 50
 
+# Homepage “Pourquoi OpenToAll ?” comparison points (#51).
+WHY_ITEMS = (
+    {
+        "icon": "download",
+        "title": "Le poids du clone, pas seulement le label",
+        "text": (
+            "GitHub ne dit pas si le dépôt fait 50 Mo ou 5 Go. "
+            "OpenToAll estime le poids du clone pour que tu télécharges "
+            "même avec une connexion limitée."
+        ),
+    },
+    {
+        "icon": "school",
+        "title": "Un vrai fit débutant",
+        "text": (
+            "Une étiquette « good first issue » ne suffit pas. "
+            "On croise niveau, docs du projet et signaux d’accueil "
+            "pour éviter les issues pièges."
+        ),
+    },
+    {
+        "icon": "schedule",
+        "title": "Des mainteneurs qui répondent",
+        "text": (
+            "Sur GitHub seul, tu découvres le silence après coup. "
+            "Ici, la réactivité des mainteneurs fait partie du filtre."
+        ),
+    },
+    {
+        "icon": "public",
+        "title": "Ta contribution reste visible",
+        "text": (
+            "Les boards génériques s’arrêtent à la liste d’issues. "
+            "OpenToAll lie tes PR mergées à un profil et un classement — "
+            "utile pour montrer ton travail."
+        ),
+    },
+)
+
 # Fields needed by issue cards / explore list (avoid pulling full body blobs).
 ISSUE_LIST_FIELDS = (
     "id",
@@ -76,7 +115,15 @@ def home(request):
         .only(*ISSUE_LIST_FIELDS)
         .order_by("-beginner_friendly_score", "-stars_count")[:3]
     )
-    return render(request, "core/home.html", {"stats": stats, "featured": featured})
+    return render(
+        request,
+        "core/home.html",
+        {
+            "stats": stats,
+            "featured": featured,
+            "why_items": WHY_ITEMS,
+        },
+    )
 
 
 def explore(request):
