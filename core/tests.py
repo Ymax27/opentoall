@@ -582,7 +582,7 @@ def test_about_page_and_built_by_credit(client):
     assert "À propos".encode() in about.content
     assert b"Built by" in about.content
     assert b">Ymax<" in about.content
-    assert b"amazing contributor" in about.content
+    assert b"12 amazing contributors" in about.content
     assert b"/graphs/contributors" in about.content
 
     home = client.get(reverse("home"))
