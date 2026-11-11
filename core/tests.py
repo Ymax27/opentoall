@@ -461,24 +461,28 @@ def test_about_page_and_built_by_credit(client):
     assert reverse("about").encode() in home.content
 
 
-def test_get_repo_contributor_count_uses_link_header(monkeypatch):
+def test_get_repo_contributor_count_excludes_owner_bots_and_cursor(monkeypatch):
     class FakeResp:
         status_code = 200
-        headers = {
-            "Link": '<https://api.github.com/repos/a/b/contributors?per_page=1&page=17>; rel="last"'
-        }
+        headers = {}
 
         def json(self):
-            return [{"login": "x"}]
+            return [
+                {"login": "dependabot[bot]", "type": "Bot"},
+                {"login": "Ymax27", "type": "User"},
+                {"login": "cursoragent", "type": "User"},
+                {"login": None, "type": "Anonymous"},
+                {"login": "alice", "type": "User"},
+                {"login": "bob", "type": "User"},
+            ]
 
     monkeypatch.setattr(
         "core.services.github_client.httpx.get",
         lambda *args, **kwargs: FakeResp(),
     )
-    # Bypass the autouse stub: call the client helper directly.
     from core.services import github_client
 
-    assert github_client.get_repo_contributor_count("a/b") == 17
+    assert github_client.get_repo_contributor_count("Ymax27/opentoall") == 2
 
 
 def test_get_repo_contributor_count_soft_fails(monkeypatch):
