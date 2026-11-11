@@ -127,6 +127,45 @@ def test_home_page_brands_clone_weight(client):
 
 
 @pytest.mark.django_db
+def test_home_page_testimonials_section_ready(client):
+    """#53 — social-proof block live and ready for real quotes."""
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert 'id="voices"' in html
+    assert "Ils ont commencé ici" in html
+    assert "show-and-tell" in html
+    assert 'href="#voices"' in html or "#voices" in html
+    assert list(resp.context["testimonials"]) == []
+    assert "prêts" in html.lower() or "prête" in html.lower()
+
+
+@pytest.mark.django_db
+def test_home_page_renders_testimonial_quotes(client, monkeypatch):
+    """#53 — real quotes from TESTIMONIAL_ITEMS appear with handle + outcome."""
+    from core import views as core_views
+
+    sample = (
+        {
+            "name": "Amina",
+            "github": "amina-dev",
+            "quote": "Repo léger, issue claire, première PR mergée.",
+            "outcome": "Première PR mergée · connexion limitée",
+        },
+    )
+    monkeypatch.setattr(core_views, "TESTIMONIAL_ITEMS", sample)
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Amina" in html
+    assert "@amina-dev" in html
+    assert "Repo léger, issue claire" in html
+    assert "Première PR mergée" in html
+    assert "https://github.com/amina-dev" in html
+    assert "La section est prête" not in html
+
+
+@pytest.mark.django_db
 def test_explore_page_and_htmx(client):
     Issue.objects.create(
         github_issue_id=3, title="Fix bug", url="https://x",

@@ -96,6 +96,22 @@ FAQ_ITEMS = (
     },
 )
 
+# Homepage testimonials / social proof (#53).
+# Add real quotes only (name, GitHub handle, short outcome). Collect via
+# Discussions → Show and tell, or after a merged PR — see CONTRIBUTING.md.
+TESTIMONIAL_ITEMS = (
+    # Example shape (uncomment when you have consent + a real quote):
+    # {
+    #     "name": "Amina",
+    #     "github": "amina",
+    #     "quote": (
+    #         "J’ai filtré les repos légers et trouvé une issue que j’ai "
+    #         "pu cloner malgré mon débit. Première PR mergée en une semaine."
+    #     ),
+    #     "outcome": "Première PR mergée · connexion limitée",
+    # },
+)
+
 # Homepage “Pourquoi OpenToAll ?” comparison points (#51).
 WHY_ITEMS = (
     {
@@ -189,6 +205,7 @@ def home(request):
             "featured": featured,
             "faq_items": FAQ_ITEMS,
             "why_items": WHY_ITEMS,
+            "testimonials": TESTIMONIAL_ITEMS,
         },
     )
 

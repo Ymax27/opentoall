@@ -61,6 +61,19 @@ Ouvrez une [issue](https://github.com/Ymax27/opentoall/issues) en décrivant :
 Une question sur l'installation ou le code, une idée encore floue ? Passez plutôt par les
 [Discussions](https://github.com/Ymax27/opentoall/discussions) (catégories Q&A et Ideas) : les bonnes idées deviennent ensuite des issues.
 
+## Témoignages (preuve sociale)
+
+La home affiche une section **Ils ont commencé ici** (`#voices`). On n’y met que des
+citations **réelles**, avec accord de la personne (débutants / connexion limitée de
+préférence). Pour proposer la tienne :
+
+1. Ouvre un fil [Show and tell](https://github.com/Ymax27/opentoall/discussions/categories/show-and-tell),
+   ou commente après une PR mergée.
+2. Inclus : prénom (ou pseudo public), handle GitHub, citation courte, résultat
+   (ex. « Première PR mergée · repo léger »). FR ou bilingue, tant que c’est authentique.
+3. Un mainteneur l’ajoute dans `TESTIMONIAL_ITEMS` (`core/views.py`) — pas de faux
+   témoignages.
+
 ## Code de conduite
 
 Ce projet adhère au [Code de conduite](CODE_OF_CONDUCT.md). En participant, vous
