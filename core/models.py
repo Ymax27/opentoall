@@ -2,7 +2,7 @@
 
 Three entities mirror the three functional blocks of the cahier des charges:
 - ``Issue``        → the aggregator + real-world-constraint metrics (blocs 1 & 2)
-- ``Profile``      → public visibility for African contributors (bloc 3)
+- ``Profile``      → public visibility for contributors (bloc 3)
 - ``Contribution`` → the tracked contributions that feed profiles & leaderboard
 """
 
@@ -148,10 +148,14 @@ class Issue(models.Model):
         return [label.strip() for label in self.labels.split(",") if label.strip()]
 
     # -- Repository weight (bloc 2) -----------------------------------------
+    # GitHub reports size in KiB; UI copy uses Mo ≈ 1000 KiB.
+    CLONE_LIGHT_MAX_KB = 50_000  # < 50 Mo
+    CLONE_MEDIUM_MAX_KB = 500_000  # < 500 Mo
+
     def size_category(self):
-        if self.repo_size_kb < 5000:
+        if self.repo_size_kb < self.CLONE_LIGHT_MAX_KB:
             return "léger"
-        elif self.repo_size_kb < 50000:
+        if self.repo_size_kb < self.CLONE_MEDIUM_MAX_KB:
             return "moyen"
         return "lourd"
 

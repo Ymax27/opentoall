@@ -65,8 +65,8 @@
                 <label class="sr-only" for="clone-size-filter">Poids du clone</label>
                 <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none" aria-describedby="clone-size-help">
                     <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
-                    <option value="5000" {% if filters.max_size == '5000' %}selected{% endif %}>Léger (&lt; 5 Mo)</option>
-                    <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Moyen et moins (&lt; 50 Mo)</option>
+                    <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Léger (&lt; 50 Mo)</option>
+                    <option value="500000" {% if filters.max_size == '500000' %}selected{% endif %}>Moyen et moins (&lt; 500 Mo)</option>
                 </select>
 
                 {% if foundations %}
@@ -83,7 +83,7 @@
             </div>
             <p id="clone-size-help" class="mt-2 text-xs text-on-surface-variant max-w-2xl">
                 <strong class="font-medium text-on-surface">Poids du clone</strong> —
-                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;5&nbsp;Mo), moyen (&lt;&nbsp;50&nbsp;Mo) ou lourd.
+                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo), moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
             </p>
         </div>
     </form>

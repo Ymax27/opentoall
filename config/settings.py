@@ -2,7 +2,7 @@
 Django settings for the OpenToAll project.
 
 OpenToAll — plateforme de découverte et de valorisation de la contribution
-open source, pensée pour les développeurs africains.
+open source, ouverte à tous.
 
 Documentation: https://docs.djangoproject.com/en/6.0/ref/settings/
 """

@@ -44,13 +44,23 @@ def test_detect_foundation():
 # Models                                                                      #
 # --------------------------------------------------------------------------- #
 @pytest.mark.django_db
-def test_issue_size_category_and_bars():
+@pytest.mark.parametrize(
+    "size_kb, category, bars",
+    [
+        (1, "léger", 1),
+        (49_999, "léger", 1),
+        (50_000, "moyen", 2),
+        (499_999, "moyen", 2),
+        (500_000, "lourd", 3),
+    ],
+)
+def test_issue_size_category_and_bars(size_kb, category, bars):
     issue = Issue.objects.create(
-        github_issue_id=1, title="Test", url="https://github.com",
-        repo_full_name="test/test", repo_size_kb=1000,
+        github_issue_id=size_kb, title="Test", url="https://github.com",
+        repo_full_name="test/test", repo_size_kb=size_kb,
     )
-    assert issue.size_category() == "léger"
-    assert issue.size_bars == 1
+    assert issue.size_category() == category
+    assert issue.size_bars == bars
     assert issue.repo_owner == "test"
     assert issue.repo_name == "test"
 
@@ -120,8 +130,8 @@ def test_home_page_brands_clone_weight(client):
     html = resp.content.decode()
     assert "Poids du clone" in html
     assert "léger" in html.lower()
-    assert "5" in html and "Mo" in html
-    assert "50" in html
+    assert "50" in html and "Mo" in html
+    assert "500" in html
     assert "lourd" in html.lower()
     assert 'class="weight-meter"' in html
 
@@ -327,8 +337,8 @@ def test_explore_explains_clone_weight_filter(client):
     assert "Poids du clone" in html
     assert 'id="clone-size-help"' in html
     assert 'aria-describedby="clone-size-help"' in html
-    assert "Léger" in html and "5 Mo" in html
-    assert "50 Mo" in html
+    assert "Léger" in html and "50 Mo" in html
+    assert "500 Mo" in html
     assert "moyen" in html.lower()
     assert "lourd" in html.lower()
 
@@ -357,11 +367,15 @@ def test_issue_card_updated_date(has_updated_at):
 @pytest.mark.parametrize("htmx", [False, True])
 @pytest.mark.parametrize(
     "max_size, expected_sizes",
-    [("", [4999, 5000, 49999, 50000]), ("5000", [4999]), ("50000", [4999, 5000, 49999])],
+    [
+        ("", [49_999, 50_000, 499_999, 500_000]),
+        ("50000", [49_999]),
+        ("500000", [49_999, 50_000, 499_999]),
+    ],
 )
 def test_explore_clone_size_filter(client, max_size, expected_sizes, htmx):
     cache.clear()
-    for size in [4999, 5000, 49999, 50000]:
+    for size in [49_999, 50_000, 499_999, 500_000]:
         Issue.objects.create(
             github_issue_id=size, title=f"Repo {size}", url="https://github.com/a/b",
             repo_full_name="a/b", repo_size_kb=size, stars_count=size,
@@ -375,7 +389,7 @@ def test_explore_clone_size_filter(client, max_size, expected_sizes, htmx):
     assert response.context["total_count"] == len(expected_sizes)
     assert sorted(issue.repo_size_kb for issue in response.context["page_obj"]) == expected_sizes
     html = response.content.decode()
-    for size in [4999, 5000, 49999, 50000]:
+    for size in [49_999, 50_000, 499_999, 500_000]:
         assert (f">Repo {size}</h3>" in html) == (size in expected_sizes)
     if htmx:
         assert "<html" not in html
@@ -385,7 +399,7 @@ def test_explore_clone_size_filter(client, max_size, expected_sizes, htmx):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("htmx", [False, True])
-@pytest.mark.parametrize("max_size", [5000, 50000])
+@pytest.mark.parametrize("max_size", [50_000, 500_000])
 def test_explore_clone_size_filter_pagination(client, max_size, htmx):
     cache.clear()
     Issue.objects.bulk_create([
