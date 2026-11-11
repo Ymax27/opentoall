@@ -438,7 +438,7 @@ def test_sitemap_uses_request_host(client, settings):
     body = resp.content.decode()
     # Absolute URLs come from the request host, not the django.contrib.sites table.
     assert "example.com" not in body
-    for name in ("home", "support", "explore", "leaderboard"):
+    for name in ("home", "about", "support", "explore", "leaderboard"):
         assert "http://opentoall.test" + reverse(name) in body
     assert "http://opentoall.test" + reverse("issue_detail", args=[open_issue.pk]) in body
     assert reverse("issue_detail", args=[assigned.pk]) not in body
@@ -485,7 +485,7 @@ def test_explore_foundation_filter_pagination(client):
         
         
 @pytest.mark.django_db
-@pytest.mark.parametrize("name", ["home", "support", "explore", "leaderboard"])
+@pytest.mark.parametrize("name", ["home", "about", "support", "explore", "leaderboard"])
 def test_json_ld_on_main_pages(client, name):
     import json
 
@@ -569,4 +569,59 @@ def test_support_form_validation_errors(client):
     )
     assert resp.status_code == 200
     assert resp.context["form"].errors
+
+
+# --------------------------------------------------------------------------- #
+# About / built-by credit (#44)                                               #
+# --------------------------------------------------------------------------- #
+@pytest.mark.django_db
+def test_about_page_and_built_by_credit(client):
+    cache.clear()
+    about = client.get(reverse("about"))
+    assert about.status_code == 200
+    assert "À propos".encode() in about.content
+    assert b"Built by" in about.content
+    assert b">Ymax<" in about.content
+    assert b"amazing contributor" in about.content
+    assert b"/graphs/contributors" in about.content
+
+    home = client.get(reverse("home"))
+    assert home.status_code == 200
+    assert b"Built by" in home.content
+    assert reverse("about").encode() in home.content
+
+
+def test_get_repo_contributor_count_excludes_owner_bots_and_cursor(monkeypatch):
+    class FakeResp:
+        status_code = 200
+        headers = {}
+
+        def json(self):
+            return [
+                {"login": "dependabot[bot]", "type": "Bot"},
+                {"login": "Ymax27", "type": "User"},
+                {"login": "cursoragent", "type": "User"},
+                {"login": None, "type": "Anonymous"},
+                {"login": "alice", "type": "User"},
+                {"login": "bob", "type": "User"},
+            ]
+
+    monkeypatch.setattr(
+        "core.services.github_client.httpx.get",
+        lambda *args, **kwargs: FakeResp(),
+    )
+    from core.services import github_client
+
+    assert github_client.get_repo_contributor_count("Ymax27/opentoall") == 2
+
+
+def test_get_repo_contributor_count_soft_fails(monkeypatch):
+    import httpx
+    from core.services import github_client
+
+    def boom(*args, **kwargs):
+        raise httpx.ConnectError("offline")
+
+    monkeypatch.setattr("core.services.github_client.httpx.get", boom)
+    assert github_client.get_repo_contributor_count("a/b") is None
 
