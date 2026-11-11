@@ -113,6 +113,20 @@ def test_home_page_why_opentoall_section(client):
 
 
 @pytest.mark.django_db
+def test_home_page_brands_clone_weight(client):
+    """#52 — Poids du clone named + buckets explained on the homepage."""
+    resp = client.get(reverse("home"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Poids du clone" in html
+    assert "léger" in html.lower()
+    assert "5" in html and "Mo" in html
+    assert "50" in html
+    assert "lourd" in html.lower()
+    assert 'class="weight-meter"' in html
+
+
+@pytest.mark.django_db
 def test_explore_page_and_htmx(client):
     Issue.objects.create(
         github_issue_id=3, title="Fix bug", url="https://x",
@@ -263,6 +277,21 @@ def test_explore_filters_have_accessible_labels(client):
     for field_id in ("search-filter", "sort-filter", "language-filter", "clone-size-filter"):
         assert f'for="{field_id}"' in content
         assert f'id="{field_id}"' in content
+
+
+@pytest.mark.django_db
+def test_explore_explains_clone_weight_filter(client):
+    """#52 — Explore filter help names Poids du clone and the size buckets."""
+    resp = client.get(reverse("explore"))
+    assert resp.status_code == 200
+    html = resp.content.decode()
+    assert "Poids du clone" in html
+    assert 'id="clone-size-help"' in html
+    assert 'aria-describedby="clone-size-help"' in html
+    assert "Léger" in html and "5 Mo" in html
+    assert "50 Mo" in html
+    assert "moyen" in html.lower()
+    assert "lourd" in html.lower()
 
 
 @pytest.mark.parametrize("has_updated_at", [True, False])

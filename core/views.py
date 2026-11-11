@@ -55,11 +55,11 @@ FAQ_ITEMS = (
         ),
     },
     {
-        "question": "C’est quoi le poids du clone ?",
+        "question": "C’est quoi le Poids du clone ?",
         "answer": (
-            "Le compteur Clone estime la taille du dépôt. Un repo léger se "
-            "télécharge plus vite : utile quand la bande passante est serrée. "
-            "Trois barres = plus lourd."
+            "Poids du clone, c’est la taille estimée du dépôt à télécharger : "
+            "léger (< 5 Mo), moyen (< 50 Mo) ou lourd. Une à trois barres sur "
+            "les cartes — utile quand la bande passante est serrée."
         ),
     },
     {
