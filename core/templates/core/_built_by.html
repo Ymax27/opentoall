@@ -1,10 +1,10 @@
-<p class="{{ credit_class|default:'text-sm text-on-surface-variant' }}">
+<p class="{{ credit_class|default:'marginalia' }}">
     Built by
-    <a href="{{ repo_owner_url }}" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">Ymax</a>
+    <a href="{{ repo_owner_url }}" target="_blank" rel="noopener" class="text-on-surface underline decoration-on-surface/25 underline-offset-2 hover:text-primary hover:decoration-primary transition-colors">Ymax</a>
     et
     {% if repo_contributor_count != None %}
-    <a href="{{ repo_contributors_url }}" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">{{ repo_contributor_count }} amazing contributor{{ repo_contributor_count|pluralize }}</a>
+    <a href="{{ repo_contributors_url }}" target="_blank" rel="noopener" class="text-on-surface underline decoration-on-surface/25 underline-offset-2 hover:text-primary hover:decoration-primary transition-colors">{{ repo_contributor_count }} amazing contributor{{ repo_contributor_count|pluralize }}</a>
     {% else %}
-    <a href="{{ repo_contributors_url }}" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">amazing contributors</a>
+    <a href="{{ repo_contributors_url }}" target="_blank" rel="noopener" class="text-on-surface underline decoration-on-surface/25 underline-offset-2 hover:text-primary hover:decoration-primary transition-colors">amazing contributors</a>
     {% endif %}
 </p>
