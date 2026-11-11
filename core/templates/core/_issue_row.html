@@ -1,6 +1,6 @@
 <a href="{{ issue.get_absolute_url }}"
-   class="entry group grid gap-x-6 gap-y-3 px-1 py-5 sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-start">
-    <span class="hidden pt-0.5 font-code text-[11px] text-on-surface-variant/70 sm:block">{{ index|stringformat:"02d" }}</span>
+   class="entry group grid gap-x-6 gap-y-3 px-1 py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-start">
+    <span class="hidden font-display text-2xl leading-none tracking-[-0.03em] text-secondary/80 tabular-nums sm:block">{{ index|stringformat:"02d" }}</span>
 
     <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-code text-[11px] text-on-surface-variant">
@@ -18,15 +18,15 @@
             </span>
         </div>
 
-        <h3 class="mt-2 font-display text-lg font-semibold leading-snug tracking-[-0.015em] text-on-surface transition-colors group-hover:text-primary sm:text-xl">
+        <h3 class="mt-2 font-display text-xl font-semibold leading-snug tracking-[-0.025em] text-on-surface transition-colors group-hover:text-secondary sm:text-2xl">
             {{ issue.title }}
         </h3>
 
         {% if issue.body %}
-        <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-on-surface-variant line-clamp-2">{{ issue.body|striptags|truncatechars:150 }}</p>
+        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant line-clamp-2">{{ issue.body|striptags|truncatechars:150 }}</p>
         {% endif %}
 
-        <div class="mt-3 flex flex-wrap items-center gap-1.5">
+        <div class="mt-4 flex flex-wrap items-center gap-1.5">
             {% if issue.difficulty == 'beginner' %}
             <span class="tag tag-accent">Débutant</span>
             {% elif issue.difficulty == 'advanced' %}
@@ -41,8 +41,8 @@
         </div>
     </div>
 
-    <div class="flex items-center justify-between gap-3 sm:justify-end sm:pt-0.5">
+    <div class="flex items-center justify-between gap-3 sm:justify-end sm:pt-1">
         <span class="font-code text-[10px] uppercase tracking-[0.12em] text-on-surface-variant">{{ issue.size_category }}</span>
-        <span aria-hidden="true" class="font-code text-sm text-primary transition-transform group-hover:translate-x-1">&rarr;</span>
+        <span aria-hidden="true" class="font-code text-sm text-secondary transition-transform group-hover:translate-x-1">&rarr;</span>
     </div>
 </a>

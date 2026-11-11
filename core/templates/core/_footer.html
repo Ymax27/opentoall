@@ -1,57 +1,57 @@
 {% load static %}
-<footer class="mt-20 border-t border-on-surface/15">
+<footer class="band-ink">
     <div class="max-w-content mx-auto px-4 lg:px-8">
-        <div class="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-8">
+        <div class="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-10">
             <div class="sm:col-span-2 lg:col-span-1">
-                <a href="{% url 'home' %}" class="flex items-center gap-2">
-                    <img src="{% static 'img/logo.png' %}" alt="" class="h-7 w-7 object-contain">
-                    <span class="font-display text-[19px] font-semibold tracking-[-0.03em]">Open<span class="text-primary">ToAll</span></span>
+                <a href="{% url 'home' %}" class="flex items-center gap-2.5">
+                    <img src="{% static 'img/logo.png' %}" alt="" class="h-8 w-8 object-contain">
+                    <span class="font-display text-2xl font-semibold tracking-[-0.04em] ink-strong">Open<span class="text-secondary">ToAll</span></span>
                 </a>
-                <p class="mt-4 max-w-xs text-sm leading-relaxed text-on-surface-variant">
+                <p class="mt-4 max-w-xs text-sm leading-relaxed ink-muted">
                     Trouve une issue adaptée à ton langage et à ta connexion — et rends visibles les contributeurs qui shippent vraiment.
                 </p>
-                <p class="mt-4 marginalia">Licence MIT · projet communautaire</p>
+                <p class="mt-5 marginalia ink-faint">Licence MIT · projet communautaire</p>
             </div>
             <div>
-                <h3 class="eyebrow"><span class="text-on-surface-variant/55">01 /</span> <span>Produit</span></h3>
+                <h3 class="eyebrow"><span class="ink-faint">01 /</span> <span class="ink-strong">Produit</span></h3>
                 <ul class="mt-4 space-y-2.5 text-sm">
-                    <li><a href="{% url 'explore' %}" class="text-on-surface-variant hover:text-primary transition-colors">Issues</a></li>
-                    <li><a href="{% url 'leaderboard' %}" class="text-on-surface-variant hover:text-primary transition-colors">Classement</a></li>
-                    <li><a href="{% url 'home' %}#pillars" class="text-on-surface-variant hover:text-primary transition-colors">Comment ça marche</a></li>
-                    <li><a href="{% url 'home' %}#why" class="text-on-surface-variant hover:text-primary transition-colors">Pourquoi OpenToAll</a></li>
-                    <li><a href="{% url 'home' %}#voices" class="text-on-surface-variant hover:text-primary transition-colors">Témoignages</a></li>
-                    <li><a href="{% url 'home' %}#faq" class="text-on-surface-variant hover:text-primary transition-colors">FAQ</a></li>
+                    <li><a href="{% url 'explore' %}" class="ink-muted hover:text-[#F4F1E9] transition-colors">Issues</a></li>
+                    <li><a href="{% url 'leaderboard' %}" class="ink-muted hover:text-[#F4F1E9] transition-colors">Classement</a></li>
+                    <li><a href="{% url 'home' %}#pillars" class="ink-muted hover:text-[#F4F1E9] transition-colors">Comment ça marche</a></li>
+                    <li><a href="{% url 'home' %}#why" class="ink-muted hover:text-[#F4F1E9] transition-colors">Pourquoi OpenToAll</a></li>
+                    <li><a href="{% url 'home' %}#voices" class="ink-muted hover:text-[#F4F1E9] transition-colors">Témoignages</a></li>
+                    <li><a href="{% url 'home' %}#faq" class="ink-muted hover:text-[#F4F1E9] transition-colors">FAQ</a></li>
                 </ul>
             </div>
             <div>
-                <h3 class="eyebrow"><span class="text-on-surface-variant/55">02 /</span> <span>Communauté</span></h3>
+                <h3 class="eyebrow"><span class="ink-faint">02 /</span> <span class="ink-strong">Communauté</span></h3>
                 <ul class="mt-4 space-y-2.5 text-sm">
-                    <li><a href="{% url 'about' %}" class="text-on-surface-variant hover:text-primary transition-colors">À propos</a></li>
-                    <li><a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Discussions</a></li>
-                    <li><a href="{{ GITHUB_REPO_URL }}/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Contribuer</a></li>
-                    <li><a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Dépôt GitHub</a></li>
-                    <li><a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">Signaler un bug</a></li>
+                    <li><a href="{% url 'about' %}" class="ink-muted hover:text-[#F4F1E9] transition-colors">À propos</a></li>
+                    <li><a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="ink-muted hover:text-[#F4F1E9] transition-colors">Discussions</a></li>
+                    <li><a href="{{ GITHUB_REPO_URL }}/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="ink-muted hover:text-[#F4F1E9] transition-colors">Contribuer</a></li>
+                    <li><a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="ink-muted hover:text-[#F4F1E9] transition-colors">Dépôt GitHub</a></li>
+                    <li><a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="ink-muted hover:text-[#F4F1E9] transition-colors">Signaler un bug</a></li>
                 </ul>
             </div>
             <div>
-                <h3 class="eyebrow"><span class="text-on-surface-variant/55">03 /</span> <span>Support</span></h3>
+                <h3 class="eyebrow"><span class="ink-faint">03 /</span> <span class="ink-strong">Support</span></h3>
                 <ul class="mt-4 space-y-2.5 text-sm">
-                    <li><a href="{% url 'support' %}" class="text-on-surface-variant hover:text-primary transition-colors">Support</a></li>
-                    <li><a href="mailto:{{ SUPPORT_EMAIL }}?subject=Support%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Email</a></li>
-                    <li><a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20écris%20%C3%A0%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary transition-colors">WhatsApp</a></li>
-                    <li><a href="mailto:{{ SUPPORT_EMAIL }}?subject=Soutenir%20OpenToAll" class="text-on-surface-variant hover:text-primary transition-colors">Soutenir le projet</a></li>
+                    <li><a href="{% url 'support' %}" class="ink-muted hover:text-[#F4F1E9] transition-colors">Support</a></li>
+                    <li><a href="mailto:{{ SUPPORT_EMAIL }}?subject=Support%20OpenToAll" class="ink-muted hover:text-[#F4F1E9] transition-colors">Email</a></li>
+                    <li><a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20%C3%A9cris%20%C3%A0%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="ink-muted hover:text-[#F4F1E9] transition-colors">WhatsApp</a></li>
+                    <li><a href="mailto:{{ SUPPORT_EMAIL }}?subject=Soutenir%20OpenToAll" class="ink-muted hover:text-[#F4F1E9] transition-colors">Soutenir le projet</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="flex flex-col gap-3 border-t border-on-surface/15 py-5 sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-                <p class="marginalia">&copy; {% now "Y" %} {{ SITE_NAME }} — MIT</p>
-                {% include "core/_built_by.html" with credit_class="marginalia" %}
+        <div class="flex flex-col gap-3 border-t ink-rule py-6 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-5">
+                <p class="marginalia ink-faint">&copy; {% now "Y" %} {{ SITE_NAME }} — MIT</p>
+                {% include "core/_built_by.html" with credit_class="marginalia ink-faint" credit_link_class="text-[#F4F1E9] underline decoration-[#F4F1E9]/25 underline-offset-2 hover:text-secondary transition-colors" %}
             </div>
-            <p class="flex flex-wrap items-center gap-x-4 gap-y-1 marginalia">
-                <a href="{% url 'support' %}" class="hover:text-primary transition-colors">Support</a>
-                <a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="hover:text-primary transition-colors">Discussions</a>
+            <p class="flex flex-wrap items-center gap-x-5 gap-y-1 marginalia ink-faint">
+                <a href="{% url 'support' %}" class="hover:text-[#F4F1E9] transition-colors">Support</a>
+                <a href="{{ GITHUB_REPO_URL }}/discussions" target="_blank" rel="noopener" class="hover:text-[#F4F1E9] transition-colors">Discussions</a>
             </p>
         </div>
     </div>

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -12,7 +12,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     <!-- Prevent dark-mode flash -->
@@ -57,14 +57,15 @@
                     fontFamily: {
                         display: ['Archivo', 'system-ui', 'sans-serif'],
                         heading: ['Archivo', 'system-ui', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
                         body: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
                         code: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
                     },
-                    borderRadius: { DEFAULT: '0.25rem', md: '0.375rem', lg: '0.5rem', xl: '0.625rem', '2xl': '0.875rem' },
+                    borderRadius: { DEFAULT: '0', md: '0', lg: '2px', xl: '2px', '2xl': '3px' },
                     maxWidth: { content: '1240px' },
                     boxShadow: {
-                        card: '0 1px 0 0 rgb(20 23 15 / 0.04)',
-                        'card-hover': '0 2px 0 0 rgb(20 81 60 / 0.35)',
+                        card: '0 1px 0 0 rgb(17 19 16 / 0.06)',
+                        'card-hover': '0 2px 0 0 rgb(214 74 38 / 0.55)',
                     },
                 },
             },
@@ -78,7 +79,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col">
-<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 focus:rounded-sm focus:font-code focus:text-xs focus:uppercase focus:tracking-wider">Aller au contenu</a>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 focus:font-code focus:text-xs focus:uppercase focus:tracking-wider">Aller au contenu</a>
 
 {% include "core/_nav.html" %}
 
@@ -89,10 +90,10 @@
         <div data-flash
              data-flash-tags="{{ message.tags }}"
              role="{% if 'error' in message.tags or 'warning' in message.tags %}alert{% else %}status{% endif %}"
-             class="mb-2 flex items-start justify-between gap-3 border-l-2 border-primary bg-surface-container-low px-4 py-3 text-sm text-on-surface">
+             class="mb-2 flex items-start justify-between gap-3 border-l-[3px] border-l-secondary border-y border-y-on-surface/15 bg-surface-container-low px-4 py-3 text-sm text-on-surface">
             <span>{{ message }}</span>
             <button type="button" data-flash-close aria-label="Fermer le message"
-                    class="shrink-0 -mr-1 rounded-sm px-2 leading-none text-lg text-on-surface-variant hover:text-on-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                    class="shrink-0 -mr-1 rounded-sm px-2 leading-none text-lg text-on-surface-variant hover:text-on-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary">
                 &times;
             </button>
         </div>

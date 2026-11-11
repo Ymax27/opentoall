@@ -1,37 +1,33 @@
 {% load static %}
 {% url 'home' as home_url %}
 {% with active=request.resolver_match.url_name|default:"" %}
-<header class="sticky top-0 z-50 w-full border-b border-outline-variant bg-background/95 backdrop-blur-md">
-    <div class="max-w-content mx-auto h-[60px] px-4 lg:px-8 flex items-center justify-between gap-4">
-        <!-- Brand + mobile menu -->
+<header class="sticky top-0 z-50 w-full border-t-[3px] border-secondary border-b border-on-surface/15 bg-background/95 backdrop-blur-md">
+    <div class="max-w-content mx-auto h-16 px-4 lg:px-8 flex items-center justify-between gap-4">
         <div class="flex min-w-0 items-center gap-3">
             <button type="button" onclick="toggleDrawer(true)" aria-controls="mobile-drawer"
                     class="lg:hidden -ml-2 grid h-10 w-10 place-items-center text-on-surface">
                 <span class="sr-only">Ouvrir le menu</span>
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                     <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="square"/>
                 </svg>
             </button>
-            <a href="{{ home_url }}" class="group flex min-w-0 items-center gap-2">
-                <img src="{% static 'img/logo.png' %}" alt="" class="h-7 w-7 shrink-0 object-contain">
-                <span class="font-display text-[19px] font-semibold leading-none tracking-[-0.03em] text-on-surface">Open<span class="text-primary">ToAll</span></span>
-                <span class="hidden xl:inline font-code text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">issues / open source</span>
+            <a href="{{ home_url }}" class="group flex min-w-0 items-center gap-2.5">
+                <img src="{% static 'img/logo.png' %}" alt="" class="h-8 w-8 shrink-0 object-contain">
+                <span class="font-display text-xl font-semibold leading-none tracking-[-0.04em] text-on-surface">Open<span class="text-secondary">ToAll</span></span>
+                <span class="hidden xl:inline font-code text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">registre / open source</span>
             </a>
         </div>
 
-        <!-- Desktop nav -->
-        <nav class="hidden lg:flex items-center gap-1" aria-label="Navigation principale">
+        <nav class="hidden lg:flex h-full items-stretch" aria-label="Navigation principale">
             {% for slug, label, icon in nav_links %}
             <a href="{% url slug %}"{% if active == slug %} aria-current="page"{% endif %}
-               class="group relative px-3 py-2 font-code text-[11px] uppercase tracking-[0.14em] transition-colors {% if active == slug %}text-primary{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+               class="group relative flex items-center border-b-2 px-4 font-code text-[11px] uppercase tracking-[0.14em] transition-colors {% if active == slug %}border-secondary text-secondary{% else %}border-transparent text-on-surface-variant hover:text-on-surface{% endif %}">
                 <span class="mr-1.5 text-[10px] opacity-45">0{{ forloop.counter }}</span>{{ label }}
-                <span class="absolute inset-x-3 -bottom-[11px] h-px {% if active == slug %}bg-primary{% else %}bg-transparent group-hover:bg-on-surface/30{% endif %}"></span>
             </a>
             {% endfor %}
         </nav>
 
-        <!-- Actions -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1.5">
             <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener"
                class="hidden sm:grid h-9 w-9 place-items-center text-on-surface-variant hover:text-on-surface transition-colors"
                title="Voir le dépôt sur GitHub">
@@ -55,9 +51,9 @@
             <a href="{% if profile.github_username %}{% url 'profile' profile.github_username %}{% else %}{% url 'home' %}{% endif %}"
                class="ml-1 flex items-center gap-2 py-1 pl-1 pr-1 sm:pr-2 hover:bg-on-surface/5 transition-colors">
                 {% if profile.avatar_url %}
-                <img src="{{ profile.avatar_url }}" alt="" class="h-8 w-8 rounded-sm object-cover border border-outline-variant">
+                <img src="{{ profile.avatar_url }}" alt="" class="h-8 w-8 object-cover border border-outline-variant">
                 {% else %}
-                <span class="h-8 w-8 rounded-sm bg-primary/10 text-primary grid place-items-center text-xs font-code font-medium">{{ profile.initials }}</span>
+                <span class="h-8 w-8 bg-primary/10 text-primary grid place-items-center text-xs font-code font-medium">{{ profile.initials }}</span>
                 {% endif %}
                 <span class="sr-only sm:not-sr-only font-code text-[11px] text-on-surface-variant">{{ profile.github_username|default:user.username }}</span>
             </a>
@@ -71,7 +67,7 @@
             </a>
             {% else %}
             <a href="{% url 'account_login' %}"
-               class="ml-1 inline-flex items-center gap-2 border border-on-surface/25 px-3.5 py-2 font-code text-[11px] uppercase tracking-[0.12em] text-on-surface transition-colors hover:border-primary hover:text-primary">
+               class="ml-1 inline-flex items-center gap-2 bg-primary px-3.5 py-2 font-code text-[11px] uppercase tracking-[0.12em] text-on-primary transition-colors hover:bg-primary-container">
                 <span class="hidden sm:inline">Connexion</span>
                 <span class="sm:hidden">Compte</span>
                 <svg viewBox="0 0 16 16" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
@@ -84,16 +80,16 @@
 </header>
 
 <!-- Mobile drawer -->
-<div id="drawer-overlay" onclick="toggleDrawer(false)" class="hidden fixed inset-0 z-[60] bg-on-surface/40 lg:hidden"></div>
-<aside id="mobile-drawer" class="fixed top-0 left-0 z-[70] flex h-full w-[86%] max-w-sm -translate-x-full flex-col border-r border-on-surface/15 bg-background transition-transform duration-300 lg:hidden">
-    <div class="flex items-center justify-between border-b border-outline-variant px-5 py-4">
+<div id="drawer-overlay" onclick="toggleDrawer(false)" class="hidden fixed inset-0 z-[60] bg-on-surface/50 lg:hidden"></div>
+<aside id="mobile-drawer" class="fixed top-0 left-0 z-[70] flex h-full w-[86%] max-w-sm -translate-x-full flex-col border-r border-on-surface/20 bg-background transition-transform duration-300 lg:hidden">
+    <div class="flex items-center justify-between border-b border-on-surface/15 px-5 py-4">
         <a href="{{ home_url }}" class="flex items-center gap-2">
-            <img src="{% static 'img/logo.png' %}" alt="" class="h-7 w-7 object-contain">
-            <span class="font-display text-[19px] font-semibold tracking-[-0.03em]">Open<span class="text-primary">ToAll</span></span>
+            <img src="{% static 'img/logo.png' %}" alt="" class="h-8 w-8 object-contain">
+            <span class="font-display text-xl font-semibold tracking-[-0.04em]">Open<span class="text-secondary">ToAll</span></span>
         </a>
         <button type="button" onclick="toggleDrawer(false)" class="grid h-9 w-9 place-items-center text-on-surface-variant hover:text-on-surface">
             <span class="sr-only">Fermer le menu</span>
-            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path d="M5 5l14 14M19 5 5 19" stroke-linecap="square"/>
             </svg>
         </button>
@@ -102,25 +98,25 @@
     <nav class="flex flex-col" aria-label="Navigation mobile">
         {% for slug, label, icon in nav_links %}
         <a href="{% url slug %}"{% if active == slug %} aria-current="page"{% endif %}
-           class="flex items-center justify-between border-b border-outline-variant/60 px-5 py-4 {% if active == slug %}text-primary{% else %}text-on-surface{% endif %}">
+           class="flex items-center justify-between border-b border-on-surface/12 px-5 py-4 {% if active == slug %}text-secondary{% else %}text-on-surface{% endif %}">
             <span class="flex items-baseline gap-3">
                 <span class="font-code text-[10px] text-on-surface-variant">0{{ forloop.counter }}</span>
-                <span class="font-display text-xl font-semibold tracking-[-0.02em]">{{ label }}</span>
+                <span class="font-display text-2xl font-semibold tracking-[-0.03em]">{{ label }}</span>
             </span>
-            <span aria-hidden="true" class="font-code text-sm {% if active == slug %}text-primary{% else %}text-on-surface-variant{% endif %}">&rarr;</span>
+            <span aria-hidden="true" class="font-code text-sm">&rarr;</span>
         </a>
         {% endfor %}
         <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener"
-           class="flex items-center justify-between border-b border-outline-variant/60 px-5 py-4 text-on-surface-variant">
+           class="flex items-center justify-between border-b border-on-surface/12 px-5 py-4 text-on-surface-variant">
             <span class="flex items-baseline gap-3">
                 <span class="font-code text-[10px]">04</span>
-                <span class="font-display text-xl font-semibold tracking-[-0.02em] text-on-surface">Contribuer</span>
+                <span class="font-display text-2xl font-semibold tracking-[-0.03em] text-on-surface">Contribuer</span>
             </span>
             <span aria-hidden="true" class="font-code text-sm">&nearr;</span>
         </a>
     </nav>
 
-    <div class="mt-auto border-t border-outline-variant p-5">
+    <div class="mt-auto border-t border-on-surface/15 p-5">
         {% if user.is_authenticated %}
         <a href="{% url 'account_logout' %}" class="flex items-center justify-between text-sm text-error">
             <span>Déconnexion</span>

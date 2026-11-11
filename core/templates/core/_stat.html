@@ -1,5 +1,6 @@
-<div class="px-4 py-5 lg:px-5 lg:py-6">
-    <p class="font-code text-[10px] uppercase tracking-[0.16em] text-on-surface-variant">{{ index }} — {{ label }}</p>
-    <p class="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.03em] text-on-surface tabular-nums lg:text-[2.5rem]">{{ value }}</p>
-    {% if note %}<p class="mt-1.5 font-code text-[10px] text-on-surface-variant">{{ note }}</p>{% endif %}
+<div class="px-5 py-6 lg:px-6 lg:py-8">
+    <p class="eyebrow text-secondary">{{ index }}</p>
+    <p class="mt-3 font-display text-[2.75rem] font-semibold leading-none tracking-[-0.045em] ink-strong tabular-nums lg:text-[3.75rem]">{{ value }}</p>
+    <p class="mt-3 font-code text-[10px] uppercase tracking-[0.14em] ink-muted">{{ label }}</p>
+    {% if note %}<p class="mt-1 font-code text-[10px] ink-faint">{{ note }}</p>{% endif %}
 </div>

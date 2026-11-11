@@ -5,55 +5,52 @@
 {% block meta_description %}Trouve une issue GitHub adaptée à ton langage, ton niveau et ta connexion — et montre tes contributions à la communauté.{% endblock %}
 
 {% block content %}
-<section class="relative overflow-hidden border-b border-on-surface/12">
-    <div class="grid-paper absolute inset-0 opacity-70 pointer-events-none" aria-hidden="true"></div>
+<!-- Hero — bande encre -->
+<section class="band-ink relative overflow-hidden">
+    <div class="grid-ink absolute inset-0 pointer-events-none" aria-hidden="true"></div>
 
     <div class="relative max-w-content mx-auto px-4 lg:px-8">
-        <div class="grid gap-x-12 gap-y-12 pb-14 pt-12 lg:grid-cols-12 lg:pb-20 lg:pt-20">
+        <div class="grid gap-12 pb-14 pt-12 lg:grid-cols-12 lg:gap-10 lg:pb-20 lg:pt-16">
 
-            <!-- Éditorial -->
             <div class="animate-fade-up lg:col-span-7">
                 <p class="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <span class="h-1.5 w-1.5 bg-primary" aria-hidden="true"></span>
-                    Open source · ouvert à tous
-                    <span class="text-on-surface-variant/60">/ registre public</span>
+                    <span class="h-1.5 w-1.5 bg-secondary" aria-hidden="true"></span>
+                    <span class="text-secondary">Registre public</span>
+                    <span class="ink-faint">/ open source, ouvert à tous</span>
                 </p>
 
-                <h1 class="mt-6 font-display font-semibold text-on-surface text-[clamp(2.4rem,7vw,3.9rem)] leading-[1.02] tracking-[-0.04em]">
+                <h1 class="mt-7 font-display font-semibold text-[clamp(3rem,7.6vw,6.25rem)] leading-[0.93] tracking-[-0.045em] ink-strong">
                     Une issue.<br>
                     Un clone.<br>
-                    <span class="relative inline-block text-primary">
-                        Une PR finie.
-                        <span class="absolute -bottom-2 left-0 h-[3px] w-full bg-secondary/70" aria-hidden="true"></span>
-                    </span>
+                    <span class="font-serif font-normal italic tracking-[-0.02em] text-secondary">Une PR finie.</span>
                 </h1>
 
-                <p class="mt-6 max-w-lg text-lg leading-relaxed text-on-surface-variant">
+                <p class="mt-7 max-w-md text-lg leading-relaxed ink-muted">
                     OpenToAll filtre les issues encore libres par langage, niveau et
-                    <span class="font-medium text-on-surface">poids du clone</span>.
+                    <span class="font-medium ink-strong">poids du clone</span>.
                     Tu sais avant de cloner si c’est faisable avec ta connexion.
                 </p>
 
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <a href="{% url 'explore' %}" class="btn btn-primary">
+                    <a href="{% url 'explore' %}" class="btn btn-paper">
                         Ouvrir le registre
                         <span aria-hidden="true">&rarr;</span>
                     </a>
                     {% if not user.is_authenticated %}
-                    <a href="{% url 'account_login' %}" class="btn btn-outline">
+                    <a href="{% url 'account_login' %}" class="btn btn-outline-light">
                         <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
                         Continuer avec GitHub
                     </a>
                     {% endif %}
                 </div>
 
-                <div class="mt-9 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-on-surface/15 pt-5">
-                    <p class="marginalia">Gratuit · sans spam · code ouvert</p>
-                    <span class="hidden h-3 w-px bg-on-surface/20 sm:block" aria-hidden="true"></span>
-                    {% include "core/_built_by.html" with credit_class="marginalia" %}
-                    <span class="hidden h-3 w-px bg-on-surface/20 sm:block" aria-hidden="true"></span>
+                <div class="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-t ink-rule pt-5">
+                    <p class="eyebrow ink-faint">Gratuit · sans spam · code ouvert</p>
+                    <span class="hidden h-3 w-px bg-[#F4F1E9]/20 sm:block" aria-hidden="true"></span>
+                    {% include "core/_built_by.html" with credit_class="marginalia ink-faint" credit_link_class="text-[#F4F1E9] underline decoration-[#F4F1E9]/25 underline-offset-2 hover:text-secondary transition-colors" %}
+                    <span class="hidden h-3 w-px bg-[#F4F1E9]/20 sm:block" aria-hidden="true"></span>
                     <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener noreferrer"
-                       class="link-arrow font-code !text-[11px] uppercase tracking-[0.1em]"
+                       class="link-arrow font-code text-[11px] uppercase tracking-[0.1em]"
                        aria-label="Star OpenToAll on GitHub">
                         Star sur GitHub
                         <span aria-hidden="true">&nearr;</span>
@@ -61,70 +58,87 @@
                 </div>
             </div>
 
-            <!-- Fiche d'exemple -->
+            <!-- Planche : maillage + exemple d'entrée -->
             <aside class="animate-fade-up lg:col-span-5" style="animation-delay:.08s">
-                <p class="eyebrow mb-3">Exemple d’entrée</p>
-                <div class="border border-on-surface/20 bg-surface-container-lowest">
-                    <div class="flex items-center justify-between gap-3 border-b border-on-surface/12 px-4 py-2.5">
-                        <span class="truncate font-code text-[11px] text-on-surface-variant">kubernetes/kubernetes</span>
-                        <span class="shrink-0 font-code text-[10px] uppercase tracking-[0.12em] text-secondary">Débutant</span>
+                <figure>
+                    <div class="flex items-baseline justify-between gap-4 border-b ink-rule pb-2">
+                        <figcaption class="eyebrow ink-faint">Fig. 01 — maillage des issues</figcaption>
+                        <span class="eyebrow text-secondary">schéma</span>
                     </div>
-                    <div class="p-4 sm:p-5">
-                        <h2 class="font-display text-lg font-semibold leading-snug tracking-[-0.015em] text-on-surface">
-                            Improve error message when config file is missing
-                        </h2>
-                        <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">
-                            Un message clair qui pointe vers la doc quand le kubeconfig est introuvable.
-                        </p>
-                        <dl class="mt-5 grid grid-cols-3 gap-3 border-t border-on-surface/12 pt-4">
-                            <div>
-                                <dt class="eyebrow text-[10px]">Langage</dt>
-                                <dd class="mt-1 font-code text-xs text-on-surface">Go</dd>
-                            </div>
-                            <div>
-                                <dt class="eyebrow text-[10px]">Clone</dt>
-                                <dd class="mt-1 flex items-center gap-2 font-code text-xs text-on-surface">
-                                    léger
-                                    <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
-                                        <span></span><span></span><span></span>
-                                    </span>
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="eyebrow text-[10px]">Réponse</dt>
-                                <dd class="mt-1 font-code text-xs text-on-surface">~2 h</dd>
-                            </div>
-                        </dl>
+                    <div class="mt-4 border ink-rule bg-[#F4F1E9]/[0.02] p-3">
+                        <svg viewBox="0 0 360 210" class="w-full" role="img" aria-labelledby="fig-title fig-desc">
+                            <title id="fig-title">Maillage schématique d’issues open source</title>
+                            <desc id="fig-desc">Grille de points reliés dont quelques nœuds sont mis en évidence. Illustration, pas une mesure réelle.</desc>
+                            <defs>
+                                <pattern id="ota-dots" width="30" height="30" patternUnits="userSpaceOnUse">
+                                    <circle cx="15" cy="15" r="1.6" fill="#F4F1E9" fill-opacity="0.22"/>
+                                </pattern>
+                            </defs>
+                            <rect width="360" height="210" fill="url(#ota-dots)"/>
+                            <g stroke="#F4F1E9" stroke-opacity="0.16" stroke-width="1" fill="none">
+                                <path d="M45 45L105 75L165 45L225 105L285 75"/>
+                                <path d="M75 135L135 105L195 135L255 165"/>
+                                <path d="M165 45L195 135"/>
+                            </g>
+                            <g fill="#D64A26">
+                                <circle cx="105" cy="75" r="4.5"/>
+                                <circle cx="225" cy="105" r="5.5"/>
+                                <circle cx="285" cy="75" r="4"/>
+                                <circle cx="135" cy="105" r="4.5"/>
+                                <circle cx="195" cy="135" r="4"/>
+                                <circle cx="75" cy="135" r="3.5"/>
+                            </g>
+                            <g fill="#F4F1E9" fill-opacity="0.6">
+                                <circle cx="45" cy="45" r="2.5"/>
+                                <circle cx="165" cy="45" r="2.5"/>
+                                <circle cx="255" cy="165" r="2.5"/>
+                            </g>
+                        </svg>
                     </div>
-                    <div class="flex items-center justify-between gap-3 border-t border-on-surface/12 bg-surface-container-low px-4 py-3">
-                        <span class="font-code text-[10px] uppercase tracking-[0.12em] text-on-surface-variant">Bon terrain pour une première PR</span>
-                        <span class="text-primary" aria-hidden="true">&rarr;</span>
-                    </div>
-                </div>
+                    <p class="mt-2 marginalia ink-faint">Planche illustrative — pas une mesure réelle.</p>
+                </figure>
 
-                <dl class="mt-5 space-y-2.5">
-                    <div class="flex gap-3">
-                        <dt class="shrink-0 font-code text-[10px] text-secondary">01</dt>
-                        <dd class="marginalia">Poids du clone — taille réelle du dépôt, en kilo-octets.</dd>
+                <div class="mt-8">
+                    <div class="flex items-baseline justify-between gap-4 border-b ink-rule pb-2">
+                        <p class="eyebrow ink-faint">Exemple d’entrée</p>
+                        <span class="eyebrow text-secondary">Débutant</span>
                     </div>
-                    <div class="flex gap-3">
-                        <dt class="shrink-0 font-code text-[10px] text-secondary">02</dt>
-                        <dd class="marginalia">Réactivité — délai de réponse médian des mainteneurs.</dd>
+                    <div class="mt-4 flex items-baseline justify-between gap-3">
+                        <span class="truncate font-code text-xs ink-muted">kubernetes/<span class="ink-strong">kubernetes</span></span>
+                        <span class="shrink-0 font-code text-[10px] ink-faint">#12931</span>
                     </div>
-                    <div class="flex gap-3">
-                        <dt class="shrink-0 font-code text-[10px] text-secondary">03</dt>
-                        <dd class="marginalia">Niveau — estimé à partir des labels et de l’historique du dépôt.</dd>
-                    </div>
-                </dl>
+                    <h2 class="mt-2 font-display text-xl font-semibold leading-snug tracking-[-0.02em] ink-strong">
+                        Improve error message when config file is missing
+                    </h2>
+                    <dl class="mt-5 grid grid-cols-3 gap-3 border-t ink-rule pt-4">
+                        <div>
+                            <dt class="eyebrow ink-faint">Langage</dt>
+                            <dd class="mt-1 font-code text-xs ink-strong">Go</dd>
+                        </div>
+                        <div>
+                            <dt class="eyebrow ink-faint">Clone</dt>
+                            <dd class="mt-1 flex items-center gap-2 font-code text-xs ink-strong">
+                                léger
+                                <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
+                                    <span></span><span></span><span></span>
+                                </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="eyebrow ink-faint">Réponse</dt>
+                            <dd class="mt-1 font-code text-xs ink-strong">~2 h</dd>
+                        </div>
+                    </dl>
+                </div>
             </aside>
         </div>
     </div>
 </section>
 
-<!-- Registre de chiffres -->
-<section class="border-b border-on-surface/12 bg-surface-container-low/60">
+<!-- Registre de chiffres — bande encre -->
+<section class="band-ink border-t ink-rule">
     <div class="max-w-content mx-auto px-4 lg:px-8">
-        <div class="grid grid-cols-2 divide-x divide-y divide-on-surface/10 lg:grid-cols-4 lg:divide-y-0">
+        <div class="grid grid-cols-2 divide-x divide-[#F4F1E9]/12 divide-y divide-[#F4F1E9]/12 lg:grid-cols-4 lg:divide-y-0">
             {% include "core/_stat.html" with index="01" value=stats.total_contributors|intcomma label="Contributeurs" note="profils publics" %}
             {% include "core/_stat.html" with index="02" value=stats.total_contributions|intcomma label="Contributions" note="PR mergées suivies" %}
             {% include "core/_stat.html" with index="03" value=stats.total_countries label="Pays" note="représentés" %}
@@ -134,18 +148,18 @@
 </section>
 
 <!-- Méthode -->
-<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-20">
-    <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-24">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
         <header class="lg:col-span-4">
-            <p class="eyebrow">01 / Méthode</p>
-            <h2 class="mt-4 font-display text-2xl font-semibold tracking-[-0.03em] text-on-surface lg:text-[1.9rem] lg:leading-tight">
+            <p class="eyebrow text-secondary">01 / Méthode</p>
+            <h2 class="mt-4 font-display text-[clamp(2rem,3.4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-on-surface">
                 Ce qui change vraiment
             </h2>
-            <p class="mt-3 max-w-sm leading-relaxed text-on-surface-variant">
+            <p class="mt-4 max-w-sm leading-relaxed text-on-surface-variant">
                 Pas un énième listing d’issues. Des filtres calés sur ton quotidien de contributeur.
             </p>
         </header>
-        <div class="border-t border-on-surface/15 lg:col-span-8">
+        <div class="grid gap-px bg-on-surface/15 sm:grid-cols-3 lg:col-span-8">
             {% include "core/_pillar.html" with index="01" title="Filtre ce qui est encore libre" text="Langage, niveau, non assigné. Tu ne perds plus une soirée sur une issue déjà prise." %}
             {% include "core/_pillar.html" with index="02" title="Choisis un repo qui répond" text="Réactivité, bienvenue aux débutants et poids du clone — pour ne pas bloquer sur un monolithe." %}
             {% include "core/_pillar.html" with index="03" title="Laisse une trace visible" text="Ton profil public et le classement montrent que tu as contribué — pas seulement un README perso." %}
@@ -158,15 +172,15 @@
 {% include "core/_testimonials.html" %}
 
 {% if featured %}
-<section class="border-t border-on-surface/12 bg-surface-container-low/40">
-    <div class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16">
-        <div class="flex flex-wrap items-end justify-between gap-4">
+<section class="border-t border-on-surface/15">
+    <div class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-20">
+        <div class="flex flex-wrap items-end justify-between gap-5">
             <div>
-                <p class="eyebrow">04 / Sélection</p>
-                <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-on-surface lg:text-[1.9rem]">
+                <p class="eyebrow text-secondary">04 / Sélection</p>
+                <h2 class="mt-4 font-display text-[clamp(2rem,3.4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-on-surface">
                     Bonnes portes d’entrée
                 </h2>
-                <p class="mt-2 text-on-surface-variant">Issues accueillantes pour démarrer maintenant.</p>
+                <p class="mt-3 text-on-surface-variant">Issues accueillantes pour démarrer maintenant.</p>
             </div>
             <a href="{% url 'explore' %}" class="link-arrow text-sm">
                 Ouvrir le registre complet
@@ -174,7 +188,7 @@
             </a>
         </div>
 
-        <div class="mt-8 border-b border-on-surface/15">
+        <div class="mt-10 border-b border-on-surface/15">
             {% for issue in featured %}
                 {% include "core/_issue_row.html" with issue=issue index=forloop.counter %}
             {% endfor %}
@@ -185,27 +199,32 @@
 
 {% include "core/_faq.html" %}
 
-<section class="max-w-content mx-auto px-4 lg:px-8 pb-16 lg:pb-24">
-    <div class="relative overflow-hidden bg-inverse-surface px-6 py-12 text-inverse-on-surface sm:px-10 lg:px-14 lg:py-16">
-        <div class="absolute inset-y-0 right-0 hidden w-2/5 border-l border-inverse-on-surface/10 lg:block" aria-hidden="true"></div>
-        <div class="relative max-w-2xl">
-            <p class="eyebrow text-inverse-on-surface/55">06 / Commencer</p>
-            <h2 class="mt-4 font-display text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
-                Ta première PR n’attend pas un projet perso parfait.
-            </h2>
-            <p class="mt-4 max-w-xl leading-relaxed text-inverse-on-surface/70">
-                Les recruteurs lisent des contributions réelles. Commence par une issue, pas par un monorepo vide.
-            </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="{% url 'explore' %}" class="btn btn-paper">
-                    Ouvre Explorer
-                    <span aria-hidden="true">&rarr;</span>
-                </a>
-                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener"
-                   class="btn border border-inverse-on-surface/30 text-inverse-on-surface hover:bg-inverse-on-surface/10">
-                    Contribue à OpenToAll
-                    <span aria-hidden="true">&nearr;</span>
-                </a>
+<!-- CTA — bande vermillon -->
+<section class="band-signal">
+    <div class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-24">
+        <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+            <div class="lg:col-span-8">
+                <p class="eyebrow text-[#111310]/60">06 / Commencer</p>
+                <h2 class="mt-5 font-display text-[clamp(2.2rem,5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.045em]">
+                    Ta première PR n’attend pas un projet perso parfait.
+                </h2>
+                <p class="mt-5 max-w-xl leading-relaxed text-[#111310]/75">
+                    Les recruteurs lisent des contributions réelles. Commence par une issue, pas par un monorepo vide.
+                </p>
+                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <a href="{% url 'explore' %}" class="btn btn-ink">
+                        Ouvre Explorer
+                        <span aria-hidden="true">&rarr;</span>
+                    </a>
+                    <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener"
+                       class="btn border border-[#111310]/40 text-[#111310] hover:bg-[#111310]/10 hover:border-[#111310]">
+                        Contribue à OpenToAll
+                        <span aria-hidden="true">&nearr;</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hidden lg:col-span-4 lg:flex lg:items-end lg:justify-end" aria-hidden="true">
+                <p class="font-code text-[11px] uppercase tracking-[0.16em] text-[#111310]/50">git checkout -b<br>premiere-pr</p>
             </div>
         </div>
     </div>
