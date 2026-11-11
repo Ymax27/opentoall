@@ -48,7 +48,7 @@ def site_globals(request):
         "SITE_NAME": site_name,
         "GITHUB_REPO_URL": getattr(settings, "GITHUB_REPO_URL", ""),
         "SUPPORT_EMAIL": getattr(
-            settings, "SUPPORT_EMAIL", "lindsellmaxwell@gmail.com"
+            settings, "SUPPORT_EMAIL", "linxconcept27@gmail.com"
         ),
         "nav_links": [
             ("home", "Accueil", "home"),

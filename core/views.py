@@ -87,7 +87,7 @@ def home(request):
 
 def contact(request):
     """Contact / support page: short form + public email."""
-    support_email = getattr(settings, "SUPPORT_EMAIL", "lindsellmaxwell@gmail.com")
+    support_email = getattr(settings, "SUPPORT_EMAIL", "linxconcept27@gmail.com")
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():

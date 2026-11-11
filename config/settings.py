@@ -458,7 +458,7 @@ SITE_NAME = "OpenToAll"
 GITHUB_REPO_URL = os.getenv(
     "GITHUB_REPO_URL", "https://github.com/Ymax27/opentoall"
 )
-SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "lindsellmaxwell@gmail.com")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "linxconcept27@gmail.com")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", SUPPORT_EMAIL)
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",

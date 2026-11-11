@@ -450,7 +450,7 @@ def test_contact_page_get(client):
     assert resp.status_code == 200
     assert b"Contact" in resp.content
     assert b"sous quelques jours" in resp.content
-    assert b"lindsellmaxwell@gmail.com" in resp.content
+    assert b"linxconcept27@gmail.com" in resp.content
     assert reverse("contact").encode() in client.get(reverse("home")).content
 
 
