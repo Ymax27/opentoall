@@ -1,15 +1,21 @@
+import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .cache_keys import CACHE_TTL, cache_key, cache_get, cache_set
+from .forms import ContactForm
 from .models import Contribution, Issue, Profile
+
+logger = logging.getLogger(__name__)
 
 from django.contrib.sites.requests import RequestSite
 from django.contrib.sitemaps.views import x_robots_tag
@@ -77,6 +83,67 @@ def home(request):
         .order_by("-beginner_friendly_score", "-stars_count")[:3]
     )
     return render(request, "core/home.html", {"stats": stats, "featured": featured})
+
+
+def contact(request):
+    """Contact / support page: short form + public email."""
+    support_email = getattr(settings, "SUPPORT_EMAIL", "lindsellmaxwell@gmail.com")
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data.get("website"):
+                messages.success(
+                    request,
+                    "Merci — on te répond sous quelques jours.",
+                )
+                return redirect("contact")
+
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            body = form.cleaned_data["message"]
+            subject = f"[OpenToAll] Message de {name}"
+            content = (
+                f"Nom : {name}\n"
+                f"Email : {email}\n\n"
+                f"{body}\n"
+            )
+            try:
+                mail = EmailMessage(
+                    subject=subject,
+                    body=content,
+                    from_email=getattr(settings, "DEFAULT_FROM_EMAIL", support_email),
+                    to=[support_email],
+                    reply_to=[email],
+                )
+                mail.send(fail_silently=False)
+            except Exception:
+                logger.exception(
+                    "Contact form email failed",
+                    extra={"event": "contact_email_error"},
+                )
+                messages.error(
+                    request,
+                    f"L’envoi a échoué. Écris-nous directement à {support_email}.",
+                )
+                return render(
+                    request,
+                    "core/contact.html",
+                    {"form": form, "support_email": support_email},
+                )
+
+            messages.success(
+                request,
+                "Merci — on te répond sous quelques jours.",
+            )
+            return redirect("contact")
+    else:
+        form = ContactForm()
+
+    return render(
+        request,
+        "core/contact.html",
+        {"form": form, "support_email": support_email},
+    )
 
 
 def explore(request):
@@ -381,6 +448,7 @@ def llms_txt(request):
         "Built for developers who need a realistic first contribution.\n\n"
         "## Core Pages\n"
         "- [Home](https://opentoall.onrender.com/): Platform overview and curated issues\n"
+        "- [Contact](https://opentoall.onrender.com/contact/): Reach the team without opening a GitHub issue\n"
         "- [Explore](https://opentoall.onrender.com/explore/): Search and browse filtered beginner-friendly issues\n"
         "- [Leaderboard](https://opentoall.onrender.com/leaderboard/): Community contributors and open source milestones\n\n"
         "## Source code\n"
