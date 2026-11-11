@@ -1,9 +1,7 @@
-<div class="group relative overflow-hidden bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-7 shadow-card hover:shadow-card-hover transition-shadow duration-200">
-    <div class="relative">
-        <div class="w-12 h-12 rounded-xl bg-{{ tone }}/12 text-{{ tone }} grid place-items-center mb-5">
-            <span class="material-symbols-outlined text-[26px]" style="font-variation-settings:'FILL' 1;">{{ icon }}</span>
-        </div>
-        <h3 class="font-heading font-semibold text-xl text-on-surface mb-2">{{ title }}</h3>
-        <p class="text-on-surface-variant leading-relaxed">{{ text }}</p>
+<div class="group grid gap-3 border-b border-on-surface/12 py-6 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-6">
+    <span class="font-code text-[11px] text-secondary">{{ index }}</span>
+    <div>
+        <h3 class="font-display text-xl font-semibold tracking-[-0.02em] text-on-surface transition-colors group-hover:text-primary">{{ title }}</h3>
+        <p class="mt-2 max-w-xl leading-relaxed text-on-surface-variant">{{ text }}</p>
     </div>
 </div>

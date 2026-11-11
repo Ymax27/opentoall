@@ -1,106 +1,155 @@
 {% extends "core/base.html" %}
 {% load humanize %}
 
-{% block title %}{{ SITE_NAME }} — Trouve ta prochaine contribution{% endblock %}
+{% block title %}{{ SITE_NAME }} — Une issue, un clone, une PR finie{% endblock %}
 {% block meta_description %}Trouve une issue GitHub adaptée à ton langage, ton niveau et ta connexion — et montre tes contributions à la communauté.{% endblock %}
 
 {% block content %}
-<section class="relative overflow-hidden border-b border-outline-variant/30">
-    <div class="absolute inset-0 kente-bg pointer-events-none"></div>
+<section class="relative overflow-hidden border-b border-on-surface/12">
+    <div class="grid-paper absolute inset-0 opacity-70 pointer-events-none" aria-hidden="true"></div>
 
-    <div class="relative max-w-content mx-auto px-4 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
-        <div class="animate-fade-up">
-            <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-5">
-                Open source · Ouvert à tous · Première PR
-            </p>
-            <h1 class="font-display font-semibold text-[2.35rem] sm:text-5xl lg:text-[3.25rem] leading-[1.08] tracking-tight text-on-surface">
-                Trouve l’issue qui <span class="text-primary">te correspond.</span>
-            </h1>
-            <p class="mt-5 text-lg text-on-surface-variant max-w-lg leading-relaxed">
-                Plus de chasse aux good first issues fermées. Filtre par langage, niveau,
-                réactivité des mainteneurs et <em class="not-italic font-medium text-on-surface">Poids du clone</em>
-                — pour télécharger même avec une connexion limitée.
-            </p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
-                    Trouve ta prochaine issue
-                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-                </a>
-                {% if not user.is_authenticated %}
-                <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center gap-2 border border-outline-variant text-on-surface font-semibold px-6 py-3.5 rounded-xl hover:bg-surface-container transition-colors">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
-                    Continuer avec GitHub
-                </a>
-                {% endif %}
-            </div>
-            <p class="mt-6 text-sm text-on-surface-variant">
-                Gratuit · Sans spam · Le projet est open source
-            </p>
-            <div class="mt-3">
-                {% include "core/_built_by.html" %}
-            </div>
-            <a href="{{ GITHUB_REPO_URL }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-               aria-label="Star OpenToAll on GitHub">
-                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">star</span>
-                Star us on GitHub
-                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
-            </a>
-        </div>
+    <div class="relative max-w-content mx-auto px-4 lg:px-8">
+        <div class="grid gap-x-12 gap-y-12 pb-14 pt-12 lg:grid-cols-12 lg:pb-20 lg:pt-20">
 
-        <div class="relative animate-fade-up hidden sm:block" style="animation-delay:.08s">
-            <div class="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl shadow-card p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-9 h-9 rounded-lg bg-primary/12 text-primary grid place-items-center font-display font-bold text-sm">K</span>
-                        <div class="font-code text-sm text-on-surface-variant truncate">kubernetes/<span class="text-on-surface font-semibold">kubernetes</span></div>
-                    </div>
-                    <span class="shrink-0 inline-flex items-center gap-1 bg-tertiary/12 text-tertiary text-[11px] font-semibold px-2.5 py-1 rounded-md">Débutant</span>
+            <!-- Éditorial -->
+            <div class="animate-fade-up lg:col-span-7">
+                <p class="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span class="h-1.5 w-1.5 bg-primary" aria-hidden="true"></span>
+                    Open source · ouvert à tous
+                    <span class="text-on-surface-variant/60">/ registre public</span>
+                </p>
+
+                <h1 class="mt-6 font-display font-semibold text-on-surface text-[clamp(2.4rem,7vw,3.9rem)] leading-[1.02] tracking-[-0.04em]">
+                    Une issue.<br>
+                    Un clone.<br>
+                    <span class="relative inline-block text-primary">
+                        Une PR finie.
+                        <span class="absolute -bottom-2 left-0 h-[3px] w-full bg-secondary/70" aria-hidden="true"></span>
+                    </span>
+                </h1>
+
+                <p class="mt-6 max-w-lg text-lg leading-relaxed text-on-surface-variant">
+                    OpenToAll filtre les issues encore libres par langage, niveau et
+                    <span class="font-medium text-on-surface">poids du clone</span>.
+                    Tu sais avant de cloner si c’est faisable avec ta connexion.
+                </p>
+
+                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <a href="{% url 'explore' %}" class="btn btn-primary">
+                        Ouvrir le registre
+                        <span aria-hidden="true">&rarr;</span>
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'account_login' %}" class="btn btn-outline">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                        Continuer avec GitHub
+                    </a>
+                    {% endif %}
                 </div>
-                <h3 class="font-heading font-semibold text-lg text-on-surface mb-2 leading-snug">Improve error message when config file is missing</h3>
-                <p class="text-sm text-on-surface-variant line-clamp-2 mb-5">Un message clair qui pointe vers la doc quand le kubeconfig est introuvable.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-outline-variant/40">
-                    <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-                        <span class="font-code">Go</span>
-                        <span aria-hidden="true">·</span>
-                        <span class="inline-flex items-center gap-1.5" title="Poids du clone : léger">
-                            <span class="uppercase tracking-wider text-[10px] font-semibold">Poids du clone</span>
-                            <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
-                                <span></span><span></span><span></span>
-                            </span>
-                        </span>
-                    </div>
-                    <span class="text-xs font-medium text-tertiary">Réponse ~2 h</span>
+
+                <div class="mt-9 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-on-surface/15 pt-5">
+                    <p class="marginalia">Gratuit · sans spam · code ouvert</p>
+                    <span class="hidden h-3 w-px bg-on-surface/20 sm:block" aria-hidden="true"></span>
+                    {% include "core/_built_by.html" with credit_class="marginalia" %}
+                    <span class="hidden h-3 w-px bg-on-surface/20 sm:block" aria-hidden="true"></span>
+                    <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener noreferrer"
+                       class="link-arrow font-code !text-[11px] uppercase tracking-[0.1em]"
+                       aria-label="Star OpenToAll on GitHub">
+                        Star sur GitHub
+                        <span aria-hidden="true">&nearr;</span>
+                    </a>
                 </div>
             </div>
-            <p class="mt-3 text-xs text-on-surface-variant text-center sm:text-left max-w-md">
-                <strong class="font-medium text-on-surface">Poids du clone</strong> —
-                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo), moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
-            </p>
+
+            <!-- Fiche d'exemple -->
+            <aside class="animate-fade-up lg:col-span-5" style="animation-delay:.08s">
+                <p class="eyebrow mb-3">Exemple d’entrée</p>
+                <div class="border border-on-surface/20 bg-surface-container-lowest">
+                    <div class="flex items-center justify-between gap-3 border-b border-on-surface/12 px-4 py-2.5">
+                        <span class="truncate font-code text-[11px] text-on-surface-variant">kubernetes/kubernetes</span>
+                        <span class="shrink-0 font-code text-[10px] uppercase tracking-[0.12em] text-secondary">Débutant</span>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h2 class="font-display text-lg font-semibold leading-snug tracking-[-0.015em] text-on-surface">
+                            Improve error message when config file is missing
+                        </h2>
+                        <p class="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                            Un message clair qui pointe vers la doc quand le kubeconfig est introuvable.
+                        </p>
+                        <dl class="mt-5 grid grid-cols-3 gap-3 border-t border-on-surface/12 pt-4">
+                            <div>
+                                <dt class="eyebrow text-[10px]">Langage</dt>
+                                <dd class="mt-1 font-code text-xs text-on-surface">Go</dd>
+                            </div>
+                            <div>
+                                <dt class="eyebrow text-[10px]">Clone</dt>
+                                <dd class="mt-1 flex items-center gap-2 font-code text-xs text-on-surface">
+                                    léger
+                                    <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
+                                        <span></span><span></span><span></span>
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="eyebrow text-[10px]">Réponse</dt>
+                                <dd class="mt-1 font-code text-xs text-on-surface">~2 h</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="flex items-center justify-between gap-3 border-t border-on-surface/12 bg-surface-container-low px-4 py-3">
+                        <span class="font-code text-[10px] uppercase tracking-[0.12em] text-on-surface-variant">Bon terrain pour une première PR</span>
+                        <span class="text-primary" aria-hidden="true">&rarr;</span>
+                    </div>
+                </div>
+
+                <dl class="mt-5 space-y-2.5">
+                    <div class="flex gap-3">
+                        <dt class="shrink-0 font-code text-[10px] text-secondary">01</dt>
+                        <dd class="marginalia">Poids du clone — taille réelle du dépôt, en kilo-octets.</dd>
+                    </div>
+                    <div class="flex gap-3">
+                        <dt class="shrink-0 font-code text-[10px] text-secondary">02</dt>
+                        <dd class="marginalia">Réactivité — délai de réponse médian des mainteneurs.</dd>
+                    </div>
+                    <div class="flex gap-3">
+                        <dt class="shrink-0 font-code text-[10px] text-secondary">03</dt>
+                        <dd class="marginalia">Niveau — estimé à partir des labels et de l’historique du dépôt.</dd>
+                    </div>
+                </dl>
+            </aside>
         </div>
     </div>
 </section>
 
-<section class="max-w-content mx-auto px-4 lg:px-8 -mt-5 relative z-10">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {% include "core/_stat.html" with icon="groups" value=stats.total_contributors|intcomma label="Contributeurs" tone="primary" %}
-        {% include "core/_stat.html" with icon="merge" value=stats.total_contributions|intcomma label="Contributions" tone="tertiary" %}
-        {% include "core/_stat.html" with icon="public" value=stats.total_countries label="Pays" tone="secondary" %}
-        {% include "core/_stat.html" with icon="bug_report" value=stats.total_issues|intcomma label="Issues libres" tone="primary" %}
+<!-- Registre de chiffres -->
+<section class="border-b border-on-surface/12 bg-surface-container-low/60">
+    <div class="max-w-content mx-auto px-4 lg:px-8">
+        <div class="grid grid-cols-2 divide-x divide-y divide-on-surface/10 lg:grid-cols-4 lg:divide-y-0">
+            {% include "core/_stat.html" with index="01" value=stats.total_contributors|intcomma label="Contributeurs" note="profils publics" %}
+            {% include "core/_stat.html" with index="02" value=stats.total_contributions|intcomma label="Contributions" note="PR mergées suivies" %}
+            {% include "core/_stat.html" with index="03" value=stats.total_countries label="Pays" note="représentés" %}
+            {% include "core/_stat.html" with index="04" value=stats.total_issues|intcomma label="Issues libres" note="à prendre maintenant" %}
+        </div>
     </div>
 </section>
 
-<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-20">
-    <div class="max-w-xl mb-10">
-        <h2 class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Ce qui change vraiment</h2>
-        <p class="mt-3 text-on-surface-variant text-lg leading-relaxed">Pas un énième listing d’issues. Des filtres calés sur ton quotidien de contributeur.</p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-5">
-        {% include "core/_pillar.html" with icon="tune" tone="primary" title="Filtre ce qui est encore libre" text="Langage, niveau, non assigné. Tu ne perds plus une soirée sur une issue déjà prise." %}
-        {% include "core/_pillar.html" with icon="speed" tone="tertiary" title="Choisis un repo qui répond" text="Réactivité, bienveillance débutants, et poids du clone — pour ne pas bloquer sur un monolithe." %}
-        {% include "core/_pillar.html" with icon="fingerprint" tone="secondary" title="Laisse une trace visible" text="Ton profil public et le classement montrent que tu as contribué — pas seulement un README perso." %}
+<!-- Méthode -->
+<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-20">
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+        <header class="lg:col-span-4">
+            <p class="eyebrow">01 / Méthode</p>
+            <h2 class="mt-4 font-display text-2xl font-semibold tracking-[-0.03em] text-on-surface lg:text-[1.9rem] lg:leading-tight">
+                Ce qui change vraiment
+            </h2>
+            <p class="mt-3 max-w-sm leading-relaxed text-on-surface-variant">
+                Pas un énième listing d’issues. Des filtres calés sur ton quotidien de contributeur.
+            </p>
+        </header>
+        <div class="border-t border-on-surface/15 lg:col-span-8">
+            {% include "core/_pillar.html" with index="01" title="Filtre ce qui est encore libre" text="Langage, niveau, non assigné. Tu ne perds plus une soirée sur une issue déjà prise." %}
+            {% include "core/_pillar.html" with index="02" title="Choisis un repo qui répond" text="Réactivité, bienvenue aux débutants et poids du clone — pour ne pas bloquer sur un monolithe." %}
+            {% include "core/_pillar.html" with index="03" title="Laisse une trace visible" text="Ton profil public et le classement montrent que tu as contribué — pas seulement un README perso." %}
+        </div>
     </div>
 </section>
 
@@ -109,37 +158,53 @@
 {% include "core/_testimonials.html" %}
 
 {% if featured %}
-<section class="max-w-content mx-auto px-4 lg:px-8 pb-6">
-    <div class="flex items-end justify-between mb-6 gap-4">
-        <div>
-            <h2 class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Bonnes portes d’entrée</h2>
-            <p class="text-on-surface-variant mt-1">Issues accueillantes pour démarrer maintenant.</p>
+<section class="border-t border-on-surface/12 bg-surface-container-low/40">
+    <div class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <p class="eyebrow">04 / Sélection</p>
+                <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-on-surface lg:text-[1.9rem]">
+                    Bonnes portes d’entrée
+                </h2>
+                <p class="mt-2 text-on-surface-variant">Issues accueillantes pour démarrer maintenant.</p>
+            </div>
+            <a href="{% url 'explore' %}" class="link-arrow text-sm">
+                Ouvrir le registre complet
+                <span aria-hidden="true">&rarr;</span>
+            </a>
         </div>
-        <a href="{% url 'explore' %}" class="hidden sm:inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:gap-2 transition-all">
-            Voir tout <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </a>
-    </div>
-    <div class="grid md:grid-cols-3 gap-4">
-        {% for issue in featured %}
-            {% include "core/_issue_card.html" with issue=issue %}
-        {% endfor %}
+
+        <div class="mt-8 border-b border-on-surface/15">
+            {% for issue in featured %}
+                {% include "core/_issue_row.html" with issue=issue index=forloop.counter %}
+            {% endfor %}
+        </div>
     </div>
 </section>
 {% endif %}
 
 {% include "core/_faq.html" %}
 
-<section class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16">
-    <div class="relative overflow-hidden rounded-2xl bg-inverse-surface text-inverse-on-surface px-8 py-12 lg:px-14">
+<section class="max-w-content mx-auto px-4 lg:px-8 pb-16 lg:pb-24">
+    <div class="relative overflow-hidden bg-inverse-surface px-6 py-12 text-inverse-on-surface sm:px-10 lg:px-14 lg:py-16">
+        <div class="absolute inset-y-0 right-0 hidden w-2/5 border-l border-inverse-on-surface/10 lg:block" aria-hidden="true"></div>
         <div class="relative max-w-2xl">
-            <h2 class="font-display font-semibold text-2xl lg:text-3xl tracking-tight">Ta première PR n’attend pas un projet perso parfait.</h2>
-            <p class="mt-4 text-inverse-on-surface/75 text-lg leading-relaxed">Les recruteurs lisent des contributions réelles. Commence par une issue, pas par un monorepo vide.</p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl hover:bg-primary-container transition-colors">
+            <p class="eyebrow text-inverse-on-surface/55">06 / Commencer</p>
+            <h2 class="mt-4 font-display text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
+                Ta première PR n’attend pas un projet perso parfait.
+            </h2>
+            <p class="mt-4 max-w-xl leading-relaxed text-inverse-on-surface/70">
+                Les recruteurs lisent des contributions réelles. Commence par une issue, pas par un monorepo vide.
+            </p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="{% url 'explore' %}" class="btn btn-paper">
                     Ouvre Explorer
+                    <span aria-hidden="true">&rarr;</span>
                 </a>
-                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 border border-inverse-on-surface/25 text-inverse-on-surface font-semibold px-6 py-3.5 rounded-xl hover:bg-inverse-on-surface/10 transition-colors">
+                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener"
+                   class="btn border border-inverse-on-surface/30 text-inverse-on-surface hover:bg-inverse-on-surface/10">
                     Contribue à OpenToAll
+                    <span aria-hidden="true">&nearr;</span>
                 </a>
             </div>
         </div>
