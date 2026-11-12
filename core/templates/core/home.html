@@ -14,9 +14,8 @@
         <div class="relative mx-auto max-w-3xl text-center">
             <p class="eyebrow nav-in">Registre public · open source</p>
             <h1 class="hero-rise hero-rise-1 mt-5 font-serif text-[clamp(2.8rem,6.2vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-[#FBFEFB]">
-                Une issue.<br>
-                Un clone.<br>
-                <span class="text-aqua">Une PR finie.</span>
+                La bonne issue.<br>
+                <span class="text-aqua">Avant de cloner.</span>
             </h1>
             <p class="hero-rise hero-rise-2 mx-auto mt-6 max-w-xl text-lg leading-relaxed text-powder">
                 OpenToAll filtre les issues encore libres par langage, niveau et poids du clone.
@@ -35,6 +34,9 @@
                 {% endif %}
             </div>
             <p class="hero-rise hero-rise-3 mt-4 font-code text-[10px] uppercase tracking-[0.14em] text-[#8FCFB4]">Gratuit · sans spam · code ouvert</p>
+            <div class="hero-rise hero-rise-3 mt-3">
+                {% include "core/_built_by.html" with credit_class="font-code text-[11px] tracking-[0.02em] text-[#8FCFB4]" credit_link_class="text-[#FBFEFB] underline decoration-white/25 underline-offset-2 hover:text-[#B8FFE1] transition-colors" %}
+            </div>
         </div>
 
         <!-- Mock registre + puces flottantes -->

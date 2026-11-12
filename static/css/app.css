@@ -374,6 +374,90 @@ select option {
   border-color: rgb(var(--secondary));
 }
 
+/* ---- Filtres Explore ----------------------------------------------------- */
+.field-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #41604F;
+}
+
+.filter-select {
+  width: 100%;
+  min-width: 0;
+  appearance: none;
+  padding: 0.7rem 2.2rem 0.7rem 0.85rem;
+  border: 1px solid rgb(1 82 57 / 0.18);
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%23015239' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  color: #08251C;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+.filter-select:focus-visible {
+  outline: 2px solid #7D56FC;
+  outline-offset: 2px;
+  border-color: #7D56FC;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgb(1 82 57 / 0.18);
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #41604F;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+.filter-chip:hover { border-color: rgb(1 82 57 / 0.4); }
+.peer:checked + .filter-chip {
+  background: #015239;
+  border-color: #015239;
+  color: #FBFEFB;
+}
+.peer:focus-visible + .filter-chip {
+  outline: 2px solid #7D56FC;
+  outline-offset: 2px;
+}
+
+.page-btn {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.85rem;
+  border: 1px solid rgb(1 82 57 / 0.18);
+  border-radius: 8px;
+  background: #FBFEFB;
+  color: #08251C;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+.page-btn:hover { border-color: #015239; background: #E4FAEE; }
+.page-btn:focus-visible { outline: 2px solid #7D56FC; outline-offset: 2px; }
+.page-btn-current {
+  background: #015239;
+  border-color: #015239;
+  color: #B8FFE1;
+}
+.dark .page-btn { background: #FBFEFB; }
+.dark .page-btn-current { background: #015239; color: #B8FFE1; }
+
 /* ---- Signature : poids du clone ----------------------------------------- */
 .weight-meter {
   display: inline-flex;

@@ -1,11 +1,12 @@
 {% if page_obj.object_list %}
-<div class="flex items-center justify-between mb-4">
-    <p class="text-sm text-on-surface-variant">
+<div class="mt-4 flex flex-wrap items-baseline justify-between gap-2">
+    <p class="font-code text-[11px] text-[#41604F] dark:text-[#BDD7CA]">
         {{ total_count }} issue{{ total_count|pluralize }} · page {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
     </p>
+    <p class="text-xs text-on-surface-variant">Chaque issue est encore libre.</p>
 </div>
 
-<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+<div class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
     {% for issue in page_obj %}
         {% include "core/_issue_card.html" with issue=issue %}
     {% endfor %}
@@ -13,31 +14,31 @@
 
 {% if page_obj.paginator.num_pages > 1 %}
 {% with qs=querystring %}
-<nav class="flex flex-wrap items-center justify-center gap-1.5 mt-10" aria-label="Pagination">
+<nav class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
     {% if page_obj.has_previous %}
     <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
        hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
        href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
-       class="w-10 h-10 grid place-items-center overflow-hidden rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
-        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+       class="page-btn">
+        <span aria-hidden="true">&larr;</span> Précédent
     </a>
     {% endif %}
 
     {% for num in page_obj.paginator.page_range %}
         {% if num == page_obj.number %}
-        <span class="min-w-10 h-10 px-3 grid place-items-center rounded-lg bg-primary text-on-primary font-semibold">{{ num }}</span>
+        <span aria-current="page" class="page-btn page-btn-current">{{ num }}</span>
         {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
         <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
            hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
            href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
-           class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+           class="page-btn">{{ num }}</a>
         {% elif num == 1 or num == page_obj.paginator.num_pages %}
         <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
            hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
            href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
-           class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+           class="page-btn">{{ num }}</a>
         {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
-        <span class="w-6 text-center text-on-surface-variant">…</span>
+        <span class="px-1 font-code text-xs text-[#41604F] dark:text-[#BDD7CA]" aria-hidden="true">…</span>
         {% endif %}
     {% endfor %}
 
@@ -45,8 +46,8 @@
     <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.next_page_number }}"
        hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
        href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.next_page_number }}"
-       class="w-10 h-10 grid place-items-center overflow-hidden rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
-        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+       class="page-btn">
+        Suivant <span aria-hidden="true">&rarr;</span>
     </a>
     {% endif %}
 </nav>
@@ -54,12 +55,12 @@
 {% endif %}
 
 {% else %}
-<div class="text-center py-20 px-4">
-    <div class="w-16 h-16 rounded-2xl bg-surface-container grid place-items-center mx-auto mb-5">
-        <span class="material-symbols-outlined text-[32px] text-on-surface-variant">search_off</span>
-    </div>
-    <h3 class="font-heading font-semibold text-xl text-on-surface">Rien avec ces filtres</h3>
-    <p class="text-on-surface-variant mt-2 max-w-sm mx-auto">Élargis le langage ou le niveau — ou reviens plus tard : de nouvelles issues arrivent régulièrement.</p>
-    <a href="{% url 'explore' %}" class="inline-flex items-center gap-1.5 mt-5 text-primary font-semibold text-sm">Réinitialiser les filtres<span class="material-symbols-outlined text-[18px]">refresh</span></a>
+<div class="card-cream mt-6 p-10 text-center sm:p-14">
+    <p class="eyebrow text-[#6C43F5]">Aucun résultat</p>
+    <h3 class="mt-3 font-serif text-2xl font-semibold text-[#08251C] sm:text-3xl">Rien avec ces filtres</h3>
+    <p class="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#41604F]">
+        Élargis le langage ou le niveau — ou reviens plus tard : de nouvelles issues arrivent régulièrement.
+    </p>
+    <a href="{% url 'explore' %}" class="btn btn-forest mt-6">Réinitialiser les filtres</a>
 </div>
 {% endif %}

@@ -3,28 +3,47 @@
 {% block title %}Trouve une issue — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<div class="max-w-content mx-auto px-4 lg:px-8 py-8 lg:py-10">
-    <div class="mb-8">
-        <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">Trouve une issue</h1>
-        <p class="text-on-surface-variant mt-2 max-w-xl">Cherche par langage, niveau ou <span class="text-on-surface font-medium">Poids du clone</span> — puis ouvre celle qui te parle vraiment.</p>
-    </div>
+<div class="px-4 sm:px-6 lg:px-16">
+
+    <section class="pt-8 lg:pt-12">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+            <div class="max-w-3xl">
+                <p class="eyebrow">Registre · issues libres</p>
+                <h1 class="mt-4 font-serif text-[clamp(2.3rem,4.4vw,3.4rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-on-surface">
+                    Trouve ta prochaine <span class="text-[#015239] dark:text-[#B8FFE1]">PR</span>.
+                </h1>
+                <p class="mt-4 max-w-xl text-lg leading-relaxed text-on-surface-variant">
+                    Filtre par langage, niveau et poids du clone — puis ouvre l’issue
+                    qui te correspond vraiment.
+                </p>
+            </div>
+            <p class="font-code text-[11px] uppercase tracking-[0.14em] text-on-surface-variant">
+                <span class="text-base text-[#015239] dark:text-[#B8FFE1]">{{ total_count }}</span> issues libres
+            </p>
+        </div>
+    </section>
 
     <form id="filters" hx-get="{% url 'explore' %}" hx-target="#issue-list" hx-swap="innerHTML"
           hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
           hx-trigger="change, keyup changed delay:400ms, search"
-          class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 lg:p-5 shadow-card mb-6">
-        <!-- Search + sort -->
-        <div class="flex flex-col md:flex-row gap-3">
-            <div class="flex-1 flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary transition-all">
-                <span class="material-symbols-outlined text-on-surface-variant">search</span>
-                <label class="sr-only" for="search-filter">Rechercher une issue</label>
-                <input type="search" id="search-filter" name="q" value="{{ filters.q }}" placeholder="Titre d’issue, nom de dépôt…"
-                       class="w-full bg-transparent outline-none text-on-surface placeholder:text-on-surface-variant">
+          class="card-cream mt-8 p-4 sm:p-6">
+
+        <div class="grid gap-3 md:grid-cols-[1fr_auto]">
+            <div class="min-w-0">
+                <label class="field-label" for="search-filter">Rechercher</label>
+                <div class="flex items-center gap-2 rounded-lg border border-[#015239]/18 bg-white px-3 focus-within:border-[#7D56FC] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#7D56FC]">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-[#41604F]" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4" stroke-linecap="round"/>
+                    </svg>
+                    <input type="search" id="search-filter" name="q" value="{{ filters.q }}"
+                           placeholder="Titre d’issue, nom de dépôt…"
+                           class="w-full min-w-0 bg-transparent py-3 text-[15px] text-[#08251C] outline-none placeholder:text-[#41604F]/70">
+                </div>
             </div>
-            <div class="flex items-center gap-2 bg-surface-container-low rounded-xl px-4 py-3">
-                <span class="material-symbols-outlined text-on-surface-variant text-[20px]">sort</span>
-                <label class="sr-only" for="sort-filter">Trier les issues</label>
-                <select name="sort" id="sort-filter" class="bg-transparent outline-none text-sm font-medium text-on-surface cursor-pointer">
+
+            <div class="md:w-56">
+                <label class="field-label" for="sort-filter">Trier</label>
+                <select name="sort" id="sort-filter" class="filter-select">
                     <option value="stars" {% if filters.sort == 'stars' %}selected{% endif %}>Plus d’étoiles</option>
                     <option value="recent" {% if filters.sort == 'recent' %}selected{% endif %}>Mises à jour récentes</option>
                     <option value="beginner" {% if filters.sort == 'beginner' %}selected{% endif %}>Plus accueillantes</option>
@@ -33,82 +52,82 @@
             </div>
         </div>
 
-        <!-- Difficulty chips -->
-        <div class="flex items-center gap-2 mt-4 overflow-x-auto hide-scrollbar pb-1">
-            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Niveau</span>
-            <label class="shrink-0">
-                <input type="radio" name="difficulty" value="" class="peer sr-only" {% if not filters.difficulty %}checked{% endif %}>
-                <span class="cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-full text-sm font-medium border border-outline-variant/60 text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary transition-colors">Tous</span>
-            </label>
-            {% for value, label in difficulties %}
-            <label class="shrink-0">
-                <input type="radio" name="difficulty" value="{{ value }}" class="peer sr-only" {% if filters.difficulty == value %}checked{% endif %}>
-                <span class="cursor-pointer whitespace-nowrap px-3.5 py-1.5 rounded-full text-sm font-medium border border-outline-variant/60 text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary transition-colors">{{ label }}</span>
-            </label>
-            {% endfor %}
-
-            <span class="w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
-            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Langage</span>
-            <label class="sr-only" for="language-filter">Langage</label>
-            <select name="language" id="language-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
-                <option value="">Tous</option>
-                {% for lang in languages %}
-                <option value="{{ lang }}" {% if filters.language == lang %}selected{% endif %}>{{ lang }}</option>
+        <div class="mt-5">
+            <p class="field-label" id="difficulty-label">Niveau</p>
+            <div class="flex flex-wrap gap-2" role="radiogroup" aria-labelledby="difficulty-label">
+                <label class="shrink-0">
+                    <input type="radio" name="difficulty" value="" class="peer sr-only" {% if not filters.difficulty %}checked{% endif %}>
+                    <span class="filter-chip">Tous</span>
+                </label>
+                {% for value, label in difficulties %}
+                <label class="shrink-0">
+                    <input type="radio" name="difficulty" value="{{ value }}" class="peer sr-only" {% if filters.difficulty == value %}checked{% endif %}>
+                    <span class="filter-chip">{{ label }}</span>
+                </label>
                 {% endfor %}
-            </select>
-
+            </div>
         </div>
 
-        <div class="mt-4">
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Poids du clone</span>
-                <label class="sr-only" for="clone-size-filter">Poids du clone</label>
-                <select id="clone-size-filter" name="max_size" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none" aria-describedby="clone-size-help">
+        <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <div class="min-w-0">
+                <label class="field-label" for="language-filter">Langage</label>
+                <select name="language" id="language-filter" class="filter-select">
+                    <option value="">Tous</option>
+                    {% for lang in languages %}
+                    <option value="{{ lang }}" {% if filters.language == lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="min-w-0">
+                <label class="field-label" for="clone-size-filter">Poids du clone</label>
+                <select id="clone-size-filter" name="max_size" class="filter-select" aria-describedby="clone-size-help">
                     <option value="" {% if not filters.max_size %}selected{% endif %}>Tous</option>
                     <option value="50000" {% if filters.max_size == '50000' %}selected{% endif %}>Léger (&lt; 50 Mo)</option>
                     <option value="500000" {% if filters.max_size == '500000' %}selected{% endif %}>Moyen et moins (&lt; 500 Mo)</option>
                 </select>
+            </div>
 
-                {% if foundations %}
-                <span class="hidden sm:block w-px h-6 bg-outline-variant/50 mx-2 shrink-0"></span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant shrink-0 mr-1">Fondation</span>
-                <label class="sr-only" for="foundation-filter">Fondation</label>
-                <select name="foundation" id="foundation-filter" class="shrink-0 bg-surface-container-low border border-outline-variant/60 rounded-full px-4 py-1.5 text-sm font-medium text-on-surface cursor-pointer outline-none">
+            {% if foundations %}
+            <div class="min-w-0">
+                <label class="field-label" for="foundation-filter">Fondation</label>
+                <select name="foundation" id="foundation-filter" class="filter-select">
                     <option value="">Toutes</option>
                     {% for f in foundations %}
                     <option value="{{ f }}" {% if filters.foundation|lower == f|lower %}selected{% endif %}>{{ f }}</option>
                     {% endfor %}
                 </select>
-                {% endif %}
             </div>
-            <p id="clone-size-help" class="mt-2 text-xs text-on-surface-variant max-w-2xl">
-                <strong class="font-medium text-on-surface">Poids du clone</strong> —
-                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo), moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
-            </p>
+            {% endif %}
         </div>
+
+        <p id="clone-size-help" class="mt-4 max-w-2xl border-t border-[#015239]/10 pt-4 text-xs leading-relaxed text-[#41604F]">
+            <strong class="font-semibold text-[#08251C]">Poids du clone</strong> —
+            taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo),
+            moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
+        </p>
     </form>
 
-    <div class="flex items-center gap-2 text-on-surface-variant text-sm mb-4">
-        <span id="list-loader" class="htmx-indicator flex items-center gap-2" aria-hidden="true">
-            <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>Chargement…
+    <div class="mt-8 flex items-center justify-between gap-3">
+        <p class="font-code text-[10px] uppercase tracking-[0.14em] text-on-surface-variant">Résultats</p>
+        <span id="list-loader" class="htmx-indicator flex items-center gap-2 font-code text-[10px] uppercase tracking-[0.14em] text-[#015239] dark:text-[#B8FFE1]" aria-hidden="true">
+            Chargement…
         </span>
         {# Live region starts empty: screen readers only announce content changes, so it is filled on HTMX events below. #}
         <span id="list-status" class="sr-only" role="status" aria-live="polite"></span>
     </div>
 
-    <div id="skeleton-loader" aria-hidden="true" class="gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div id="skeleton-loader" aria-hidden="true" class="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {% for i in "123" %}
-        <div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 space-y-3">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg skeleton shrink-0"></div>
-                <div class="h-4 skeleton" style="width: 60%;"></div>
-            </div>
-            <div class="h-5 skeleton" style="width: 80%;"></div>
-            <div class="h-4 skeleton" style="width: 90%;"></div>
-            <div class="h-4 skeleton" style="width: 40%;"></div>
+        <div class="card-cream p-5 space-y-3">
+            <div class="h-3 w-1/3 skeleton"></div>
+            <div class="h-5 w-4/5 skeleton"></div>
+            <div class="h-3 w-full skeleton"></div>
+            <div class="h-3 w-2/3 skeleton"></div>
         </div>
         {% endfor %}
     </div>
+
     <div id="issue-list">
         {% include "core/_issue_list.html" %}
     </div>
