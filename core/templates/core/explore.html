@@ -26,12 +26,21 @@
     <form id="filters" hx-get="{% url 'explore' %}" hx-target="#issue-list" hx-swap="innerHTML"
           hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
           hx-trigger="change, keyup changed delay:400ms, search"
-          class="card-cream mt-8 p-4 sm:p-6">
+          class="panel-forest mt-8 p-4 sm:p-6">
 
-        <div class="grid gap-3 md:grid-cols-[1fr_auto]">
+        <div class="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
+            <p class="eyebrow">Filtres</p>
+            {% if filters.q or filters.language or filters.difficulty or filters.foundation or filters.max_size %}
+            <a href="{% url 'explore' %}" class="font-code text-[10px] uppercase tracking-[0.12em] text-[#8FCFB4] transition-colors hover:text-[#B8FFE1]">
+                Tout effacer
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
             <div class="min-w-0">
                 <label class="field-label" for="search-filter">Rechercher</label>
-                <div class="flex items-center gap-2 rounded-lg border border-[#015239]/18 bg-white px-3 focus-within:border-[#7D56FC] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#7D56FC]">
+                <div class="flex items-center gap-2 rounded-lg bg-white px-3 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#7D56FC]">
                     <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-[#41604F]" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                         <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4" stroke-linecap="round"/>
                     </svg>
@@ -43,7 +52,7 @@
 
             <div class="md:w-56">
                 <label class="field-label" for="sort-filter">Trier</label>
-                <select name="sort" id="sort-filter" class="filter-select">
+                <select name="sort" id="sort-filter" class="filter-select filter-select-lg">
                     <option value="stars" {% if filters.sort == 'stars' %}selected{% endif %}>Plus d’étoiles</option>
                     <option value="recent" {% if filters.sort == 'recent' %}selected{% endif %}>Mises à jour récentes</option>
                     <option value="beginner" {% if filters.sort == 'beginner' %}selected{% endif %}>Plus accueillantes</option>
@@ -101,8 +110,8 @@
             {% endif %}
         </div>
 
-        <p id="clone-size-help" class="mt-4 max-w-2xl border-t border-[#015239]/10 pt-4 text-xs leading-relaxed text-[#41604F]">
-            <strong class="font-semibold text-[#08251C]">Poids du clone</strong> —
+        <p id="clone-size-help" class="mt-4 max-w-2xl border-t border-white/12 pt-4 text-xs leading-relaxed text-[#BDD7CA]">
+            <strong class="font-semibold text-[#FBFEFB]">Poids du clone</strong> —
             taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo),
             moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
         </p>
@@ -119,11 +128,13 @@
 
     <div id="skeleton-loader" aria-hidden="true" class="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {% for i in "123" %}
-        <div class="card-cream p-5 space-y-3">
-            <div class="h-3 w-1/3 skeleton"></div>
-            <div class="h-5 w-4/5 skeleton"></div>
-            <div class="h-3 w-full skeleton"></div>
-            <div class="h-3 w-2/3 skeleton"></div>
+        <div class="card-cream overflow-hidden">
+            <div class="h-9 bg-[#015239]/90"></div>
+            <div class="space-y-3 p-5">
+                <div class="h-3 w-1/3 skeleton"></div>
+                <div class="h-5 w-4/5 skeleton"></div>
+                <div class="h-3 w-full skeleton"></div>
+            </div>
         </div>
         {% endfor %}
     </div>

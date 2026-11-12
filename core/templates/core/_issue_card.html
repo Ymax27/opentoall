@@ -1,52 +1,52 @@
 {% load humanize %}
 
-<a href="{{ issue.get_absolute_url }}" class="issue-card group relative flex flex-col p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D56FC]">
-    <div class="flex items-start justify-between gap-3">
-        <div class="flex min-w-0 items-center gap-2.5">
-            {% if issue.repo_avatar_url %}
-            <img src="{{ issue.repo_avatar_url }}" alt="" class="h-9 w-9 shrink-0 rounded-md border border-[#015239]/10 object-cover" loading="lazy">
+<a href="{{ issue.get_absolute_url }}" class="issue-record group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D56FC]">
+    <div class="issue-record-head">
+        {% if issue.repo_avatar_url %}
+        <img src="{{ issue.repo_avatar_url }}" alt="" class="h-5 w-5 shrink-0 rounded-[4px] object-cover" loading="lazy">
+        {% else %}
+        <span class="grid h-5 w-5 shrink-0 place-items-center rounded-[4px] bg-[#B8FFE1] font-code text-[10px] font-bold text-[#015239]">{{ issue.repo_name|first|upper }}</span>
+        {% endif %}
+        <span class="issue-record-index">N° {{ index|stringformat:"03d" }}</span>
+        <span class="issue-record-repo">{{ issue.repo_owner }}/<span class="font-semibold text-[#FBFEFB]">{{ issue.repo_name }}</span></span>
+        <span class="issue-record-stars">{{ issue.stars_display }} ★</span>
+    </div>
+
+    <div class="issue-record-body">
+        <div class="flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 font-code text-[10px] uppercase tracking-[0.08em] text-[#41604F]">
+                <span class="sr-only">Poids du clone {{ issue.size_category }}</span>
+                <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </span>
+                <span aria-hidden="true">{{ issue.size_category }}</span>
+            </span>
+
+            {% if issue.difficulty == 'beginner' %}
+            <span class="shrink-0 rounded-md bg-[#B8FFE1] px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#015239]">Débutant</span>
+            {% elif issue.difficulty == 'advanced' %}
+            <span class="shrink-0 rounded-md bg-[#08251C]/8 px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#08251C]">Confirmé</span>
             {% else %}
-            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#E4FAEE] font-code text-sm font-semibold text-[#015239]">{{ issue.repo_name|first|upper }}</span>
+            <span class="shrink-0 rounded-md bg-[#7D56FC]/10 px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6C43F5]">Intermédiaire</span>
             {% endif %}
-            <div class="min-w-0">
-                <p class="truncate font-code text-[11px] text-[#41604F]">{{ issue.repo_owner }}/<span class="font-semibold text-[#08251C]">{{ issue.repo_name }}</span></p>
-                <p class="mt-0.5 flex items-center gap-2.5 font-code text-[10px] text-[#41604F]">
-                    <span aria-label="{{ issue.stars_display }} étoiles">{{ issue.stars_display }} ★</span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="sr-only">Poids du clone {{ issue.size_category }}</span>
-                        <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-hidden="true">
-                            <span></span><span></span><span></span>
-                        </span>
-                        <span aria-hidden="true">{{ issue.size_category }}</span>
-                    </span>
-                </p>
-            </div>
         </div>
 
-        {% if issue.difficulty == 'beginner' %}
-        <span class="shrink-0 rounded-md bg-[#B8FFE1]/70 px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#015239]">Débutant</span>
-        {% elif issue.difficulty == 'advanced' %}
-        <span class="shrink-0 rounded-md bg-[#08251C]/8 px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#08251C]">Confirmé</span>
-        {% else %}
-        <span class="shrink-0 rounded-md bg-[#7D56FC]/10 px-2 py-1 font-code text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6C43F5]">Intermédiaire</span>
-        {% endif %}
+        <h3 class="mt-3 line-clamp-2 font-serif text-[20px] font-semibold leading-[1.18] tracking-[-0.015em] text-[#08251C] transition-colors group-hover:text-[#015239]">{{ issue.title }}</h3>
+        {% if issue.body %}<p class="mt-2.5 line-clamp-2 text-[13px] leading-relaxed text-[#41604F]">{{ issue.body|striptags|truncatechars:110 }}</p>{% endif %}
+
+        <div class="mt-auto flex flex-wrap gap-1.5 pt-5">
+            {% if issue.language %}<span class="tag">{{ issue.language }}</span>{% endif %}
+            {% for label in issue.labels_list|slice:":2" %}
+            <span class="tag">{{ label }}</span>
+            {% endfor %}
+        </div>
     </div>
 
-    <h3 class="mt-4 line-clamp-2 font-body text-[17px] font-semibold leading-snug text-[#08251C] transition-colors group-hover:text-[#015239]">{{ issue.title }}</h3>
-    {% if issue.body %}<p class="mt-2 line-clamp-2 text-sm leading-relaxed text-[#41604F]">{{ issue.body|striptags|truncatechars:120 }}</p>{% endif %}
-
-    <div class="mt-4 flex flex-wrap gap-1.5">
-        {% if issue.language %}<span class="tag">{{ issue.language }}</span>{% endif %}
-        {% for label in issue.labels_list|slice:":2" %}
-        <span class="tag">{{ label }}</span>
-        {% endfor %}
-    </div>
-
-    <div class="mt-5 flex items-center justify-between gap-3 border-t border-[#015239]/10 pt-3.5">
-        <p class="min-w-0 font-code text-[10px] uppercase tracking-[0.08em] text-[#41604F]">
+    <div class="issue-record-foot">
+        <p class="min-w-0 truncate font-code text-[10px] uppercase tracking-[0.06em] text-[#41604F]">
             {% if issue.issue_updated_at %}Mise à jour <time datetime="{{ issue.issue_updated_at|date:'c' }}">{{ issue.issue_updated_at|naturaltime }}</time>{% endif %}
         </p>
-        <span class="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[#015239]">
+        <span class="issue-record-cta">
             Ouvrir <span aria-hidden="true">&rarr;</span>
         </span>
     </div>

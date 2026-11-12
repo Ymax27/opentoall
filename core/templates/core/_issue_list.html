@@ -8,7 +8,7 @@
 
 <div class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
     {% for issue in page_obj %}
-        {% include "core/_issue_card.html" with issue=issue %}
+        {% include "core/_issue_card.html" with issue=issue index=forloop.counter0|add:page_obj.start_index %}
     {% endfor %}
 </div>
 
