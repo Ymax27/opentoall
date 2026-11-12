@@ -1,20 +1,19 @@
 {% if page_obj.object_list %}
-<div class="mt-4 flex flex-wrap items-baseline justify-between gap-2">
-    <p class="font-code text-[11px] text-[#41604F] dark:text-[#BDD7CA]">
+<div class="mt-3 flex flex-wrap items-baseline justify-between gap-2">
+    <p class="text-sm text-[#41604F] dark:text-[#BDD7CA]">
         {{ total_count }} issue{{ total_count|pluralize }} · page {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
     </p>
-    <p class="text-xs text-on-surface-variant">Chaque issue est encore libre.</p>
 </div>
 
-<div class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+<div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     {% for issue in page_obj %}
-        {% include "core/_issue_card.html" with issue=issue index=forloop.counter0|add:page_obj.start_index %}
+        {% include "core/_issue_card.html" with issue=issue %}
     {% endfor %}
 </div>
 
 {% if page_obj.paginator.num_pages > 1 %}
 {% with qs=querystring %}
-<nav class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
+<nav class="mt-9 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
     {% if page_obj.has_previous %}
     <a hx-get="{% url 'explore' %}?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
        hx-target="#issue-list" hx-swap="innerHTML show:window:top" hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
@@ -38,7 +37,7 @@
            href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
            class="page-btn">{{ num }}</a>
         {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
-        <span class="px-1 font-code text-xs text-[#41604F] dark:text-[#BDD7CA]" aria-hidden="true">…</span>
+        <span class="px-1 text-xs text-[#41604F] dark:text-[#BDD7CA]" aria-hidden="true">…</span>
         {% endif %}
     {% endfor %}
 
@@ -55,11 +54,10 @@
 {% endif %}
 
 {% else %}
-<div class="card-cream mt-6 p-10 text-center sm:p-14">
-    <p class="eyebrow text-[#6C43F5]">Aucun résultat</p>
-    <h3 class="mt-3 font-serif text-2xl font-semibold text-[#08251C] sm:text-3xl">Rien avec ces filtres</h3>
-    <p class="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#41604F]">
-        Élargis le langage ou le niveau — ou reviens plus tard : de nouvelles issues arrivent régulièrement.
+<div class="mt-4 rounded-2xl border border-[#015239]/12 bg-[#FBFEFB] px-6 py-12 text-center">
+    <h3 class="font-serif text-2xl font-semibold text-[#08251C]">Rien avec ces filtres</h3>
+    <p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[#41604F]">
+        Élargis le langage ou le niveau — de nouvelles issues arrivent régulièrement.
     </p>
     <a href="{% url 'explore' %}" class="btn btn-forest mt-6">Réinitialiser les filtres</a>
 </div>
