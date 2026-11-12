@@ -1,32 +1,27 @@
-<section id="faq" class="border-t border-on-surface/15" aria-labelledby="faq-heading">
-    <div class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-20">
-        <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
-            <header class="lg:col-span-4">
-                <p class="eyebrow text-secondary">05 / Questions</p>
-                <h2 id="faq-heading" class="mt-4 font-display text-[clamp(2rem,3.4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-on-surface">
-                    Questions fréquentes
-                </h2>
-                <p class="mt-4 max-w-sm leading-relaxed text-on-surface-variant">
-                    Les réponses courtes avant de te lancer sur une issue.
-                </p>
-            </header>
+<section id="faq" class="py-14 lg:py-20" aria-labelledby="faq-heading">
+    <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div data-reveal>
+            <p class="eyebrow text-[#6C43F5]">Questions</p>
+            <h2 id="faq-heading" class="mt-4 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Questions fréquentes
+            </h2>
+            <p class="mt-4 max-w-sm leading-relaxed text-on-surface-variant">
+                Les réponses courtes avant de te lancer sur une issue.
+            </p>
+        </div>
 
-            <div class="border-t border-on-surface/30 lg:col-span-8">
-                {% for item in faq_items %}
-                <details class="group border-b border-on-surface/15">
-                    <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-4 marker:content-none [&::-webkit-details-marker]:hidden">
-                        <span class="flex items-baseline gap-4">
-                            <span class="font-code text-[10px] text-secondary">{{ forloop.counter|stringformat:"02d" }}</span>
-                            <span class="font-display text-base font-semibold tracking-[-0.015em] text-on-surface lg:text-lg">{{ item.question }}</span>
-                        </span>
-                        <svg viewBox="0 0 16 16" class="mt-1 h-3.5 w-3.5 shrink-0 text-on-surface-variant transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                            <path d="M3 6l5 5 5-5" stroke-linecap="square"/>
-                        </svg>
-                    </summary>
-                    <p class="max-w-2xl pb-4 pl-8 leading-relaxed text-on-surface-variant">{{ item.answer }}</p>
-                </details>
-                {% endfor %}
-            </div>
+        <div class="space-y-3">
+            {% for item in faq_items %}
+            <details class="card-cream group px-5 py-4" data-reveal>
+                <summary class="flex cursor-pointer list-none items-start justify-between gap-4 marker:content-none [&::-webkit-details-marker]:hidden">
+                    <span class="text-base font-semibold text-[#08251C]">{{ item.question }}</span>
+                    <svg viewBox="0 0 16 16" class="mt-1 h-4 w-4 shrink-0 text-[#7D56FC] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M3 6l5 5 5-5" stroke-linecap="round"/>
+                    </svg>
+                </summary>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-[#41604F]">{{ item.answer }}</p>
+            </details>
+            {% endfor %}
         </div>
     </div>
 </section>

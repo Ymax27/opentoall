@@ -1,24 +1,24 @@
-<section id="why" class="band-ink">
-    <div class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-24">
-        <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
-            <header class="lg:col-span-4" aria-labelledby="why-heading">
-                <p class="eyebrow text-secondary">02 / Pourquoi</p>
-                <h2 id="why-heading" class="mt-4 font-display text-[clamp(2rem,3.4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.04em] ink-strong">
-                    Pourquoi OpenToAll&nbsp;?
-                </h2>
-                <p class="mt-4 max-w-sm leading-relaxed ink-muted">
-                    Chercher « good first issue » sur GitHub seul ne dit pas si le dépôt est clonable, accueillant, ou déjà pris.
-                </p>
-            </header>
-
-            <dl class="lg:col-span-8 grid gap-x-10 sm:grid-cols-2">
-                {% for item in why_items %}
-                <div class="border-t ink-rule py-5">
-                    <dt class="font-display text-lg font-semibold tracking-[-0.015em] ink-strong">{{ item.title }}</dt>
-                    <dd class="mt-2 leading-relaxed ink-muted">{{ item.text }}</dd>
-                </div>
-                {% endfor %}
-            </dl>
+<section id="why" class="py-14 lg:py-20" aria-labelledby="why-heading">
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div data-reveal>
+            <p class="eyebrow text-[#6C43F5]">Pourquoi</p>
+            <h2 id="why-heading" class="mt-4 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Pourquoi OpenToAll&nbsp;?
+            </h2>
+            <p class="mt-4 max-w-md leading-relaxed text-on-surface-variant">
+                Chercher « good first issue » sur GitHub seul ne dit pas si le dépôt
+                est clonable, accueillant, ou déjà pris.
+            </p>
         </div>
+
+        <ul class="relative border-l border-dashed border-[#015239]/30 pl-7" data-reveal="2">
+            {% for item in why_items %}
+            <li class="relative pb-8 last:pb-0">
+                <span class="absolute -left-[34px] top-1.5 h-2.5 w-2.5 rotate-45 bg-[#7D56FC]" aria-hidden="true"></span>
+                <h3 class="text-lg font-semibold text-on-surface">{{ item.title }}</h3>
+                <p class="mt-2 max-w-lg leading-relaxed text-on-surface-variant">{{ item.text }}</p>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </section>
