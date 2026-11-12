@@ -341,78 +341,6 @@ select option {
   color: #6C43F5;
 }
 
-.issue-record {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #FBFEFB;
-  color: #08251C;
-  border: 1px solid rgb(1 82 57 / 0.14);
-  border-radius: 14px;
-  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
-}
-.issue-record:hover {
-  transform: translateY(-4px);
-  border-color: rgb(125 86 252 / 0.5);
-  box-shadow: 0 28px 45px -32px rgb(1 82 57 / 0.55);
-}
-.issue-record-head {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.6rem 0.85rem;
-  background: #015239;
-  color: #FBFEFB;
-}
-.issue-record-index {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.12em;
-  color: #8FCFB4;
-}
-.issue-record-repo {
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.6875rem;
-  color: #BDD7CA;
-}
-.issue-record-stars {
-  flex-shrink: 0;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.625rem;
-  white-space: nowrap;
-  color: #B8FFE1;
-}
-.issue-record-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 1rem 1.1rem 0.9rem;
-}
-.issue-record-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.65rem 1.1rem;
-  border-top: 1px dashed rgb(1 82 57 / 0.18);
-}
-.issue-record-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  flex-shrink: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #015239;
-  transition: color 180ms ease;
-}
-.issue-record:hover .issue-record-cta { color: #7D56FC; }
-
 .issue-tile {
   position: relative;
   display: flex;
@@ -557,17 +485,6 @@ select option {
 }
 
 /* ---- Filtres Explore ----------------------------------------------------- */
-.field-label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #41604F;
-}
-
 .filter-select {
   width: 100%;
   min-width: 0;
@@ -589,47 +506,6 @@ select option {
   outline-offset: 2px;
   border-color: #7D56FC;
 }
-
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid rgb(1 82 57 / 0.18);
-  border-radius: 999px;
-  background: #FFFFFF;
-  color: #41604F;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
-}
-.filter-chip:hover { border-color: rgb(1 82 57 / 0.4); }
-.peer:checked + .filter-chip {
-  background: #015239;
-  border-color: #015239;
-  color: #FBFEFB;
-}
-.peer:focus-visible + .filter-chip {
-  outline: 2px solid #7D56FC;
-  outline-offset: 2px;
-}
-
-.panel-forest .field-label { color: #8FCFB4; }
-.panel-forest .filter-chip {
-  background: transparent;
-  border-color: rgb(251 254 251 / 0.22);
-  color: #BDD7CA;
-}
-.panel-forest .filter-chip:hover {
-  border-color: rgb(184 255 225 / 0.55);
-  color: #FBFEFB;
-}
-.panel-forest .peer:checked + .filter-chip {
-  background: #B8FFE1;
-  border-color: #B8FFE1;
-  color: #08251C;
-}
-.filter-select-lg { padding-top: 0.85rem; padding-bottom: 0.85rem; }
 
 .page-btn {
   display: inline-flex;
@@ -686,6 +562,10 @@ select option {
   outline: 2px solid #7D56FC;
   outline-offset: 1px;
 }
+.dark .seg { background: rgb(251 254 251 / 0.08); }
+.dark .seg-item { color: #BDD7CA; }
+.dark .seg-item:hover { color: #FBFEFB; }
+.dark .peer:checked + .seg-item { background: #FBFEFB; color: #08251C; }
 
 @media (max-width: 460px) {
   .seg-item { padding: 0.25rem 0.55rem; font-size: 0.75rem; }
@@ -697,17 +577,6 @@ select option {
   padding-top: 0.55rem;
   padding-bottom: 0.55rem;
   font-size: 0.875rem;
-}
-
-.tag-soft {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-  background: rgb(1 82 57 / 0.06);
-  color: #41604F;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.625rem;
 }
 
 .dot {
@@ -810,9 +679,6 @@ select option {
 .htmx-request.htmx-indicator,
 .htmx-request .htmx-indicator { opacity: 1; }
 .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
-
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 @keyframes list-in {
   from { opacity: 0; transform: translateY(4px); }

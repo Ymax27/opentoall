@@ -4,122 +4,136 @@
 {% block meta_description %}Vois qui contribue depuis ton pays — et rejoins le classement avec ta prochaine PR.{% endblock %}
 
 {% block content %}
-<div class="relative overflow-hidden">
-    <div class="absolute inset-0 kente-bg opacity-40 pointer-events-none"></div>
-    <div class="relative max-w-content mx-auto px-4 lg:px-8 py-10 lg:py-14">
+<div class="px-4 sm:px-6 lg:px-16">
 
-        <div class="max-w-2xl mb-10">
-            <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-3">Communauté</p>
-            <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">Qui contribue près de chez toi</h1>
-            <p class="mt-3 text-on-surface-variant text-lg leading-relaxed">Pas un podium générique — des noms, des pays, des PRs. Si quelqu’un de ton pays l’a fait, tu peux aussi.</p>
-        </div>
-
-        {% if top %}
-        <div class="relative overflow-hidden rounded-2xl bg-inverse-surface text-inverse-on-surface p-6 lg:p-8 mb-8">
-            <div class="relative flex flex-col sm:flex-row items-center gap-6">
-                <div class="relative shrink-0">
-                    {% if top.avatar_url %}
-                    <img src="{{ top.avatar_url }}" alt="" class="w-20 h-20 rounded-xl object-cover border border-inverse-on-surface/20">
-                    {% else %}
-                    <div class="w-20 h-20 rounded-xl grid place-items-center bg-inverse-on-surface/10 font-display font-bold text-2xl">{{ top.initials }}</div>
-                    {% endif %}
-                    <span class="absolute -top-2 -left-2 bg-secondary-container text-on-secondary text-[11px] font-bold px-2 py-0.5 rounded-md">#1</span>
-                </div>
-                <div class="text-center sm:text-left flex-1 min-w-0">
-                    <h2 class="font-display font-semibold text-2xl truncate">{{ top.github_username }}</h2>
-                    <p class="text-inverse-on-surface/70 mt-1">{{ top.flag }} {{ top.country|default:"Communauté" }} · <span class="font-semibold text-inverse-on-surface">{{ top.total }} contributions</span></p>
-                    {% if top.headline %}<p class="mt-3 text-inverse-on-surface/85 max-w-lg">{{ top.headline }}</p>{% endif %}
-                </div>
-                <a href="{% url 'profile' top.github_username %}" class="inline-flex items-center gap-2 bg-primary text-on-primary font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-container transition-colors shrink-0">
-                    Voir le profil<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                </a>
+    <section class="pt-8 lg:pt-12">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+            <div class="max-w-2xl">
+                <p class="eyebrow">Communauté · classement</p>
+                <h1 class="mt-4 font-serif text-[clamp(2.3rem,4.4vw,3.4rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-on-surface">
+                    Qui contribue près de chez toi
+                </h1>
+                <p class="mt-4 max-w-xl text-lg leading-relaxed text-on-surface-variant">
+                    Pas un podium générique — des noms, des pays, des PRs.
+                    Si quelqu’un de ton pays l’a fait, tu peux aussi.
+                </p>
             </div>
-        </div>
-        {% endif %}
 
-        <form method="get" class="flex items-center justify-between gap-3 mb-5">
-            <h2 class="font-heading font-semibold text-xl text-on-surface">Classement</h2>
-            <div class="relative">
+            <form method="get" class="shrink-0">
                 <label class="sr-only" for="country-filter">Pays</label>
-                <select id="country-filter" name="country" onchange="this.form.submit()" class="appearance-none bg-surface-container-lowest border border-outline-variant/50 text-on-surface font-medium text-sm rounded-xl py-2.5 pl-4 pr-10 outline-none cursor-pointer focus-visible:ring-2 focus-visible:ring-primary">
+                <select id="country-filter" name="country" onchange="this.form.submit()" class="filter-select filter-select-auto">
                     <option value="">Tous les pays</option>
                     {% for c in countries %}
                     <option value="{{ c }}" {% if selected_country == c %}selected{% endif %}>{{ c }}</option>
                     {% endfor %}
                 </select>
-                <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
-            </div>
-        </form>
+            </form>
+        </div>
+    </section>
 
-        {% if profiles %}
-        <div class="space-y-2.5">
-            {% for p in profiles %}
-            {% with rank=forloop.counter0|add:page_obj.start_index %}
-            <a href="{% url 'profile' p.github_username %}" class="group flex items-center gap-4 bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-3.5 pl-4 shadow-card hover:shadow-card-hover hover:border-primary/20 transition-all relative overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-                {% if rank <= 3 %}
-                <span class="absolute left-0 top-0 bottom-0 w-1 {% if rank == 1 %}bg-primary{% elif rank == 2 %}bg-secondary-container{% else %}bg-tertiary{% endif %}"></span>
-                {% endif %}
-                <span class="w-8 text-center font-display font-semibold text-lg shrink-0 {% if rank <= 3 %}text-primary{% else %}text-on-surface-variant{% endif %}">{{ rank }}</span>
-                {% if p.avatar_url %}
-                <img src="{{ p.avatar_url }}" alt="" class="w-11 h-11 rounded-xl object-cover bg-surface-container shrink-0" loading="lazy">
-                {% else %}
-                <span class="w-11 h-11 rounded-xl bg-primary/12 text-primary grid place-items-center font-bold shrink-0">{{ p.initials }}</span>
-                {% endif %}
-                <div class="min-w-0 flex-1">
-                    <div class="font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{{ p.github_username }}</div>
-                    <div class="text-sm text-on-surface-variant">{{ p.flag }} {{ p.country|default:"—" }}</div>
+    {% if profiles %}
+    {% if top %}
+    <section class="mt-8">
+        <div class="panel-forest relative overflow-hidden p-6 sm:p-8">
+            <div class="hero-dots pointer-events-none absolute inset-0" aria-hidden="true"></div>
+            <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+                <div class="relative shrink-0">
+                    {% if top.avatar_url %}
+                    <img src="{{ top.avatar_url }}" alt="" class="h-16 w-16 rounded-xl border border-white/15 object-cover">
+                    {% else %}
+                    <span class="grid h-16 w-16 place-items-center rounded-xl bg-white/10 font-serif text-2xl text-[#B8FFE1]">{{ top.initials }}</span>
+                    {% endif %}
+                    <span class="absolute -left-2 -top-2 rounded-md bg-[#B8FFE1] px-1.5 py-0.5 font-code text-[10px] font-bold text-[#015239]">01</span>
                 </div>
-                <div class="text-right shrink-0">
-                    <div class="font-display font-semibold text-xl text-on-surface">{{ p.total }}</div>
-                    <div class="text-xs text-on-surface-variant">contrib.</div>
+
+                <div class="min-w-0">
+                    <h2 class="truncate font-serif text-3xl font-semibold tracking-[-0.02em] text-[#FBFEFB]">{{ top.github_username }}</h2>
+                    <p class="mt-1 text-sm text-[#BDD7CA]">{{ top.flag }} {{ top.country|default:"Communauté" }}</p>
                 </div>
+
+                <div class="sm:ml-auto sm:text-right">
+                    <p class="font-serif text-4xl font-semibold text-[#B8FFE1]">{{ top.total }}</p>
+                    <p class="font-code text-[10px] uppercase tracking-[0.14em] text-[#8FCFB4]">contributions</p>
+                </div>
+            </div>
+
+            {% if top.headline %}
+            <p class="relative mt-5 max-w-2xl text-sm leading-relaxed text-[#BDD7CA]">{{ top.headline }}</p>
+            {% endif %}
+
+            <a href="{% url 'profile' top.github_username %}" class="link-arrow relative mt-5 text-sm">
+                Voir le profil <span aria-hidden="true">&rarr;</span>
             </a>
-            {% endwith %}
-            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="mt-10">
+        <div class="flex items-baseline justify-between gap-4 border-b border-[#015239]/12 pb-3">
+            <p class="font-code text-[10px] uppercase tracking-[0.14em] text-[#41604F] dark:text-[#BDD7CA]">Classement</p>
+            <p class="text-xs text-[#41604F] dark:text-[#BDD7CA]">{{ page_obj.paginator.count }} profil{{ page_obj.paginator.count|pluralize }}</p>
         </div>
 
+        <ol>
+            {% for p in rest %}
+            <li>
+                <a href="{% url 'profile' p.github_username %}" class="group flex items-center gap-4 border-b border-[#015239]/8 py-4 transition-colors hover:border-[#015239]/20">
+                    <span class="w-7 shrink-0 font-serif text-base text-[#41604F]">{{ forloop.counter|add:rest_offset|stringformat:"02d" }}</span>
+                    {% if p.avatar_url %}
+                    <img src="{{ p.avatar_url }}" alt="" class="h-10 w-10 shrink-0 rounded-lg border border-[#015239]/10 object-cover" loading="lazy">
+                    {% else %}
+                    <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#015239]/8 font-code text-xs font-semibold text-[#015239]">{{ p.initials }}</span>
+                    {% endif %}
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-[15px] font-semibold text-[#08251C] dark:text-[#E9F7EE] transition-colors group-hover:text-[#015239] dark:group-hover:text-[#B8FFE1]">{{ p.github_username }}</p>
+                        <p class="mt-0.5 truncate text-xs text-[#41604F] dark:text-[#BDD7CA]">{{ p.flag }} {{ p.country|default:"—" }}</p>
+                    </div>
+                    <div class="shrink-0 text-right">
+                        <span class="font-serif text-xl font-semibold text-[#08251C] dark:text-[#FBFEFB]">{{ p.total }}</span>
+                        <span class="ml-1 font-code text-[10px] uppercase tracking-[0.08em] text-[#41604F] dark:text-[#BDD7CA]">contrib.</span>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ol>
+
         {% if page_obj.paginator.num_pages > 1 %}
-        {% with qs=querystring %}
-        <nav class="flex items-center justify-center gap-1.5 mt-10" aria-label="Pagination">
+        <nav class="mt-9 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
             {% if page_obj.has_previous %}
-            <a href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.previous_page_number }}"
-               class="w-10 h-10 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+            <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page_obj.previous_page_number }}" class="page-btn">
+                <span aria-hidden="true">&larr;</span> Précédent
             </a>
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
-                <span class="min-w-10 h-10 px-3 grid place-items-center rounded-lg bg-primary text-on-primary font-semibold">{{ num }}</span>
+                <span aria-current="page" class="page-btn page-btn-current">{{ num }}</span>
                 {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
-                <a href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
-                   class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+                <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ num }}" class="page-btn">{{ num }}</a>
                 {% elif num == 1 or num == page_obj.paginator.num_pages %}
-                <a href="?{{ qs }}{% if qs %}&{% endif %}page={{ num }}"
-                   class="min-w-10 h-10 px-3 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">{{ num }}</a>
+                <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ num }}" class="page-btn">{{ num }}</a>
                 {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
-                <span class="w-6 text-center text-on-surface-variant">…</span>
+                <span class="px-1 text-xs text-[#41604F] dark:text-[#BDD7CA]" aria-hidden="true">…</span>
                 {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
-            <a href="?{{ qs }}{% if qs %}&{% endif %}page={{ page_obj.next_page_number }}"
-               class="w-10 h-10 grid place-items-center rounded-lg border border-outline-variant/60 text-on-surface-variant hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+            <a href="?{{ querystring }}{% if querystring %}&{% endif %}page={{ page_obj.next_page_number }}" class="page-btn">
+                Suivant <span aria-hidden="true">&rarr;</span>
             </a>
             {% endif %}
         </nav>
-        {% endwith %}
         {% endif %}
+    </section>
 
-        {% else %}
-        <div class="text-center py-16 px-4 bg-surface-container-low/50 rounded-2xl">
-            <span class="material-symbols-outlined text-[40px] text-on-surface-variant">groups</span>
-            <h3 class="font-heading font-semibold text-lg text-on-surface mt-3">Personne ici pour l’instant</h3>
-            <p class="mt-2 text-on-surface-variant max-w-sm mx-auto">Change de pays, ou sois le premier : ouvre une issue et reviens après ta PR.</p>
-            <a href="{% url 'explore' %}" class="inline-flex items-center gap-1.5 mt-5 text-primary font-semibold text-sm">Trouve une issue<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
-        </div>
-        {% endif %}
+    {% else %}
+    <div class="mt-8 rounded-2xl border border-[#015239]/12 bg-[#FBFEFB] px-6 py-12 text-center">
+        <h2 class="font-serif text-2xl font-semibold text-[#08251C]">Personne ici pour l’instant</h2>
+        <p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[#41604F]">
+            Change de pays, ou sois le premier : ouvre une issue et reviens après ta PR.
+        </p>
+        <a href="{% url 'explore' %}" class="btn btn-forest mt-6">Trouve une issue</a>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -53,7 +53,7 @@
         </div>
 
         <div class="mt-3 flex flex-wrap items-center gap-2">
-            <span class="mr-1 font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F]">Niveau</span>
+            <span class="mr-1 font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">Niveau</span>
             <div class="seg" role="radiogroup" aria-label="Niveau">
                 <label>
                     <input type="radio" name="difficulty" value="" class="peer sr-only" {% if not filters.difficulty %}checked{% endif %}>
@@ -95,14 +95,14 @@
             {% endif %}
 
             {% if filters.q or filters.language or filters.difficulty or filters.foundation or filters.max_size %}
-            <a href="{% url 'explore' %}" class="ml-auto font-code text-[10px] uppercase tracking-[0.1em] text-[#41604F] underline decoration-[#015239]/20 underline-offset-4 transition-colors hover:text-[#015239]">
+            <a href="{% url 'explore' %}" class="ml-auto font-code text-[10px] uppercase tracking-[0.1em] text-[#41604F] underline decoration-[#015239]/20 underline-offset-4 transition-colors hover:text-[#015239] dark:text-[#BDD7CA] dark:decoration-white/25 dark:hover:text-[#B8FFE1]">
                 Tout effacer
             </a>
             {% endif %}
         </div>
 
-        <p id="clone-size-help" class="mt-3 text-[11px] leading-relaxed text-[#41604F]">
-            <span class="font-semibold text-[#08251C]">Poids du clone</span> —
+        <p id="clone-size-help" class="mt-3 text-[11px] leading-relaxed text-[#41604F] dark:text-[#BDD7CA]">
+            <span class="font-semibold text-[#08251C] dark:text-[#FBFEFB]">Poids du clone</span> —
             taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo),
             moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
         </p>
@@ -119,11 +119,21 @@
 
     <div id="skeleton-loader" aria-hidden="true" class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {% for i in "123" %}
-        <div class="issue-card p-5">
-            <div class="h-3 w-1/3 skeleton"></div>
-            <div class="mt-4 h-4 w-11/12 skeleton"></div>
-            <div class="mt-2 h-3 w-full skeleton"></div>
-            <div class="mt-2 h-3 w-2/3 skeleton"></div>
+        <div class="issue-tile issue-tile-beginner">
+            <div class="flex items-center justify-between gap-3">
+                <div class="h-2.5 w-20 skeleton"></div>
+                <div class="h-2.5 w-16 skeleton"></div>
+            </div>
+            <div class="mt-4 h-5 w-11/12 skeleton"></div>
+            <div class="mt-2 h-5 w-2/3 skeleton"></div>
+            <div class="mt-3 h-3 w-full skeleton"></div>
+            <div class="mt-2 h-3 w-4/5 skeleton"></div>
+            <div class="mt-5 h-2.5 w-28 skeleton"></div>
+            <div class="mt-5 flex items-center gap-2 border-t border-[#015239]/10 pt-4">
+                <div class="h-4 w-4 skeleton"></div>
+                <div class="h-3 w-28 skeleton"></div>
+                <div class="ml-auto h-6 w-6 rounded-full skeleton"></div>
+            </div>
         </div>
         {% endfor %}
     </div>

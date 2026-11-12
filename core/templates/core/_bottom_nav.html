@@ -1,21 +1,35 @@
 {% with active=request.resolver_match.url_name|default:"" %}
 <!-- Mobile bottom navigation -->
-<nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-outline-variant/40 bg-surface/90 backdrop-blur-xl" style="padding-bottom: env(safe-area-inset-bottom);">
+<nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[#015239]/12 bg-[#E4FAEE]/95 backdrop-blur-xl dark:border-white/10 dark:bg-[#08251C]/95" style="padding-bottom: env(safe-area-inset-bottom);">
     <div class="grid grid-cols-4 h-16">
         {% for slug, label, icon in nav_links %}
-        <a href="{% url slug %}" class="flex flex-col items-center justify-center gap-0.5 transition-colors {% if active == slug %}text-primary{% else %}text-on-surface-variant{% endif %}">
-            <span class="material-symbols-outlined text-[24px]" style="{% if active == slug %}font-variation-settings:'FILL' 1;{% endif %}">{{ icon }}</span>
+        <a href="{% url slug %}"{% if active == slug %} aria-current="page"{% endif %}
+           class="flex flex-col items-center justify-center gap-1 transition-colors {% if active == slug %}text-[#015239] dark:text-[#B8FFE1]{% else %}text-[#41604F] dark:text-[#BDD7CA]{% endif %}">
+            <svg viewBox="0 0 24 24" class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                {% if slug == 'home' %}
+                <path d="M4 10.5 12 4l8 6.5V20h-5v-5.5H9V20H4z"/>
+                {% elif slug == 'explore' %}
+                <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>
+                {% else %}
+                <path d="M4 20V11M10 20V5M16 20v-6M22 20H2"/>
+                {% endif %}
+            </svg>
             <span class="text-[11px] font-medium">{{ label }}</span>
         </a>
         {% endfor %}
         {% if user.is_authenticated %}
-        <a href="{% if user.profile.github_username %}{% url 'profile' user.profile.github_username %}{% else %}{% url 'home' %}{% endif %}" class="flex flex-col items-center justify-center gap-0.5 {% if active == 'profile' %}text-primary{% else %}text-on-surface-variant{% endif %}">
-            <span class="material-symbols-outlined text-[24px]">person</span>
+        <a href="{% if user.profile.github_username %}{% url 'profile' user.profile.github_username %}{% else %}{% url 'home' %}{% endif %}"
+           class="flex flex-col items-center justify-center gap-1 transition-colors {% if active == 'profile' %}text-[#015239] dark:text-[#B8FFE1]{% else %}text-[#41604F] dark:text-[#BDD7CA]{% endif %}">
+            <svg viewBox="0 0 24 24" class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/>
+            </svg>
             <span class="text-[11px] font-medium">Profil</span>
         </a>
         {% else %}
-        <a href="{% url 'account_login' %}" class="flex flex-col items-center justify-center gap-0.5 text-on-surface-variant">
-            <span class="material-symbols-outlined text-[24px]">login</span>
+        <a href="{% url 'account_login' %}" class="flex flex-col items-center justify-center gap-1 text-[#41604F] transition-colors dark:text-[#BDD7CA]">
+            <svg viewBox="0 0 24 24" class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 4h4a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 18 20h-4M10 8l4 4-4 4M14 12H4"/>
+            </svg>
             <span class="text-[11px] font-medium">Connexion</span>
         </a>
         {% endif %}
