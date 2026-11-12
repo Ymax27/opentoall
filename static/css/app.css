@@ -413,6 +413,116 @@ select option {
 }
 .issue-record:hover .issue-record-cta { color: #7D56FC; }
 
+.issue-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.3rem 1.35rem 1rem 1.5rem;
+  background: #FBFEFB;
+  color: #08251C;
+  border: 1px solid rgb(1 82 57 / 0.12);
+  border-radius: 14px;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+}
+.issue-tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #015239;
+  transition: width 200ms ease;
+}
+.issue-tile:hover::before { width: 6px; }
+.issue-tile-intermediate::before { background: #7D56FC; }
+.issue-tile-advanced::before { background: #41604F; }
+.issue-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgb(125 86 252 / 0.4);
+  box-shadow: 0 24px 40px -32px rgb(1 82 57 / 0.5);
+}
+.issue-kicker {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #41604F;
+}
+.issue-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #41604F;
+}
+.issue-title {
+  margin-top: 0.55rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.3125rem;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: #08251C;
+}
+.issue-dek {
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: #41604F;
+}
+.issue-time {
+  margin-top: 0.85rem;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #41604F;
+}
+.issue-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(1 82 57 / 0.1);
+}
+.issue-dek + .issue-meta,
+.issue-title + .issue-meta { margin-top: 1.1rem; }
+.issue-repo {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: #41604F;
+}
+.issue-stars {
+  flex-shrink: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  color: #41604F;
+}
+.issue-weight { display: inline-flex; flex-shrink: 0; }
+.issue-go {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.625rem;
+  height: 1.625rem;
+  margin-left: auto;
+  border-radius: 999px;
+  background: #015239;
+  color: #B8FFE1;
+  font-size: 0.8125rem;
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+.issue-tile:hover .issue-go { transform: translateX(2px); background: #7D56FC; }
+
 .issue-card {
   display: flex;
   flex-direction: column;

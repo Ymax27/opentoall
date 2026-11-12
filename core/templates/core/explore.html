@@ -26,7 +26,7 @@
     <form id="filters" hx-get="{% url 'explore' %}" hx-target="#issue-list" hx-swap="innerHTML"
           hx-push-url="true" hx-indicator="#list-loader, #skeleton-loader"
           hx-trigger="change, keyup changed delay:400ms, search"
-          class="mt-8 rounded-2xl border border-[#015239]/12 bg-[#FBFEFB] p-4 sm:p-5">
+          class="mt-9 border-b border-[#015239]/12 pb-6">
 
         <div class="flex flex-col gap-3 md:flex-row md:items-center">
             <div class="min-w-0 flex-1">
@@ -108,7 +108,7 @@
         </p>
     </form>
 
-    <div class="mt-7 flex items-center justify-between gap-3">
+    <div class="mt-6 flex items-center justify-between gap-3">
         <p class="font-code text-[10px] uppercase tracking-[0.14em] text-on-surface-variant">Résultats</p>
         <span id="list-loader" class="htmx-indicator flex items-center gap-2 font-code text-[10px] uppercase tracking-[0.14em] text-[#015239] dark:text-[#B8FFE1]" aria-hidden="true">
             Chargement…
