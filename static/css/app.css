@@ -149,6 +149,19 @@ select option {
   color: #08251C;
   border-radius: 16px;
 }
+/* La carte menthe reste claire en thème sombre : son contenu garde les
+   couleurs fortes du thème clair, sinon les boutons deviennent illisibles. */
+.dark .card-mint { background: #D5F1E3; color: #08251C; }
+.dark .card-mint .btn-ghost-dark {
+  background: transparent;
+  color: #08251C;
+  border-color: rgb(1 82 57 / 0.3);
+}
+.dark .card-mint .btn-ghost-dark:hover {
+  background: rgb(1 82 57 / 0.08);
+  border-color: rgb(1 82 57 / 0.5);
+  color: #08251C;
+}
 .card-dashed {
   border: 1px dashed #7D56FC;
   border-radius: 16px;
@@ -593,7 +606,7 @@ select option {
   padding: 0.8rem 0.95rem;
   border: 1px solid rgb(1 82 57 / 0.18);
   border-radius: 8px;
-  background: #FFFFFF;
+  background: #E4FAEE;
   color: #08251C;
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
@@ -613,7 +626,7 @@ select option {
 .issue-card {
   display: flex;
   flex-direction: column;
-  background: #FBFEFB;
+  background: #D5F1E3;
   color: #08251C;
   border: 1px solid rgb(1 82 57 / 0.08);
   border-radius: 16px;
@@ -631,7 +644,7 @@ select option {
   padding: 0.9rem 1.1rem;
   border: 1px solid rgb(var(--outline-variant));
   border-radius: 8px;
-  background: #FFFFFF;
+  background: #E4FAEE;
   color: #08251C;
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 1rem;
@@ -651,7 +664,7 @@ select option {
   padding: 0.7rem 2.2rem 0.7rem 0.85rem;
   border: 1px solid rgb(1 82 57 / 0.18);
   border-radius: 8px;
-  background-color: #FFFFFF;
+  background-color: #E4FAEE;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%23015239' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.85rem center;
@@ -674,7 +687,7 @@ select option {
   padding: 0 0.85rem;
   border: 1px solid rgb(1 82 57 / 0.18);
   border-radius: 8px;
-  background: #FBFEFB;
+  background: #D5F1E3;
   color: #08251C;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.6875rem;
@@ -713,7 +726,7 @@ select option {
 }
 .seg-item:hover { color: #08251C; }
 .peer:checked + .seg-item {
-  background: #FBFEFB;
+  background: #B8FFE1;
   color: #08251C;
   box-shadow: 0 1px 2px rgb(8 37 28 / 0.12);
 }
@@ -724,7 +737,7 @@ select option {
 .dark .seg { background: rgb(251 254 251 / 0.08); }
 .dark .seg-item { color: #BDD7CA; }
 .dark .seg-item:hover { color: #FBFEFB; }
-.dark .peer:checked + .seg-item { background: #FBFEFB; color: #08251C; }
+.dark .peer:checked + .seg-item { background: #B8FFE1; color: #08251C; }
 
 @media (max-width: 460px) {
   .seg-item { padding: 0.25rem 0.55rem; font-size: 0.75rem; }

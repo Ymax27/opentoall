@@ -71,7 +71,7 @@
             },
         };
     </script>
-    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261113c">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261113e">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     {% for block in json_ld_blocks %}
     <script type="application/ld+json">{{ block|safe }}</script>
@@ -90,7 +90,7 @@
         <div data-flash
              data-flash-tags="{{ message.tags }}"
              role="{% if 'error' in message.tags or 'warning' in message.tags %}alert{% else %}status{% endif %}"
-             class="mb-2 flex items-start justify-between gap-3 rounded-xl border border-[#015239]/15 bg-[#FBFEFB] px-4 py-3 text-sm text-[#08251C] shadow-sm">
+             class="mb-2 flex items-start justify-between gap-3 rounded-xl border border-[#015239]/20 bg-[#D5F1E3] px-4 py-3 text-sm text-[#08251C] shadow-sm">
             <span>{{ message }}</span>
             <button type="button" data-flash-close aria-label="Fermer le message"
                     class="shrink-0 -mr-1 rounded px-2 leading-none text-lg text-[#41604F] hover:text-[#08251C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7D56FC]">

@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}
+
+{% block title %}Mentions légales — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Éditeur, hébergement, code source, données personnelles et contact d’OpenToAll.{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-16">
+    <div class="grid items-start gap-10 pt-8 lg:grid-cols-[.32fr_.68fr] lg:gap-16 lg:pt-12">
+
+        <aside class="lg:sticky lg:top-28">
+            <p class="eyebrow">Mentions légales</p>
+            <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                Ce que le site fait de tes données, qui l’édite, et comment le joindre.
+                Le code est public : tout ce qui suit est vérifiable dans le dépôt.
+            </p>
+            <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="link-arrow mt-5 text-sm">
+                Voir le dépôt <span aria-hidden="true">&nearr;</span>
+            </a>
+        </aside>
+
+        <article class="max-w-2xl">
+            <h1 class="font-serif text-[clamp(2rem,3.4vw,2.9rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Mentions légales.
+            </h1>
+
+            <dl class="mt-8 divide-y divide-[#015239]/10 border-t border-[#015239]/10 dark:divide-white/10 dark:border-white/10">
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">01 · Éditeur</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        {{ SITE_NAME }} est un projet open source édité par Ymax, à titre personnel.
+                        Contact : <a href="mailto:{{ SUPPORT_EMAIL }}" class="font-medium text-[#015239] underline decoration-[#015239]/25 underline-offset-4 dark:text-[#B8FFE1]">{{ SUPPORT_EMAIL }}</a>.
+                    </dd>
+                </section>
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">02 · Hébergement</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        L’application et sa base de données sont hébergées sur une infrastructure
+                        cloud. Les issues affichées proviennent de l’API publique de GitHub et
+                        restent la propriété de leurs dépôts respectifs.
+                    </dd>
+                </section>
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">03 · Code source</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Le code est publié sous licence MIT.
+                        <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="font-medium text-[#015239] underline decoration-[#015239]/25 underline-offset-4 dark:text-[#B8FFE1]">Dépôt GitHub</a>.
+                        Les marques et logos cités appartiennent à leurs propriétaires.
+                    </dd>
+                </section>
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">04 · Données</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        La connexion passe par GitHub et ne lit que ton profil public : nom
+                        d’utilisateur, avatar, pays déclaré. Sont conservés ton profil et les
+                        contributions que tu revendiques. Rien n’est revendu ni transmis à des tiers.
+                        Tu peux demander la suppression de ton profil à l’adresse ci-dessus.
+                    </dd>
+                </section>
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">05 · Cookies</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Un cookie de session et un jeton anti-CSRF, nécessaires au fonctionnement
+                        du site. Aucun cookie publicitaire ni traceur d’audience.
+                    </dd>
+                </section>
+
+                <section class="grid gap-2 py-6 sm:grid-cols-[9rem_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">06 · Responsabilité</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Les informations sur les issues (niveau, poids du clone, santé du projet)
+                        sont indicatives et peuvent évoluer côté GitHub. Vérifie toujours l’issue
+                        avant de commencer à travailler.
+                    </dd>
+                </section>
+            </dl>
+        </article>
+    </div>
+</div>
+{% endblock %}

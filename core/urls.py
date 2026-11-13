@@ -1,5 +1,5 @@
 from django.urls import path
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 
 from . import views
 
@@ -7,6 +7,11 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("about/", views.about, name="about"),
     path("support/", views.support, name="support"),
+    path(
+        "mentions-legales/",
+        TemplateView.as_view(template_name="core/legal.html"),
+        name="legal",
+    ),
     path(
         "contact/",
         RedirectView.as_view(pattern_name="support", permanent=True),

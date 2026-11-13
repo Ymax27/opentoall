@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+
+{% block title %}Page introuvable — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-10 sm:px-6 lg:px-16 lg:py-16">
+    <div class="grid items-center gap-10 lg:grid-cols-[1.1fr_.9fr] lg:gap-16">
+
+        <section>
+            <p class="eyebrow">Erreur 404</p>
+            <h1 class="mt-4 font-serif text-[clamp(2.4rem,5vw,3.8rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-on-surface">
+                Cette page n’existe pas.
+            </h1>
+            <p class="mt-5 max-w-md text-lg leading-relaxed text-on-surface-variant">
+                L’adresse a peut-être changé, ou l’issue a été fermée entre-temps.
+                Le registre, lui, est toujours ouvert.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <a href="{% url 'explore' %}" class="btn btn-forest">Trouve une issue <span aria-hidden="true">&rarr;</span></a>
+                <a href="{% url 'home' %}" class="link-arrow text-sm text-[#015239] dark:text-[#B8FFE1]">Retour à l’accueil</a>
+            </div>
+        </section>
+
+        <aside class="panel-forest relative overflow-hidden p-8 lg:p-10">
+            <div class="hero-dots pointer-events-none absolute inset-0" aria-hidden="true"></div>
+            <p class="relative font-serif text-[clamp(5rem,13vw,9rem)] font-semibold leading-none tracking-[-0.05em] text-[#B8FFE1]/25" aria-hidden="true">404</p>
+            <p class="relative mt-4 font-code text-[10px] uppercase tracking-[0.16em] text-[#8FCFB4]">Registre · issues libres</p>
+            <p class="relative mt-3 text-sm leading-relaxed text-[#BDD7CA]">
+                Les erreurs arrivent. Une issue mal collée aussi — vérifie l’URL,
+                ou repars du filtre.
+            </p>
+            <a href="{% url 'leaderboard' %}" class="link-arrow relative mt-6 text-sm">Voir le classement <span aria-hidden="true">&rarr;</span></a>
+        </aside>
+    </div>
+</div>
+{% endblock %}
