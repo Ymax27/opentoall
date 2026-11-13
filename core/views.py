@@ -467,14 +467,13 @@ def leaderboard(request):
     page_obj = paginator.get_page(request.GET.get("page", "1"))
     page_rows = list(page_obj.object_list)
 
+    # Featured card is #1 only; the list must still show #2, #3, … (redesign #90
+    # had sliced off the first three rows, so ranks 2–3 never rendered).
     on_first_page = page_obj.number == 1
-    if on_first_page:
-        podium, rest = page_rows[:3], page_rows[3:]
-    else:
-        podium, rest = [], page_rows
-
-    # Rank of the row just before `rest` begins: 3 on page 1, 50 on page 2, ...
-    rest_offset = max(page_obj.start_index() - 1, 0) + (len(podium))
+    featured = 1 if (on_first_page and page_rows) else 0
+    rest = page_rows[featured:]
+    # Rank of the row just before `rest` begins: 1 on page 1, 50 on page 2, …
+    rest_offset = max(page_obj.start_index() - 1, 0) + featured
 
     querystring = urlencode({"country": country}) if country else ""
 
@@ -483,7 +482,6 @@ def leaderboard(request):
         "core/leaderboard.html",
         {
             "profiles": page_rows,
-            "podium": podium,
             "rest": rest,
             "rest_offset": rest_offset,
             "top": profiles[0] if (profiles and on_first_page) else None,
