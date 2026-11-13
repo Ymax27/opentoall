@@ -459,12 +459,16 @@ def test_leaderboard_pagination(client, monkeypatch):
 
     url = reverse("leaderboard")
 
-    # Page 1: hero shown, highest contributor first, 2 rows.
+    # Page 1: hero is #1; list still includes #2 (not dropped after a podium slice).
     r1 = client.get(url)
     assert r1.status_code == 200
     assert r1.context["page_obj"].number == 1
     assert [p.github_username for p in r1.context["profiles"]] == ["lbuser5", "lbuser4"]
     assert r1.context["top"].github_username == "lbuser5"
+    assert [p.github_username for p in r1.context["rest"]] == ["lbuser4"]
+    assert r1.context["rest_offset"] == 1
+    assert b">02<" in r1.content
+    assert b"lbuser4" in r1.content
 
     # Page 2: no hero, ranks continue from 3.
     r2 = client.get(url, {"page": 2})
@@ -472,6 +476,8 @@ def test_leaderboard_pagination(client, monkeypatch):
     assert r2.context["top"] is None
     assert r2.context["page_obj"].start_index() == 3
     assert [p.github_username for p in r2.context["profiles"]] == ["lbuser3", "lbuser2"]
+    assert [p.github_username for p in r2.context["rest"]] == ["lbuser3", "lbuser2"]
+    assert r2.context["rest_offset"] == 2
 
     # Bad or out-of-range page numbers must not crash.
     assert client.get(url, {"page": "abc"}).status_code == 200
