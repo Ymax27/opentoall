@@ -144,6 +144,11 @@ select option {
   color: #08251C;
   border-radius: 16px;
 }
+.card-mint {
+  background: #D5F1E3;
+  color: #08251C;
+  border-radius: 16px;
+}
 .card-dashed {
   border: 1px dashed #7D56FC;
   border-radius: 16px;
@@ -347,9 +352,9 @@ select option {
   flex-direction: column;
   overflow: hidden;
   padding: 1.6rem 1.5rem 1.15rem;
-  background: #FBFEFB;
+  background: #D5F1E3;
   color: #08251C;
-  border: 1px solid rgb(1 82 57 / 0.12);
+  border: 1px solid rgb(1 82 57 / 0.16);
   border-radius: 14px;
   transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 }

@@ -4,25 +4,62 @@
 {% block meta_description %}OpenToAll aide à trouver une issue open source réaliste à cloner et à finir — avec un crédit léger aux personnes qui construisent le projet.{% endblock %}
 
 {% block content %}
-<section class="max-w-content mx-auto px-4 lg:px-8 py-12 lg:py-16">
-    <div class="max-w-2xl">
-        <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-4">À propos</p>
-        <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">
-            Une issue que tu peux vraiment finir.
-        </h1>
-        <p class="mt-5 text-lg text-on-surface-variant leading-relaxed">
-            OpenToAll liste des issues GitHub encore libres, filtrées par langage, niveau
-            et poids du clone — pour que tu clones et merges sans te battre contre un monolithe
-            ou une issue déjà prise.
-        </p>
+<div class="px-4 sm:px-6 lg:px-16">
+    <div class="grid items-start gap-12 pt-8 lg:grid-cols-[1.15fr_.85fr] lg:gap-16 lg:pt-12">
 
-        <div class="mt-10 pt-8 border-t border-outline-variant/40">
-            {% include "core/_built_by.html" with credit_class="text-base text-on-surface-variant" %}
-            <p class="mt-3 text-sm text-on-surface-variant">
-                Projet open source, sous licence MIT.
-                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">Voir le dépôt</a>
+        <section class="max-w-2xl">
+            <p class="eyebrow">À propos</p>
+            <h1 class="mt-4 font-serif text-[clamp(2.2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Une issue que tu peux vraiment finir.
+            </h1>
+            <p class="mt-5 text-lg leading-relaxed text-on-surface-variant">
+                OpenToAll liste des issues GitHub encore libres, filtrées par langage, niveau
+                et poids du clone — pour que tu clones et merges sans te battre contre un monolithe
+                ou une issue déjà prise.
             </p>
-        </div>
+
+            <dl class="mt-10 divide-y divide-[#015239]/10 border-t border-[#015239]/10 dark:divide-white/10 dark:border-white/10">
+                <div class="grid gap-2 py-5 sm:grid-cols-[auto_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">01 · Filtrer</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Langage, niveau, poids du clone, fondation. Ce qui reste une fois les
+                        filtres appliqués est réellement libre et clonable.
+                    </dd>
+                </div>
+                <div class="grid gap-2 py-5 sm:grid-cols-[auto_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">02 · Choisir</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Réactivité des mainteneurs, accueil des débutants, fichiers communautaires :
+                        les signaux qui disent si ta PR sera lue.
+                    </dd>
+                </div>
+                <div class="grid gap-2 py-5 sm:grid-cols-[auto_1fr] sm:gap-8">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">03 · Laisser une trace</dt>
+                    <dd class="text-[15px] leading-relaxed text-on-surface-variant">
+                        Un profil public et un classement par pays pour montrer ce que tu as mergé —
+                        pas seulement un README que personne ne lit.
+                    </dd>
+                </div>
+            </dl>
+        </section>
+
+        <aside class="panel-forest p-6 sm:p-8 lg:mt-10">
+            <p class="eyebrow">Le projet</p>
+            <p class="mt-4 max-w-sm text-sm leading-relaxed text-[#BDD7CA]">
+                OpenToAll est un registre ouvert : les issues viennent de dépôts réels et
+                les signaux affichés sont vérifiables sur GitHub.
+            </p>
+
+            <div class="mt-6 border-t border-white/15 pt-5">
+                {% include "core/_built_by.html" with credit_class="font-code text-[11px] tracking-[0.02em] text-[#8FCFB4]" credit_link_class="text-[#FBFEFB] underline decoration-white/25 underline-offset-2 hover:text-[#B8FFE1] transition-colors" %}
+            </div>
+
+            <p class="mt-3 text-xs text-[#8FCFB4]">Projet open source, sous licence MIT.</p>
+
+            <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="btn btn-ghost-light mt-6 w-full">
+                Voir le dépôt <span aria-hidden="true">&nearr;</span>
+            </a>
+        </aside>
     </div>
-</section>
+</div>
 {% endblock %}
