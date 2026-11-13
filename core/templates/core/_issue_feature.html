@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<a href="{{ issue.get_absolute_url }}" class="issue-feature group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8FFE1]">
+<a href="{{ issue.get_absolute_url }}" class="issue-feature group md:col-span-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8FFE1]">
     <span class="issue-feature-ghost" aria-hidden="true">{{ index|stringformat:"02d" }}</span>
 
     <div class="relative flex items-center justify-between gap-3">
@@ -16,6 +16,12 @@
 
     <h3 class="issue-feature-title relative">{{ issue.title }}</h3>
     {% if issue.body %}<p class="issue-feature-dek line-clamp-2">{{ issue.body|striptags|truncatechars:150 }}</p>{% endif %}
+    {% if issue.foundation or issue.labels_list %}
+    <div class="issue-tags relative">
+        {% if issue.foundation %}<span>{{ issue.foundation }}</span>{% endif %}
+        {% for label in issue.labels_list|slice:":2" %}<span>{{ label }}</span>{% endfor %}
+    </div>
+    {% endif %}
 
     <div class="issue-feature-meta">
         {% if issue.repo_avatar_url %}
@@ -25,6 +31,9 @@
         {% endif %}
         <span class="min-w-0 truncate font-code text-[11px] text-[#BDD7CA]">{{ issue.repo_owner }}/{{ issue.repo_name }}</span>
         <span class="shrink-0 font-code text-[10px] text-[#8FCFB4]" aria-label="{{ issue.stars_display }} étoiles">{{ issue.stars_display }} ★</span>
+        {% if issue.responsiveness %}
+        <span class="shrink-0 font-code text-[10px] text-[#8FCFB4]" title="Réactivité des mainteneurs">Réactivité : {{ issue.responsiveness }}</span>
+        {% endif %}
         <span class="shrink-0">
             <span class="sr-only">Poids du clone {{ issue.size_category }}</span>
             <span class="weight-meter" data-level="{{ issue.size_bars }}" aria-hidden="true">

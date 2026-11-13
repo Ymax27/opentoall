@@ -17,8 +17,14 @@
 
     <h3 class="issue-title transition-colors group-hover:text-[#015239]">{{ issue.title }}</h3>
     {% if issue.body %}<p class="issue-dek line-clamp-2">{{ issue.body|striptags|truncatechars:110 }}</p>{% endif %}
+    {% if issue.foundation or issue.labels_list %}
+    <div class="issue-tags">
+        {% if issue.foundation %}<span>{{ issue.foundation }}</span>{% endif %}
+        {% for label in issue.labels_list|slice:":2" %}<span>{{ label }}</span>{% endfor %}
+    </div>
+    {% endif %}
     {% if issue.issue_updated_at %}
-    <p class="issue-time">Mise à jour <time datetime="{{ issue.issue_updated_at|date:'c' }}">{{ issue.issue_updated_at|naturaltime }}</time></p>
+    <p class="issue-time">Mise à jour <time datetime="{{ issue.issue_updated_at|date:'c' }}">{{ issue.issue_updated_at|naturaltime }}</time>{% if issue.responsiveness %} · Réactivité : {{ issue.responsiveness }}{% endif %}</p>
     {% endif %}
 
     <div class="issue-meta">

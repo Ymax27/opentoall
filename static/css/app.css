@@ -386,7 +386,7 @@ select option {
 .issue-tile-advanced::before { background: #41604F; }
 .issue-tile:hover {
   transform: translateY(-3px);
-  border-color: rgb(125 86 252 / 0.4);
+  border-color: rgb(91 50 224 / 0.55);
   box-shadow: 0 24px 40px -32px rgb(1 82 57 / 0.5);
 }
 .issue-kicker {
@@ -475,7 +475,35 @@ select option {
   font-size: 0.8125rem;
   transition: transform 200ms ease, background-color 200ms ease;
 }
-.issue-tile:hover .issue-go { transform: translateX(2px); background: #7D56FC; }
+.issue-tile:hover .issue-go { transform: translateX(2px); background: #5B32E0; }
+
+.issue-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+.issue-tags span {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid rgb(1 82 57 / 0.18);
+  border-radius: 4px;
+  background: rgb(251 254 251 / 0.5);
+  color: #2F4A3D;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.issue-tile-dark .issue-tags span {
+  border-color: rgb(184 255 225 / 0.24);
+  background: transparent;
+  color: #BDD7CA;
+}
+.issue-feature .issue-tags span {
+  border-color: rgb(184 255 225 / 0.26);
+  background: transparent;
+  color: #BDD7CA;
+}
 
 .issue-tile-dark {
   background-color: #113A2D;
