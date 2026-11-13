@@ -7,7 +7,11 @@
 
 <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     {% for issue in page_obj %}
-        {% include "core/_issue_card.html" with issue=issue %}
+        {% if forloop.first %}
+            {% include "core/_issue_feature.html" with issue=issue index=page_obj.start_index %}
+        {% else %}
+            {% include "core/_issue_card.html" with issue=issue dark=forloop.counter0|divisibleby:4 %}
+        {% endif %}
     {% endfor %}
 </div>
 

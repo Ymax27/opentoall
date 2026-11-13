@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<a href="{{ issue.get_absolute_url }}" class="issue-tile issue-tile-{{ issue.difficulty }} group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D56FC]">
+<a href="{{ issue.get_absolute_url }}" class="issue-tile issue-tile-{{ issue.difficulty }}{% if dark %} issue-tile-dark{% endif %} group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D56FC]">
     <div class="flex items-center justify-between gap-3">
         <span class="issue-kicker">{{ issue.language|default:"Général" }}</span>
         {% if issue.difficulty == 'beginner' %}

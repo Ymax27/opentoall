@@ -4,83 +4,82 @@
 {% block meta_description %}Support OpenToAll : question, partenariat ou aide sur la plateforme — sans ouvrir une issue GitHub.{% endblock %}
 
 {% block content %}
-<section class="max-w-content mx-auto px-4 lg:px-8 py-12 lg:py-16">
-    <div class="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-16 items-start">
-        <div class="max-w-xl">
-            <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-4">Support</p>
-            <h1 class="font-display font-semibold text-3xl lg:text-4xl text-on-surface tracking-tight">
+<div class="px-4 sm:px-6 lg:px-16">
+    <div class="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+
+        <section class="max-w-xl pt-8 lg:pt-12">
+            <p class="eyebrow">Support</p>
+            <h1 class="mt-4 font-serif text-[clamp(2.2rem,4vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
                 Écris-nous sans passer par une issue.
             </h1>
-            <p class="mt-5 text-lg text-on-surface-variant leading-relaxed">
+            <p class="mt-5 text-lg leading-relaxed text-on-surface-variant">
                 Question, partenariat, idée ou besoin d’aide sur la plateforme —
                 on lit chaque message. Réponse sous quelques jours.
             </p>
 
-            <ul class="mt-8 space-y-3 text-sm text-on-surface-variant">
-                <li class="flex items-start gap-3">
-                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">mail</span>
-                    <span>
-                        Email :
-                        <a href="mailto:{{ support_email }}?subject=Support%20OpenToAll" class="font-medium text-on-surface hover:text-primary transition-colors">{{ support_email }}</a>
-                    </span>
-                </li>
-                <li class="flex items-start gap-3">
-                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">chat</span>
-                    <span>
-                        WhatsApp :
-                        <a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20écris%20à%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">+237 650 218 023</a>
-                    </span>
-                </li>
-                <li class="flex items-start gap-3">
-                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">bug_report</span>
-                    <span>
-                        Bug ou idée produit :
-                        <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">ouvrir une issue GitHub</a>
-                    </span>
-                </li>
-            </ul>
-        </div>
+            <dl class="mt-10 divide-y divide-[#015239]/10 border-y border-[#015239]/10 text-sm dark:divide-white/10 dark:border-white/10">
+                <div class="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">Email</dt>
+                    <dd>
+                        <a href="mailto:{{ support_email }}?subject=Support%20OpenToAll" class="font-medium text-on-surface transition-colors hover:text-[#015239] dark:hover:text-[#B8FFE1]">{{ support_email }}</a>
+                    </dd>
+                </div>
+                <div class="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">WhatsApp</dt>
+                    <dd>
+                        <a href="https://wa.me/237650218023?text=Salut%2C%20je%20vous%20%C3%A9cris%20%C3%A0%20propos%20d%27OpenToAll" target="_blank" rel="noopener" class="font-medium text-on-surface transition-colors hover:text-[#015239] dark:hover:text-[#B8FFE1]">+237 650 218 023</a>
+                    </dd>
+                </div>
+                <div class="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                    <dt class="font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F] dark:text-[#8FCFB4]">Bug ou idée</dt>
+                    <dd>
+                        <a href="{{ GITHUB_REPO_URL }}/issues" target="_blank" rel="noopener" class="font-medium text-on-surface transition-colors hover:text-[#015239] dark:hover:text-[#B8FFE1]">ouvrir une issue GitHub</a>
+                    </dd>
+                </div>
+            </dl>
+        </section>
 
-        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-card p-6 lg:p-8">
+        <section class="card-cream border border-[#015239]/10 p-6 sm:p-8 lg:mt-10">
             {% if messages %}
             <ul class="mb-6 space-y-2">
                 {% for message in messages %}
-                <li class="rounded-xl px-4 py-3 text-sm {% if message.tags == 'error' %}bg-error-container/30 text-error{% else %}bg-tertiary/12 text-tertiary{% endif %}">
+                <li class="rounded-lg border px-4 py-3 text-sm {% if message.tags == 'error' %}border-[#B3261E]/25 bg-[#B3261E]/8 text-[#8C1D18]{% else %}border-[#015239]/20 bg-[#B8FFE1]/40 text-[#015239]{% endif %}">
                     {{ message }}
                 </li>
                 {% endfor %}
             </ul>
             {% endif %}
 
-            <form method="post" action="{% url 'support' %}" class="space-y-5" novalidate>
+            <p class="eyebrow text-[#6C43F5]">Message</p>
+
+            <form id="support-form" method="post" action="{% url 'support' %}" class="mt-5 space-y-5" novalidate>
                 {% csrf_token %}
                 <div class="hidden" aria-hidden="true">{{ form.website }}</div>
 
                 <div>
-                    <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.name.label }}</label>
+                    <label for="{{ form.name.id_for_label }}" class="mb-1.5 block font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F]">{{ form.name.label }}</label>
                     {{ form.name }}
-                    {% if form.name.errors %}<p class="mt-1.5 text-sm text-error">{{ form.name.errors.0 }}</p>{% endif %}
+                    {% if form.name.errors %}<p class="mt-1.5 text-sm text-[#8C1D18]">{{ form.name.errors.0 }}</p>{% endif %}
                 </div>
                 <div>
-                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.email.label }}</label>
+                    <label for="{{ form.email.id_for_label }}" class="mb-1.5 block font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F]">{{ form.email.label }}</label>
                     {{ form.email }}
-                    {% if form.email.errors %}<p class="mt-1.5 text-sm text-error">{{ form.email.errors.0 }}</p>{% endif %}
+                    {% if form.email.errors %}<p class="mt-1.5 text-sm text-[#8C1D18]">{{ form.email.errors.0 }}</p>{% endif %}
                 </div>
                 <div>
-                    <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-on-surface mb-1.5">{{ form.message.label }}</label>
+                    <label for="{{ form.message.id_for_label }}" class="mb-1.5 block font-code text-[10px] uppercase tracking-[0.12em] text-[#41604F]">{{ form.message.label }}</label>
                     {{ form.message }}
-                    {% if form.message.errors %}<p class="mt-1.5 text-sm text-error">{{ form.message.errors.0 }}</p>{% endif %}
+                    {% if form.message.errors %}<p class="mt-1.5 text-sm text-[#8C1D18]">{{ form.message.errors.0 }}</p>{% endif %}
                 </div>
 
-                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
-                    Envoyer le message
-                    <span class="material-symbols-outlined text-[20px]">send</span>
+                <button type="submit" class="btn btn-forest w-full">
+                    Envoyer le message <span aria-hidden="true">&rarr;</span>
                 </button>
-                <p class="text-xs text-on-surface-variant text-center">
+                <p class="text-center text-xs text-[#41604F]">
                     On répond sous quelques jours — pas de newsletter, pas de spam.
                 </p>
             </form>
-        </div>
+        </section>
     </div>
-</section>
+</div>
 {% endblock %}

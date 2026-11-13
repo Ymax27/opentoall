@@ -451,6 +451,149 @@ select option {
 }
 .issue-tile:hover .issue-go { transform: translateX(2px); background: #7D56FC; }
 
+.issue-tile-dark {
+  background: #113A2D;
+  border-color: rgb(184 255 225 / 0.14);
+  color: #FBFEFB;
+}
+.issue-tile-dark::before { background: #B8FFE1; }
+.issue-tile-dark .issue-kicker { color: #8FCFB4; }
+.issue-tile-dark .issue-level { color: #BDD7CA; }
+.issue-tile-dark .issue-title { color: #FBFEFB; }
+.issue-tile-dark .issue-dek,
+.issue-tile-dark .issue-time,
+.issue-tile-dark .issue-repo { color: #BDD7CA; }
+.issue-tile-dark .issue-stars { color: #B8FFE1; }
+.issue-tile-dark .issue-meta { border-top-color: rgb(255 255 255 / 0.14); }
+.issue-tile-dark .weight-meter span { background: rgb(251 254 251 / 0.25); }
+.issue-tile-dark .weight-meter[data-level="1"] span:nth-child(1),
+.issue-tile-dark .weight-meter[data-level="2"] span:nth-child(1),
+.issue-tile-dark .weight-meter[data-level="2"] span:nth-child(2),
+.issue-tile-dark .weight-meter[data-level="3"] span { background: #B8FFE1; }
+.issue-tile-dark .issue-go { background: #B8FFE1; color: #015239; }
+.issue-tile-dark:hover { border-color: rgb(184 255 225 / 0.45); }
+.issue-tile-dark:hover .issue-go { background: #FBFEFB; }
+
+.issue-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.6rem 1.7rem 1.3rem;
+  border-radius: 18px;
+  border: 1px solid rgb(184 255 225 / 0.14);
+  background-color: #113A2D;
+  background-image: radial-gradient(rgb(251 254 251 / 0.14) 0.7px, transparent 0.7px);
+  background-size: 12px 12px;
+  color: #FBFEFB;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+}
+.issue-feature:hover {
+  transform: translateY(-3px);
+  border-color: rgb(184 255 225 / 0.45);
+  box-shadow: 0 30px 50px -34px rgb(0 0 0 / 0.65);
+}
+.issue-feature-ghost {
+  position: absolute;
+  right: 1.1rem;
+  top: -0.7rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 5.5rem;
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(251 254 251 / 0.07);
+  pointer-events: none;
+  user-select: none;
+}
+.issue-feature-kicker {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8FCFB4;
+}
+.issue-feature-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #B8FFE1;
+}
+.issue-feature-title {
+  margin-top: 1rem;
+  max-width: 26ch;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: #FBFEFB;
+  transition: color 200ms ease;
+}
+.issue-feature:hover .issue-feature-title { color: #B8FFE1; }
+.issue-feature-dek {
+  margin-top: 0.7rem;
+  max-width: 56ch;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #BDD7CA;
+}
+.issue-feature-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgb(255 255 255 / 0.14);
+}
+.issue-feature .weight-meter span { background: rgb(251 254 251 / 0.25); }
+.issue-feature .weight-meter[data-level="1"] span:nth-child(1),
+.issue-feature .weight-meter[data-level="2"] span:nth-child(1),
+.issue-feature .weight-meter[data-level="2"] span:nth-child(2),
+.issue-feature .weight-meter[data-level="3"] span { background: #B8FFE1; }
+.issue-feature-go {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  border-radius: 999px;
+  background: #B8FFE1;
+  color: #015239;
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+.issue-feature:hover .issue-feature-go { background: #FBFEFB; transform: translateX(2px); }
+.dot-aqua { background: #B8FFE1; }
+.dark .tag { color: #BDD7CA; border-color: rgb(251 254 251 / 0.22); }
+
+/* ---- Formulaire Support -------------------------------------------------- */
+#support-form input[type="text"],
+#support-form input[type="email"],
+#support-form textarea {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgb(1 82 57 / 0.18);
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #08251C;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+#support-form textarea { min-height: 9rem; resize: vertical; }
+#support-form input::placeholder,
+#support-form textarea::placeholder { color: rgb(65 96 79 / 0.6); }
+#support-form input:focus-visible,
+#support-form textarea:focus-visible {
+  outline: 2px solid #7D56FC;
+  outline-offset: 2px;
+  border-color: #7D56FC;
+}
+.skeleton-light { background: rgb(251 254 251 / 0.12); }
+
 .issue-card {
   display: flex;
   flex-direction: column;
