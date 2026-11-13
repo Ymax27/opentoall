@@ -2,7 +2,10 @@
 
 <a href="{{ issue.get_absolute_url }}" class="issue-tile issue-tile-{{ issue.difficulty }}{% if dark %} issue-tile-dark{% endif %} group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7D56FC]">
     <div class="flex items-center justify-between gap-3">
-        <span class="issue-kicker">{{ issue.language|default:"Général" }}</span>
+        <span class="flex items-center gap-2.5">
+            <span class="issue-index" aria-hidden="true">{{ index|stringformat:"02d" }}</span>
+            <span class="issue-kicker">{{ issue.language|default:"Général" }}</span>
+        </span>
         {% if issue.difficulty == 'beginner' %}
         <span class="issue-level"><span class="dot dot-beginner" aria-hidden="true"></span>Débutant</span>
         {% elif issue.difficulty == 'advanced' %}

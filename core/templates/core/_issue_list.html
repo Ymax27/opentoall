@@ -5,12 +5,16 @@
     </p>
 </div>
 
-<div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+<div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
     {% for issue in page_obj %}
         {% if forloop.first %}
             {% include "core/_issue_feature.html" with issue=issue index=page_obj.start_index %}
+        {% elif forloop.counter == 2 %}
+            {% include "core/_issue_card.html" with issue=issue index=forloop.counter0|add:page_obj.start_index dark=1 %}
+        {% elif forloop.counter0|divisibleby:4 %}
+            {% include "core/_issue_card.html" with issue=issue index=forloop.counter0|add:page_obj.start_index dark=1 %}
         {% else %}
-            {% include "core/_issue_card.html" with issue=issue dark=forloop.counter0|divisibleby:4 %}
+            {% include "core/_issue_card.html" with issue=issue index=forloop.counter0|add:page_obj.start_index %}
         {% endif %}
     {% endfor %}
 </div>

@@ -346,7 +346,7 @@ select option {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 1.3rem 1.35rem 1rem 1.5rem;
+  padding: 1.6rem 1.5rem 1.15rem;
   background: #FBFEFB;
   color: #08251C;
   border: 1px solid rgb(1 82 57 / 0.12);
@@ -378,6 +378,14 @@ select option {
   text-transform: uppercase;
   color: #41604F;
 }
+.issue-index {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: rgb(1 82 57 / 0.38);
+}
 .issue-level {
   display: inline-flex;
   align-items: center;
@@ -390,9 +398,9 @@ select option {
 .issue-title {
   margin-top: 0.55rem;
   font-family: "Fraunces", Georgia, serif;
-  font-size: 1.3125rem;
+  font-size: 1.375rem;
   font-weight: 600;
-  line-height: 1.18;
+  line-height: 1.16;
   letter-spacing: -0.02em;
   color: #08251C;
 }
@@ -452,10 +460,13 @@ select option {
 .issue-tile:hover .issue-go { transform: translateX(2px); background: #7D56FC; }
 
 .issue-tile-dark {
-  background: #113A2D;
+  background-color: #113A2D;
+  background-image: radial-gradient(rgb(251 254 251 / 0.12) 0.7px, transparent 0.7px);
+  background-size: 12px 12px;
   border-color: rgb(184 255 225 / 0.14);
   color: #FBFEFB;
 }
+.issue-tile-dark .issue-index { color: rgb(184 255 225 / 0.6); }
 .issue-tile-dark::before { background: #B8FFE1; }
 .issue-tile-dark .issue-kicker { color: #8FCFB4; }
 .issue-tile-dark .issue-level { color: #BDD7CA; }

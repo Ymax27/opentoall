@@ -71,7 +71,7 @@
             },
         };
     </script>
-    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261113b">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     {% for block in json_ld_blocks %}
     <script type="application/ld+json">{{ block|safe }}</script>
