@@ -1,18 +1,27 @@
-<section id="faq" class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16" aria-labelledby="faq-heading">
-    <div class="max-w-xl mb-8">
-        <h2 id="faq-heading" class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Questions fréquentes</h2>
-        <p class="mt-3 text-on-surface-variant text-lg leading-relaxed">Les réponses courtes avant de te lancer sur une issue.</p>
-    </div>
+<section id="faq" class="py-14 lg:py-20" aria-labelledby="faq-heading">
+    <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div data-reveal>
+            <p class="eyebrow text-[#6C43F5]">Questions</p>
+            <h2 id="faq-heading" class="mt-4 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Questions fréquentes
+            </h2>
+            <p class="mt-4 max-w-sm leading-relaxed text-on-surface-variant">
+                Les réponses courtes avant de te lancer sur une issue.
+            </p>
+        </div>
 
-    <div class="max-w-3xl divide-y divide-outline-variant/40 border-y border-outline-variant/40">
-        {% for item in faq_items %}
-        <details class="group py-4">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-heading font-semibold text-on-surface marker:content-none [&::-webkit-details-marker]:hidden">
-                <span>{{ item.question }}</span>
-                <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform group-open:rotate-180" aria-hidden="true">expand_more</span>
-            </summary>
-            <p class="mt-3 pr-10 text-on-surface-variant leading-relaxed">{{ item.answer }}</p>
-        </details>
-        {% endfor %}
+        <div class="space-y-3">
+            {% for item in faq_items %}
+            <details class="card-cream group px-5 py-4" data-reveal>
+                <summary class="flex cursor-pointer list-none items-start justify-between gap-4 marker:content-none [&::-webkit-details-marker]:hidden">
+                    <span class="text-base font-semibold text-[#08251C]">{{ item.question }}</span>
+                    <svg viewBox="0 0 16 16" class="mt-1 h-4 w-4 shrink-0 text-[#7D56FC] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M3 6l5 5 5-5" stroke-linecap="round"/>
+                    </svg>
+                </summary>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-[#41604F]">{{ item.answer }}</p>
+            </details>
+            {% endfor %}
+        </div>
     </div>
 </section>

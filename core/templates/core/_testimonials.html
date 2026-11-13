@@ -1,38 +1,42 @@
-<section id="voices" class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16 border-t border-outline-variant/30" aria-labelledby="voices-heading">
-    <div class="max-w-xl mb-10">
-        <h2 id="voices-heading" class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Ils ont commencé ici</h2>
-        <p class="mt-3 text-on-surface-variant text-lg leading-relaxed">
-            Des histoires courtes de contributeurs — première PR, repos légers, connexion réelle.
+<section id="voices" class="py-6 lg:py-10" aria-labelledby="voices-heading">
+    <div class="panel-forest px-6 py-12 text-center lg:px-14 lg:py-16" data-reveal>
+        <p class="eyebrow">Témoignages</p>
+        <h2 id="voices-heading" class="mt-4 font-serif text-[clamp(2rem,3.8vw,3.2rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#FBFEFB]">
+            Ils ont commencé ici
+        </h2>
+        <p class="mx-auto mt-4 max-w-lg leading-relaxed text-powder">
+            Des histoires courtes de contributeurs — première PR, dépôts légers, connexion réelle.
         </p>
-    </div>
 
-    {% if testimonials %}
-    <div class="grid md:grid-cols-2 gap-x-12 gap-y-10 max-w-4xl">
-        {% for item in testimonials %}
-        <figure class="border-l-2 border-primary/40 pl-5">
-            <blockquote class="text-lg text-on-surface leading-relaxed">
-                <p>«&nbsp;{{ item.quote }}&nbsp;»</p>
-            </blockquote>
-            <figcaption class="mt-4 text-sm text-on-surface-variant">
-                <a href="https://github.com/{{ item.github }}" target="_blank" rel="noopener" class="font-semibold text-on-surface hover:text-primary transition-colors">{{ item.name }}</a>
-                <span aria-hidden="true"> · </span>
-                <a href="https://github.com/{{ item.github }}" target="_blank" rel="noopener" class="font-code hover:text-primary transition-colors">@{{ item.github }}</a>
-                {% if item.outcome %}
-                <span class="block mt-1 text-on-surface-variant/90">{{ item.outcome }}</span>
-                {% endif %}
-            </figcaption>
-        </figure>
-        {% endfor %}
+        {% if testimonials %}
+        <div class="mt-10 grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
+            {% for item in testimonials %}
+            <figure class="card-cream p-6">
+                <blockquote class="text-base leading-relaxed text-[#08251C]">
+                    <p>«&nbsp;{{ item.quote }}&nbsp;»</p>
+                </blockquote>
+                <figcaption class="mt-5 text-sm text-[#41604F]">
+                    <a href="https://github.com/{{ item.github }}" target="_blank" rel="noopener" class="font-semibold text-[#08251C] hover:text-[#7D56FC] transition-colors">{{ item.name }}</a>
+                    <span aria-hidden="true"> · </span>
+                    <a href="https://github.com/{{ item.github }}" target="_blank" rel="noopener" class="font-code hover:text-[#7D56FC] transition-colors">@{{ item.github }}</a>
+                    {% if item.outcome %}<span class="mt-1 block">{{ item.outcome }}</span>{% endif %}
+                </figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card-cream mx-auto mt-9 max-w-2xl p-6 text-left sm:p-8">
+            <p class="eyebrow text-[#6C43F5]">Note</p>
+            <p class="mt-3 text-lg leading-relaxed text-[#08251C]">
+                La section est prête, et volontairement vide. Les premiers récits seront
+                publiés ici avec l’accord des personnes concernées.
+            </p>
+            <p class="mt-4 text-sm leading-relaxed text-[#41604F]">
+                Tu as trouvé une issue (ou mergé une PR) grâce à OpenToAll&nbsp;?
+                <a href="{{ GITHUB_REPO_URL }}/discussions/categories/show-and-tell" target="_blank" rel="noopener" class="font-medium text-[#08251C] underline decoration-[#7D56FC]/50 underline-offset-4 hover:text-[#7D56FC] transition-colors">Partage ton histoire</a>
+                dans Discussions → Show and tell. On l’ajoute ici avec ton accord (FR ou bilingue).
+            </p>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <p class="max-w-2xl text-on-surface-variant leading-relaxed">
-        La section est prête — les premiers témoignages authentiques seront publiés ici dès qu’un contributeur accepte de partager son histoire.
-    </p>
-    {% endif %}
-
-    <p class="mt-10 max-w-2xl text-sm text-on-surface-variant leading-relaxed">
-        Tu as trouvé une issue (ou mergé une PR) grâce à OpenToAll&nbsp;?
-        <a href="{{ GITHUB_REPO_URL }}/discussions/categories/show-and-tell" target="_blank" rel="noopener" class="font-medium text-on-surface hover:text-primary transition-colors">Partage ton histoire</a>
-        dans Discussions → Show and tell, ou après une PR mergée. On l’ajoute ici avec ton accord (FR ou bilingue).
-    </p>
 </section>

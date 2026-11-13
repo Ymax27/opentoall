@@ -1,148 +1,344 @@
 {% extends "core/base.html" %}
 {% load humanize %}
 
-{% block title %}{{ SITE_NAME }} — Trouve ta prochaine contribution{% endblock %}
+{% block title %}{{ SITE_NAME }} — Une issue, un clone, une PR finie{% endblock %}
 {% block meta_description %}Trouve une issue GitHub adaptée à ton langage, ton niveau et ta connexion — et montre tes contributions à la communauté.{% endblock %}
 
 {% block content %}
-<section class="relative overflow-hidden border-b border-outline-variant/30">
-    <div class="absolute inset-0 kente-bg pointer-events-none"></div>
+<div class="px-4 sm:px-6 lg:px-16">
 
-    <div class="relative max-w-content mx-auto px-4 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
-        <div class="animate-fade-up">
-            <p class="font-display text-xs font-semibold uppercase tracking-[0.14em] text-primary mb-5">
-                Open source · Ouvert à tous · Première PR
-            </p>
-            <h1 class="font-display font-semibold text-[2.35rem] sm:text-5xl lg:text-[3.25rem] leading-[1.08] tracking-tight text-on-surface">
-                Trouve l’issue qui <span class="text-primary">te correspond.</span>
+    <!-- Hero -->
+    <section class="panel-forest relative px-5 py-12 sm:px-8 lg:px-14 lg:pt-16 lg:pb-12">
+        <div class="hero-dots pointer-events-none absolute inset-0" aria-hidden="true"></div>
+
+        <div class="relative mx-auto max-w-3xl text-center">
+            <p class="eyebrow nav-in">Registre public · open source</p>
+            <h1 class="hero-rise hero-rise-1 mt-5 font-serif text-[clamp(2.8rem,6.2vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-[#FBFEFB]">
+                La bonne issue.<br>
+                <span class="text-aqua">Avant de cloner.</span>
             </h1>
-            <p class="mt-5 text-lg text-on-surface-variant max-w-lg leading-relaxed">
-                Plus de chasse aux good first issues fermées. Filtre par langage, niveau,
-                réactivité des mainteneurs et <em class="not-italic font-medium text-on-surface">Poids du clone</em>
-                — pour télécharger même avec une connexion limitée.
+            <p class="hero-rise hero-rise-2 mx-auto mt-6 max-w-xl text-lg leading-relaxed text-powder">
+                OpenToAll filtre les issues encore libres par langage, niveau et poids du clone.
+                Tu sais avant de cloner si c’est faisable avec ta connexion.
             </p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary-container transition-colors">
-                    Trouve ta prochaine issue
-                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            <div class="hero-rise hero-rise-3 mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <a href="{% url 'explore' %}" class="btn btn-violet">
+                    Ouvrir le registre
+                    <span aria-hidden="true">&rarr;</span>
                 </a>
                 {% if not user.is_authenticated %}
-                <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center gap-2 border border-outline-variant text-on-surface font-semibold px-6 py-3.5 rounded-xl hover:bg-surface-container transition-colors">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                <a href="{% url 'account_login' %}" class="btn btn-ghost-light">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
                     Continuer avec GitHub
                 </a>
                 {% endif %}
             </div>
-            <p class="mt-6 text-sm text-on-surface-variant">
-                Gratuit · Sans spam · Le projet est open source
-            </p>
-            <div class="mt-3">
-                {% include "core/_built_by.html" %}
+            <p class="hero-rise hero-rise-3 mt-4 font-code text-[10px] uppercase tracking-[0.14em] text-[#8FCFB4]">Gratuit · sans spam · code ouvert</p>
+            <div class="hero-rise hero-rise-3 mt-3">
+                {% include "core/_built_by.html" with credit_class="font-code text-[13px] tracking-[0.02em] text-[#8FCFB4]" credit_link_class="text-[#FBFEFB] underline decoration-white/25 underline-offset-2 hover:text-[#B8FFE1] transition-colors" %}
             </div>
-            <a href="{{ GITHUB_REPO_URL }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
-               aria-label="Star OpenToAll on GitHub">
-                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">star</span>
-                Star us on GitHub
-                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
+        </div>
+
+        <!-- Mock registre + puces flottantes -->
+        <div class="hero-rise hero-rise-4 relative mx-auto mt-12 max-w-4xl">
+            <span class="chip float-slow absolute -left-24 -top-8 z-10 hidden whitespace-nowrap xl:inline-flex">Python</span>
+            <span class="chip float-slow-2 absolute -right-24 -top-8 z-10 hidden whitespace-nowrap xl:inline-flex">Go</span>
+            <span class="chip float-slow-3 absolute -right-24 -bottom-8 z-10 hidden whitespace-nowrap xl:inline-flex">good first issue</span>
+            <span class="chip float-slow-2 absolute -left-24 -bottom-8 z-10 hidden whitespace-nowrap xl:inline-flex">poids léger</span>
+
+            <div class="mock-window">
+                <div class="mock-bar">
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                    <span class="ml-2 font-code text-[10px] uppercase tracking-[0.14em] text-[#BDD7CA]">registre / issues libres</span>
+                    <span class="ml-auto font-code text-[10px] text-[#B8FFE1]">{{ stats.total_issues|intcomma }} libres</span>
+                </div>
+
+                {% if featured %}
+                    {% for issue in featured %}
+                    <a href="{{ issue.get_absolute_url }}" class="mock-row group">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="min-w-0">
+                                <p class="font-code text-[10px] text-[#8FCFB4]">{{ issue.repo_owner }}/{{ issue.repo_name }}</p>
+                                <p class="mt-1 truncate text-sm font-medium text-[#FBFEFB] transition-colors group-hover:text-[#B8FFE1]">{{ issue.title }}</p>
+                            </div>
+                            <span class="shrink-0 font-code text-[10px] uppercase tracking-[0.1em] text-[#BDD7CA]">{{ issue.size_category }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="mock-row">
+                        <p class="font-code text-[10px] text-[#8FCFB4]">owner/repo</p>
+                        <p class="mt-1 text-sm font-medium text-[#FBFEFB]">Une issue encore libre, prête à être prise.</p>
+                    </div>
+                {% endif %}
+
+                <div class="flex items-center justify-between border-t border-white/10 px-4 py-3">
+                    <span class="font-code text-[10px] uppercase tracking-[0.12em] text-[#8FCFB4]">clonable · réactif · non assigné</span>
+                    <span class="text-[#B8FFE1]" aria-hidden="true">&rarr;</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative mt-10 flex flex-col items-center gap-3 border-t border-white/15 pt-5 sm:flex-row sm:justify-center sm:gap-6">
+            <span class="eyebrow">Poids du clone</span>
+            <span class="flex items-center gap-2 font-code text-[10px] text-[#BDD7CA]">
+                <span class="weight-meter" data-level="2" role="img" aria-label="Poids du clone moyen">
+                    <span></span><span></span><span></span>
+                </span>
+                léger &lt; 50 Mo · moyen &lt; 500 Mo · lourd
+            </span>
+            <span class="hidden h-3 w-px bg-white/20 sm:block" aria-hidden="true"></span>
+            <span class="font-code text-[10px] text-[#8FCFB4]">github.com · issues publiques</span>
+        </div>
+    </section>
+
+    <!-- Marquee dépôts -->
+    {% if featured %}
+    <section class="py-12 lg:py-16" aria-label="Dépôts représentés">
+        <p class="text-center text-sm font-medium text-on-surface-variant">Les issues viennent de dépôts réels</p>
+        <div class="marquee mt-7">
+            <div class="marquee-track">
+                <div class="flex items-center gap-10 pr-10">
+                    {% for issue in featured %}
+                    <a href="{{ issue.get_absolute_url }}" class="whitespace-nowrap font-serif text-xl text-on-surface transition-colors hover:text-[#7D56FC] sm:text-2xl">{{ issue.repo_owner }}/{{ issue.repo_name }}</a>
+                    {% endfor %}
+                    <span class="whitespace-nowrap font-code text-[11px] uppercase tracking-[0.14em] text-on-surface-variant">bonnes premières issues</span>
+                </div>
+                <div class="flex items-center gap-10 pr-10" aria-hidden="true">
+                    {% for issue in featured %}
+                    <span class="whitespace-nowrap font-serif text-xl text-on-surface sm:text-2xl">{{ issue.repo_owner }}/{{ issue.repo_name }}</span>
+                    {% endfor %}
+                    <span class="whitespace-nowrap font-code text-[11px] uppercase tracking-[0.14em] text-on-surface-variant">bonnes premières issues</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Feature 1 -->
+    <section id="pillars" class="py-6 lg:py-10">
+        <div class="panel-forest-deep grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-2 lg:p-14" data-reveal>
+            <div>
+                <p class="eyebrow">01 / Filtrer</p>
+                <h2 class="mt-4 font-serif text-[clamp(2rem,3.6vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#FBFEFB]">
+                    Filtre ce qui est encore libre
+                </h2>
+                <p class="mt-5 max-w-md leading-relaxed text-powder">
+                    Langage, niveau, poids du clone, fondation. Tu ne perds plus une soirée
+                    sur une issue déjà prise ou un dépôt impossible à télécharger.
+                </p>
+                <a href="{% url 'explore' %}" class="link-arrow mt-6 text-sm">
+                    Ouvrir le registre
+                    <span aria-hidden="true">&rarr;</span>
+                </a>
+            </div>
+
+            <div class="card-cream p-5 shadow-[0_30px_60px_-40px_rgba(0,0,0,0.7)]">
+                <div class="flex items-center justify-between border-b border-[#015239]/10 pb-3">
+                    <span class="font-code text-[10px] uppercase tracking-[0.14em] text-[#41604F]">Filtres</span>
+                    <span class="font-code text-[10px] text-[#7D56FC]">3 actifs</span>
+                </div>
+                <div class="mt-4 space-y-2.5">
+                    <div class="flex items-center justify-between rounded-lg bg-[#E4FAEE] px-3 py-2.5">
+                        <span class="text-sm font-medium text-[#08251C]">Langage</span>
+                        <span class="tag">Python</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-lg bg-[#E4FAEE] px-3 py-2.5">
+                        <span class="text-sm font-medium text-[#08251C]">Niveau</span>
+                        <span class="tag tag-violet">Débutant</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-lg bg-[#E4FAEE] px-3 py-2.5">
+                        <span class="text-sm font-medium text-[#08251C]">Poids du clone</span>
+                        <span class="tag">léger · &lt; 50 Mo</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center justify-between rounded-lg bg-[#015239] px-4 py-3 text-[#FBFEFB]">
+                    <span class="text-xs text-[#BDD7CA]">Résultats</span>
+                    <span class="font-code text-sm text-[#B8FFE1]">{{ stats.total_issues|intcomma }} issues</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features 2 & 3 -->
+    <section class="grid gap-6 py-6 lg:grid-cols-2 lg:py-10">
+        <article class="card-dashed p-6 lg:p-8" data-reveal>
+            <p class="eyebrow text-[#6C43F5]">02 / Choisir</p>
+            <h2 class="mt-4 font-serif text-[clamp(1.8rem,2.8vw,2.6rem)] font-semibold leading-[1.04] tracking-[-0.03em] text-on-surface">
+                Choisis un repo qui répond
+            </h2>
+            <p class="mt-4 leading-relaxed text-on-surface-variant">
+                Réactivité des mainteneurs, bienvenue aux débutants : les signaux
+                qui disent si ta PR sera lue avant d’écrire une ligne.
+            </p>
+            <div class="mt-7 rounded-2xl bg-[#015239] p-5 text-[#FBFEFB]">
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <span class="font-code text-[10px] uppercase tracking-[0.14em] text-[#BDD7CA]">Santé du dépôt</span>
+                    <span class="font-code text-[10px] text-[#B8FFE1]">bon</span>
+                </div>
+                <dl class="mt-4 space-y-3">
+                    <div class="flex items-center justify-between text-sm">
+                        <dt class="text-[#BDD7CA]">Réponse médiane</dt>
+                        <dd class="font-code text-[#B8FFE1]">~2 h</dd>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <dt class="text-[#BDD7CA]">PR acceptées</dt>
+                        <dd class="font-code text-[#FBFEFB]">68 %</dd>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <dt class="text-[#BDD7CA]">Bienveillance</dt>
+                        <dd class="font-code text-[#FBFEFB]">élevée</dd>
+                    </div>
+                </dl>
+            </div>
+        </article>
+
+        <article class="card-dashed p-6 lg:p-8" data-reveal="2">
+            <p class="eyebrow text-[#6C43F5]">03 / Laisser une trace</p>
+            <h2 class="mt-4 font-serif text-[clamp(1.8rem,2.8vw,2.6rem)] font-semibold leading-[1.04] tracking-[-0.03em] text-on-surface">
+                Laisse une trace visible
+            </h2>
+            <p class="mt-4 leading-relaxed text-on-surface-variant">
+                Ton profil public et le classement montrent ce que tu as mergé —
+                pas seulement un README perso que personne ne lit.
+            </p>
+            <div class="mt-7 rounded-2xl bg-[#015239] p-5 text-[#FBFEFB]">
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <span class="font-code text-[10px] uppercase tracking-[0.14em] text-[#BDD7CA]">Classement</span>
+                    <span class="font-code text-[10px] text-[#B8FFE1]">semaine</span>
+                </div>
+                <ol class="mt-4 space-y-3 font-code text-xs">
+                    <li class="flex items-center justify-between"><span class="text-[#BDD7CA]">01 · @camille</span><span class="text-[#B8FFE1]">12 PR</span></li>
+                    <li class="flex items-center justify-between"><span class="text-[#BDD7CA]">02 · @youssef</span><span class="text-[#FBFEFB]">9 PR</span></li>
+                    <li class="flex items-center justify-between"><span class="text-[#BDD7CA]">03 · @amina</span><span class="text-[#FBFEFB]">7 PR</span></li>
+                </ol>
+            </div>
+        </article>
+    </section>
+
+    <!-- Diagramme -->
+    <section class="py-14 text-center lg:py-20" aria-labelledby="diagram-heading">
+        <div data-reveal>
+            <p class="eyebrow">Ce qu’on vérifie</p>
+            <h2 id="diagram-heading" class="mx-auto mt-4 max-w-2xl font-serif text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                Tout ce qu’il faut avant de cloner
+            </h2>
+            <p class="mx-auto mt-5 max-w-xl leading-relaxed text-on-surface-variant">
+                Six signaux lus sur le dépôt et l’issue. Pas une note magique :
+                des faits que tu peux vérifier toi-même sur GitHub.
+            </p>
+        </div>
+
+        <div class="relative mx-auto mt-12 max-w-3xl" data-reveal="2">
+            <div class="absolute left-1/2 top-1/2 hidden h-px w-[72%] -translate-x-1/2 -translate-y-1/2 border-t border-dashed border-[#015239]/30 lg:block" aria-hidden="true"></div>
+            <div class="relative grid items-center gap-5 sm:grid-cols-[1fr_auto_1fr]">
+                <div class="flex flex-wrap justify-center gap-2.5 sm:flex-col sm:items-end">
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">01</span> Langage</span>
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">02</span> Poids du clone</span>
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">03</span> Niveau</span>
+                </div>
+                <div class="order-first mx-auto flex h-24 w-24 items-center justify-center rounded-[28px] bg-[#015239] text-[#B8FFE1] shadow-[0_30px_50px_-25px_rgba(1,82,57,0.7)] sm:order-none">
+                    {% include "core/_mark.html" with class="h-12 w-12" %}
+                </div>
+                <div class="flex flex-wrap justify-center gap-2.5 sm:flex-col sm:items-start">
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">04</span> Réactivité</span>
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">05</span> Bienveillance</span>
+                    <span class="diagram-pill"><span class="font-code text-[10px] text-[#7D56FC]">06</span> Pays</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chiffres -->
+    <section class="pb-6" aria-label="Le registre en chiffres">
+        <div class="card-cream mx-auto grid max-w-5xl grid-cols-2 gap-x-6 gap-y-8 px-6 py-8 sm:grid-cols-4 sm:px-10" data-reveal>
+            {% include "core/_stat.html" with index="01" value=stats.total_contributors|intcomma label="Contributeurs" note="profils publics" %}
+            {% include "core/_stat.html" with index="02" value=stats.total_contributions|intcomma label="Contributions" note="PR mergées suivies" %}
+            {% include "core/_stat.html" with index="03" value=stats.total_countries label="Pays" note="représentés" %}
+            {% include "core/_stat.html" with index="04" value=stats.total_issues|intcomma label="Issues libres" note="à prendre maintenant" %}
+        </div>
+    </section>
+
+    <!-- Sélection -->
+    {% if featured %}
+    <section class="py-14 lg:py-20">
+        <div class="flex flex-wrap items-end justify-between gap-5" data-reveal>
+            <div>
+                <p class="eyebrow text-[#6C43F5]">Sélection</p>
+                <h2 class="mt-3 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-on-surface">
+                    Bonnes portes d’entrée
+                </h2>
+                <p class="mt-3 text-on-surface-variant">Issues accueillantes pour démarrer maintenant.</p>
+            </div>
+            <a href="{% url 'explore' %}" class="link-arrow text-sm">
+                Tout le registre
+                <span aria-hidden="true">&rarr;</span>
             </a>
         </div>
 
-        <div class="relative animate-fade-up hidden sm:block" style="animation-delay:.08s">
-            <div class="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl shadow-card p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-9 h-9 rounded-lg bg-primary/12 text-primary grid place-items-center font-display font-bold text-sm">K</span>
-                        <div class="font-code text-sm text-on-surface-variant truncate">kubernetes/<span class="text-on-surface font-semibold">kubernetes</span></div>
-                    </div>
-                    <span class="shrink-0 inline-flex items-center gap-1 bg-tertiary/12 text-tertiary text-[11px] font-semibold px-2.5 py-1 rounded-md">Débutant</span>
-                </div>
-                <h3 class="font-heading font-semibold text-lg text-on-surface mb-2 leading-snug">Improve error message when config file is missing</h3>
-                <p class="text-sm text-on-surface-variant line-clamp-2 mb-5">Un message clair qui pointe vers la doc quand le kubeconfig est introuvable.</p>
-                <div class="flex items-center justify-between pt-4 border-t border-outline-variant/40">
-                    <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-                        <span class="font-code">Go</span>
-                        <span aria-hidden="true">·</span>
-                        <span class="inline-flex items-center gap-1.5" title="Poids du clone : léger">
-                            <span class="uppercase tracking-wider text-[10px] font-semibold">Poids du clone</span>
-                            <span class="weight-meter" data-level="1" aria-label="Poids du clone léger">
-                                <span></span><span></span><span></span>
-                            </span>
-                        </span>
-                    </div>
-                    <span class="text-xs font-medium text-tertiary">Réponse ~2 h</span>
-                </div>
-            </div>
-            <p class="mt-3 text-xs text-on-surface-variant text-center sm:text-left max-w-md">
-                <strong class="font-medium text-on-surface">Poids du clone</strong> —
-                taille estimée du dépôt à télécharger&nbsp;: léger (&lt;&nbsp;50&nbsp;Mo), moyen (&lt;&nbsp;500&nbsp;Mo) ou lourd.
+        <div class="mt-8 grid gap-5 md:grid-cols-3">
+            {% for issue in featured %}
+                {% include "core/_issue_row.html" with issue=issue %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Témoignages -->
+    {% include "core/_testimonials.html" %}
+
+    <!-- Pourquoi -->
+    {% include "core/_why.html" %}
+
+    <!-- FAQ -->
+    {% include "core/_faq.html" %}
+
+    <!-- CTA final -->
+    <section class="py-10 lg:py-16">
+        <div class="panel-forest px-6 py-14 text-center lg:py-20" data-reveal>
+            <h2 class="mx-auto max-w-3xl font-serif text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em] text-[#FBFEFB]">
+                Ta première PR n’attend pas un projet perso parfait.
+            </h2>
+            <p class="mx-auto mt-5 max-w-xl leading-relaxed text-powder">
+                Les recruteurs lisent des contributions réelles. Commence par une issue,
+                pas par un monorepo vide.
             </p>
-        </div>
-    </div>
-</section>
-
-<section class="max-w-content mx-auto px-4 lg:px-8 -mt-5 relative z-10">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {% include "core/_stat.html" with icon="groups" value=stats.total_contributors|intcomma label="Contributeurs" tone="primary" %}
-        {% include "core/_stat.html" with icon="merge" value=stats.total_contributions|intcomma label="Contributions" tone="tertiary" %}
-        {% include "core/_stat.html" with icon="public" value=stats.total_countries label="Pays" tone="secondary" %}
-        {% include "core/_stat.html" with icon="bug_report" value=stats.total_issues|intcomma label="Issues libres" tone="primary" %}
-    </div>
-</section>
-
-<section id="pillars" class="max-w-content mx-auto px-4 lg:px-8 py-16 lg:py-20">
-    <div class="max-w-xl mb-10">
-        <h2 class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Ce qui change vraiment</h2>
-        <p class="mt-3 text-on-surface-variant text-lg leading-relaxed">Pas un énième listing d’issues. Des filtres calés sur ton quotidien de contributeur.</p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-5">
-        {% include "core/_pillar.html" with icon="tune" tone="primary" title="Filtre ce qui est encore libre" text="Langage, niveau, non assigné. Tu ne perds plus une soirée sur une issue déjà prise." %}
-        {% include "core/_pillar.html" with icon="speed" tone="tertiary" title="Choisis un repo qui répond" text="Réactivité, bienveillance débutants, et poids du clone — pour ne pas bloquer sur un monolithe." %}
-        {% include "core/_pillar.html" with icon="fingerprint" tone="secondary" title="Laisse une trace visible" text="Ton profil public et le classement montrent que tu as contribué — pas seulement un README perso." %}
-    </div>
-</section>
-
-{% include "core/_why.html" %}
-
-{% include "core/_testimonials.html" %}
-
-{% if featured %}
-<section class="max-w-content mx-auto px-4 lg:px-8 pb-6">
-    <div class="flex items-end justify-between mb-6 gap-4">
-        <div>
-            <h2 class="font-display font-semibold text-2xl lg:text-3xl text-on-surface tracking-tight">Bonnes portes d’entrée</h2>
-            <p class="text-on-surface-variant mt-1">Issues accueillantes pour démarrer maintenant.</p>
-        </div>
-        <a href="{% url 'explore' %}" class="hidden sm:inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:gap-2 transition-all">
-            Voir tout <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </a>
-    </div>
-    <div class="grid md:grid-cols-3 gap-4">
-        {% for issue in featured %}
-            {% include "core/_issue_card.html" with issue=issue %}
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
-{% include "core/_faq.html" %}
-
-<section class="max-w-content mx-auto px-4 lg:px-8 py-14 lg:py-16">
-    <div class="relative overflow-hidden rounded-2xl bg-inverse-surface text-inverse-on-surface px-8 py-12 lg:px-14">
-        <div class="relative max-w-2xl">
-            <h2 class="font-display font-semibold text-2xl lg:text-3xl tracking-tight">Ta première PR n’attend pas un projet perso parfait.</h2>
-            <p class="mt-4 text-inverse-on-surface/75 text-lg leading-relaxed">Les recruteurs lisent des contributions réelles. Commence par une issue, pas par un monorepo vide.</p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="{% url 'explore' %}" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3.5 rounded-xl hover:bg-primary-container transition-colors">
+            <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <a href="{% url 'explore' %}" class="btn btn-violet">
                     Ouvre Explorer
+                    <span aria-hidden="true">&rarr;</span>
                 </a>
-                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 border border-inverse-on-surface/25 text-inverse-on-surface font-semibold px-6 py-3.5 rounded-xl hover:bg-inverse-on-surface/10 transition-colors">
+                <a href="{{ GITHUB_REPO_URL }}" target="_blank" rel="noopener" class="btn btn-ghost-light">
                     Contribue à OpenToAll
+                    <span aria-hidden="true">&nearr;</span>
                 </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+    (function () {
+        const items = document.querySelectorAll('[data-reveal]');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!items.length) return;
+        if (reduce || !('IntersectionObserver' in window)) {
+            items.forEach(function (el) { el.classList.add('is-visible'); });
+            return;
+        }
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function (el) { io.observe(el); });
+    })();
+</script>
 {% endblock %}
