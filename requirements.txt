@@ -31,7 +31,7 @@ pluggy==1.7.0
 prompt_toolkit==3.0.53
 psycopg2-binary==2.9.13
 Pygments==2.20.0
-pytest==9.1.1
+pytest==9.2.0
 pytest-django==4.14.0
 python-crontab==3.3.0
 python-dateutil==2.9.0.post0
