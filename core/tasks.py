@@ -71,8 +71,8 @@ def ingest_issues(
     repo_cache: dict[str, dict] = {}
     rate_limited = False
 
-    def _log(msg: str):
-        logger.info(msg)
+    def _log(msg: str, **extra):
+        logger.info(msg, extra=extra)
         if on_progress:
             on_progress(msg)
 
@@ -90,7 +90,9 @@ def ingest_issues(
                 except GitHubRateLimitError:
                     _log(
                         f"Rate limit GitHub atteint pendant {lang}/{label}. "
-                        "Progression sauvegardée — relance fetch_issues plus tard."
+                        "Progression sauvegardée — relance fetch_issues plus tard.",
+                        language=lang,
+                        label=label,
                     )
                     rate_limited = True
                     break

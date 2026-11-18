@@ -83,6 +83,20 @@ def _respect_search_budget() -> None:
     _last_search_at = time.monotonic()
 
 
+def _backoff_seconds(remaining: int) -> float:
+    """Seconds to pause for a given remaining REST budget (0 = no pause).
+
+    Tiered, so ingestion slows down gradually instead of hitting a cliff.
+    """
+    if remaining < 10:
+        return 5.0
+    if remaining < 50:
+        return 2.0
+    if remaining < 100:
+        return 0.5
+    return 0.0
+
+
 def _handle_rate_limit(resp: httpx.Response, context: str) -> None:
     if resp.status_code not in {403, 429}:
         return
@@ -149,14 +163,16 @@ def _get(url: str, *, params: dict[str, Any] | None = None, context: str) -> dic
     if remaining is not None:
         try:
             left = int(remaining)
-            if left < 50:
-                # Global REST budget running low — pause briefly.
+            pause = _backoff_seconds(left)
+            if pause:
+                # Global REST budget running low — slow down before it hits zero.
                 logger.warning(
-                    "GitHub rate budget low (%s remaining)",
+                    "GitHub rate budget low (%s remaining), pausing %.1fs",
                     left,
-                    extra={"event": "github_budget_low"},
+                    pause,
+                    extra={"event": "github_budget_low", "remaining": left},
                 )
-                time.sleep(1.5)
+                time.sleep(pause)
         except ValueError:
             pass
 
