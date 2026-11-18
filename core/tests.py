@@ -748,3 +748,44 @@ def test_get_repo_contributor_count_soft_fails(monkeypatch):
     monkeypatch.setattr("core.services.github_client.httpx.get", boom)
     assert github_client.get_repo_contributor_count("a/b") is None
 
+
+
+@pytest.mark.parametrize(
+    "remaining, expected",
+    [(0, 5.0), (9, 5.0), (10, 2.0), (49, 2.0), (50, 0.5), (99, 0.5), (100, 0.0), (5000, 0.0)],
+)
+def test_backoff_seconds_is_tiered(remaining, expected):
+    from core.services import github_client
+
+    assert github_client._backoff_seconds(remaining) == expected
+
+
+def test_get_pauses_when_budget_is_low(monkeypatch):
+    from core.services import github_client
+
+    class FakeResp:
+        status_code = 200
+        headers = {"X-RateLimit-Remaining": "7"}
+        text = ""
+
+        def json(self):
+            return {"ok": True}
+
+    sleeps = []
+    monkeypatch.setattr("core.services.github_client.httpx.get", lambda *a, **k: FakeResp())
+    monkeypatch.setattr("core.services.github_client.time.sleep", sleeps.append)
+    assert github_client._get("https://api.github.com/x", context="t") == {"ok": True}
+    assert sleeps == [5.0]
+
+
+def test_get_still_raises_on_rate_limit(monkeypatch):
+    from core.services import github_client
+
+    class Limited:
+        status_code = 403
+        headers = {"X-RateLimit-Remaining": "0"}
+        text = "API rate limit exceeded"
+
+    monkeypatch.setattr("core.services.github_client.httpx.get", lambda *a, **k: Limited())
+    with pytest.raises(github_client.GitHubRateLimitError):
+        github_client._get("https://api.github.com/x", context="t")
