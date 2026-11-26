@@ -90,16 +90,6 @@ _render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if _render_host and _render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_render_host)
 
-# Fly.io injects FLY_APP_NAME (e.g. opentoall → opentoall.fly.dev).
-_fly_app = os.getenv("FLY_APP_NAME", "").strip()
-if _fly_app:
-    _fly_host = f"{_fly_app}.fly.dev"
-    if _fly_host not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(_fly_host)
-    _fly_origin = f"https://{_fly_host}"
-else:
-    _fly_origin = ""
-
 if not DEBUG and ("*" in ALLOWED_HOSTS or not ALLOWED_HOSTS):
     raise ImproperlyConfigured(
         "ALLOWED_HOSTS must list exact production hostnames when DEBUG=False."
@@ -114,8 +104,6 @@ if _render_host:
     _render_origin = f"https://{_render_host}"
     if _render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_render_origin)
-if _fly_origin and _fly_origin not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append(_fly_origin)
 
 
 # ---------------------------------------------------------------------------
